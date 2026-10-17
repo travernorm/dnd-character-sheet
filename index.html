@@ -47,7 +47,8 @@ h3{font-size:1rem}
 .hpbar{position:absolute;left:0;bottom:0;height:3px;background:var(--ok)}
 .hpbar.low{background:var(--danger)}
 @media (max-width:600px){.top{position:static}.vital{min-width:48px;padding:3px 6px}.vital.hp{min-width:90px}}
-.toprow2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toprow2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex:1 1 100%}
+.toprow2 .newchar{margin-left:auto}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:.82rem}
 .pill.live{border-color:var(--accent);color:var(--accent);font-weight:700}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
@@ -1466,8 +1467,9 @@ function renderTop(){
    <div class="toprow2">
     ${s?`<button class="btn sess-btn live" id="t-sess" title="Close session ${s.number}, file its Session Entry and back it up"><span class="dot"></span>Close session</button><span class="sess-meta">Session ${s.number} live · ${esc(fmtDate(s.date))}</span>`:`<button class="btn primary sess-btn" id="t-sess">Open session</button>`}
     <button class="btn small" id="t-sr">Short rest</button><button class="btn small" id="t-lr">Long rest</button>
+    <button class="btn small ghost newchar" id="t-new" title="Clear this character and start a new one">New character</button>
    </div>`;
-  $("#t-sess").onclick=()=>s?endSession():startSession();$("#t-sr").onclick=shortRest;$("#t-lr").onclick=longRest;$("#t-xp").onclick=xpModal;
+  $("#t-sess").onclick=()=>s?endSession():startSession();$("#t-sr").onclick=shortRest;$("#t-lr").onclick=longRest;$("#t-xp").onclick=xpModal;$("#t-new").onclick=newCharacterModal;
   $("#tabs").innerHTML=TABS.map(t=>`<button class="tab" role="tab" data-tab="${t[0]}" aria-selected="${t[0]===TAB}">${t[1]}</button>`).join("");
   $("#tabs").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{TAB=b.dataset.tab;try{localStorage.setItem(LK+"tab",TAB)}catch(e){}render();window.scrollTo({top:0})});
 }
@@ -2019,8 +2021,8 @@ function historyMarkdown(){
   if(NOTES.length){md+="\n## Notes\n\n";NOTES.forEach(n=>{md+="### "+n.title+" ("+n.tag+")\n\n"+(n.body||"")+"\n\n"})}
   return md;
 }
-async function offerFile(name,text){
-  const out=$("#d-out");
+async function offerFile(name,text,outEl){
+  const out=outEl||$("#d-out");
   if(!window.claude){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:name.endsWith(".json")?"application/json":"text/markdown"}));a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Saved "+name);return}
   try{const dl=await window.claude.use("downloads");if(dl){await dl.save({filename:name,data:text});toast("Saved "+name);return}}catch(e){if(e&&e.code==="declined")return}
   out.innerHTML=`<div class="field"><span class="label">Copy this text into a file named ${esc(name)}</span><textarea readonly style="min-height:160px" id="d-txt"></textarea><button class="btn small" id="d-copy">Copy</button></div>`;
@@ -2077,6 +2079,28 @@ function ledgerFromFile(o){
   if(!ch.classes.length)throw "none of its classes could be read";
   if(c.xp==null&&ch.xp==null)ch.xp=XP_TABLE[Math.min(19,ch.levelHistory.length-1)];
   return{format:"dnd-ledger",version:2,character:ch,state:null,sessions:[],notes:[],events:[],migrated:v1};
+}
+// Clears the character and everything logged for them. Content packs and app settings stay.
+function newCharacterModal(){
+  const s=currentSession();
+  openModal(`<h2>Start a new character?</h2>
+   <p>This clears ${esc(C.name)} from this ledger: the sheet, play history, sessions, notes and Session Entries. Content packs you added stay.</p>
+   ${s?`<div class="warn">Session ${s.number} is still open. Close it first if you want its Session Entry.</div>`:""}
+   <p class="muted" style="font-size:.86rem">Export a backup first if you might want ${esc(C.name)} back. You can restore it from the Backup &amp; level up tab.</p>
+   <div id="nc-out"></div>
+   <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" data-close>Cancel</button><button class="btn" id="nc-exp">Export backup</button><button class="btn danger" id="nc-clear">Clear and start new</button></div>`,m=>{
+    m.querySelector("#nc-exp").onclick=()=>offerFile("ledger-"+today()+".json",JSON.stringify(exportObj(),null,1),m.querySelector("#nc-out"));
+    const b=m.querySelector("#nc-clear");b.onclick=()=>{b.textContent="Tap again to clear "+C.name;b.onclick=async()=>{b.disabled=true;b.textContent="Clearing…";
+      try{await clearCharacter()}catch(e){b.disabled=false;b.textContent="Clear and start new";toast("Couldn't clear ("+(e&&e.code||e&&e.message||e)+").",true);return}
+      closeModal();toast("Cleared. Create or load a character.")}};
+  });
+}
+async function clearCharacter(){
+  for(const s of SESS)await Store.del("sessions/"+s.id);for(const n of NOTES)await Store.del("notes/"+n.id);for(const c of CHUNKS)await Store.del("log/"+c.id);for(const e of ENTRIES)await Store.del("entries/"+e.id);
+  await Store.del("app/state");await Store.del("app/character-v1");await Store.del("app/character");
+  C=null;ST=null;SESS=[];NOTES=[];CHUNKS=[];EVENTS=[];ENTRIES=[];DCACHE={sig:"",d:null};
+  coverDone=false;jrFlush=null;TAB="play";$("#cover").hidden=true;$("#tabs").innerHTML="";$("#jr-root").innerHTML="";document.title="D&D Ledger";window.scrollTo(0,0);
+  renderEmpty();
 }
 async function startLedger(o,how){SESS=[];NOTES=[];CHUNKS=[];ENTRIES=[];await restore(o);if(how)log("level",how,classLine(C)+" · "+maxHP(C)+" HP",null);else render()}
 function renderEmpty(){
