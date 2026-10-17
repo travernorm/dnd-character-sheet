@@ -41,6 +41,8 @@ def main(book):
         sp, misses = spellparser.parse(book, *meta["spells"])
         for s in sp:
             s.update(fixes.get("spells", {}).get(s["id"], {}))
+            for find, repl in fixes.get("spellText", {}).get(s["id"], []):  # a line the scan skipped
+                s["sum"] = s.get("sum", "").replace(find, repl)
         pack["spells"] = sp
         print("spells: %d (%d names not matched: %s)" % (len(sp), len(misses), ", ".join(misses)))
     if meta.get("creatures"):
