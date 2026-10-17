@@ -2,7 +2,8 @@
 
 A word that isn't in the dictionary is retried with the swaps these scans make
 (l for t or I, e for c, o for n, rn for m, 0 for o...), and glued words like
-"ofyou" are split. Uses the system word list plus the game words below.
+"ofyou" are split. Uses the system word list, the game words below, and every
+word that appears several times in the books' own OCR text (see corpus()).
 """
 import functools, os, re
 
@@ -72,12 +73,57 @@ def known(w):
     if w.endswith("'s"):
         return known(w[:-2])
     W = words()
-    for suf, add in (("s", ""), ("es", ""), ("ies", "y"), ("ed", ""), ("ed", "e"), ("d", ""), ("ing", ""), ("ing", "e"), ("er", ""), ("ers", ""), ("ly", ""), ("ness", ""), ("al", "")):
-        if w.endswith(suf) and len(w) - len(suf) >= 3:
-            base = w[:-len(suf)] + add
+    for suf, add in (("s", ""), ("es", ""), ("ies", "y"), ("ied", "y"), ("ed", ""), ("ed", "e"), ("d", ""), ("ing", ""), ("ing", "e"), ("er", ""), ("ers", ""), ("ier", "y"),
+                     ("est", ""), ("st", ""), ("iest", "y"), ("ly", ""), ("ness", ""), ("al", "")):
+        base = w[:-len(suf)] + add if w.endswith(suf) else ""
+        if len(base) >= 3:  # "using" is "use" + "ing"
             if base in W or base in COMMON or (len(base) > 3 and base[-1] == base[-2] and base[:-1] in W):
                 return True
     return False
+
+
+@functools.lru_cache(maxsize=None)
+def corpus():
+    """How often each word appears across every book's OCR text. Monster names, places and line-break halves
+    ("duergar", "githyanki", "suc"/"cessful") aren't in the dictionary, but a word that shows up in the
+    books several times is real. Scan slips rarely repeat letter for letter."""
+    import collections, glob
+    n = collections.Counter()
+    for d in glob.glob(os.path.join(ROOT, "packs", ".text", "*", "")):
+        if d.rstrip(os.sep).endswith("-pypdf"):
+            continue
+        for f in glob.glob(os.path.join(d, "p*.txt")):
+            with open(f, encoding="utf-8", errors="replace") as fh:
+                for w in re.findall(r"[A-Za-z']+", fh.read()):
+                    if w.islower() or (w[0].isupper() and w[1:].islower()):
+                        n[w.lower().strip("'")] += 1
+    return n
+
+
+def one_swap(low):
+    for a, b in SWAPS:
+        for m in re.finditer(re.escape(a), low):
+            yield low[:m.start()] + b + low[m.end():]
+
+
+def in_books(low):
+    """Seen 3+ times in the books, unless a spelling one swap away is far more common (a repeated slip like "spelicasting")."""
+    seen = corpus().get(low, 0)
+    if seen < 3:
+        return False
+    rival = max((corpus().get(c, 0) for c in one_swap(low) if known(c)), default=0)
+    return rival < 40 * seen
+
+
+def join_halves(text):
+    """Put back words a line break split without a hyphen: "protec tion", "suc cessful"."""
+    def rep(m):
+        a, b = m.group(1), m.group(2)
+        j = (a + b).lower()
+        if (known(j) or corpus().get(j, 0) >= 3) and not (known(a) and known(b)):
+            return a + b
+        return m.group(0)
+    return re.sub(r"\b([A-Za-z]{2,}) ([a-z]{2,})\b", rep, text)
 
 
 def segment(low):
@@ -105,6 +151,8 @@ def fix_word(w):
         return core
     if re.fullmatch(r"[Vv]ou(r|rs)?|[Vv]ou'(re|ve)", core):
         return "Y" + core[1:] if core[0] == "V" else "y" + core[1:]
+    if in_books(core.lower()):
+        return w
     if len(core) < 3 or re.fullmatch(r"\d+[a-z]{0,2}|\d*d\d+", core.lower()):
         return w
     low = core.lower()
@@ -147,4 +195,5 @@ def clean(text):
     text = re.sub(r"\bVou\b", "You", text)
     text = re.sub(r"\bl(?=n[a-z]{3,})", "I", text)  # lnstantaneous, lntelligence
     text = re.sub(r"\b([Il]|1)d(\d)", r"1d\2", text)  # Id6
+    text = join_halves(text)
     return re.sub(r"[A-Za-z0-9;']+", lambda m: fix_word(m.group(0)), text)

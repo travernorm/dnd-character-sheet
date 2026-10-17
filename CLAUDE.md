@@ -15,6 +15,7 @@ A character sheet and play log for 2014 fifth edition D&D. The whole app is `ind
 - **Amounts** can be a number, a formula (`"max(1, mod.cha)"`, `"1d10 + classLevel"`, `col.X` for class table columns) or a level scale (`{"1": "d6", "5": "d8"}`).
 - **Load order** (`loadLibrary` in `index.html`): `data/srd-spells.json` → `data/srd-items.json` → `data/base-pack.json` → every pack in `packs/`, sorted by `loadOrder` (default 50; MPMM is 60 so its reprints win, VGM/MTF are 10) → packs uploaded in the app. A later pack replaces an entry with the same id, except option sets, whose options merge. `packId:id` picks one pack's version (`mpmm:kenku`).
 - **Engine** (`index.html`): `addPack` indexes packs into `R`. `ref(coll, id)` looks entries up. `derive(c, st)` walks every owner (classes, subclasses, race, subrace, background, feats and option choices, equipped and attuned items, custom features, active spells), applies their effects, and returns the computed sheet. `D()` caches it. `statBlock` renders creatures and companions.
+- **Spells** (`index.html`, "SPELL DETAILS"): packs store spell text, not dice, so `spellMath(spell, slotLevel)` reads damage, healing, attack or save, upcasting and cantrip scaling from `sum` and `up`. `durRounds` reads durations (concentration and spell effects cast in combat end on their own in `nextRound`), and `spellMaterial` reads costly components. If a spell's numbers come out wrong, the fix is usually its text in the pack, not the parser.
 - **Storage**: `Store` (the artifact db capability or localStorage, key prefix `dnd-ledger:`). The character is `app/character` (`C`). Play state such as current HP, spent slots and conditions is separate (`ST`).
 
 ## Version 1 files still load
@@ -46,7 +47,8 @@ python3 tools/validate.py data/base-pack.json packs/<id>.json
 
 - Book ids: `phb xge tce dmg mm vgm mtf mpmm ftd bgg`. `BOOKS` in `build_pack.py` sets the page ranges and `loadOrder`. `books/<id>.py` defines races, feats, subclasses and their effects (using the builders in `fx.py` and `books/kit.py`). The text for each entry is looked up in the OCR output.
 - `ocr.py` repairs OCR slips using a dictionary. `text.py` finds sections and stops at the next heading, table row, footer, or all-caps line. `spells.py`, `items.py` and `creatures.py` parse those blocks. The name tables (`spell-classes.json`, `item-names.json`, `creature-names*.json`) tie the parsed blocks to the right ids.
-- `fixes.json` holds per-book hand corrections. One example is `textEnd`, which cuts a feature's text where it runs into the next section.
+- `fixes.json` holds per-book hand corrections: field values, `textEnd` (cuts a feature's text where it runs into the next section) and `spellText` (find/replace for a few words the scan skipped).
+- `ocr.py` treats any word that appears 3+ times across all the books' OCR text as real (`corpus()`), so monster names and game terms aren't "corrected". Rebuild every pack after changing it.
 - Off a Mac, `pdf_text.py` reads the PDF text layer instead. That text is noisier.
 
 ## Known gaps

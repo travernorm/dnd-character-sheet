@@ -174,7 +174,8 @@ def check_character(ch, idx, problems, warnings):
         if v and v not in idx.ids[coll]:
             warnings.append("%s '%s' isn't in any loaded pack (shown as text only)" % (field, v))
     for cls, lists in (ch.get("spells") or {}).items():
-        for lst, ids in lists.items():
+        named = [("%s.%s" % (lst, n), v) for lst, sets in lists.items() if lst == "sets" for n, v in sets.items()]
+        for lst, ids in [x for x in lists.items() if x[0] != "sets"] + named:
             for s in ids:
                 if s not in idx.ids["spells"] and s not in custom_spells:
                     warnings.append("spells.%s.%s: '%s' isn't in any loaded pack or customSpells" % (cls, lst, s))

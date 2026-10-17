@@ -1,5 +1,5 @@
 {
- "_about": "Hand corrections the parsers can't make: short field values, and textEnd markers (a few words where a feature's text should stop). Never book text.",
+ "_about": "Hand corrections the parsers can't make: short field values, textEnd markers (a few words where a feature's text should stop), and spellText find/replace pairs for a few words the scan skipped. Never book text.",
  "phb": {
   "spells": {
    "conjure-barrage": {
@@ -29,6 +29,16 @@
     "after": "only once per tur",
     "append": "n."
    }
+  }
+ },
+ "xge": {
+  "spellText": {
+   "toll-the-dead": [
+    [
+     "1d12 ne the spell's",
+     "1d12 necrotic damage.\n\nThe spell's"
+    ]
+   ]
   }
  }
 }

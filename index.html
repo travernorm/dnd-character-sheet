@@ -157,10 +157,23 @@ main .wrap{padding-block:16px 96px}
 /* spells */
 .slotrow{display:flex;gap:14px;flex-wrap:wrap}
 .slotgrp{display:flex;flex-direction:column;gap:4px}
-.spell{border-top:1px solid var(--line);padding:9px 0;display:flex;flex-direction:column;gap:6px}
+.spell{border-top:1px solid var(--line);padding:7px 0}
 .spell:first-child{border-top:0}
-.spell-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.spell-h .nm{font-weight:700;margin-right:auto;min-width:0}
+.spell-h{display:grid;grid-template-columns:minmax(9em,max-content) 1fr auto;grid-template-areas:"nm meta act";gap:4px 10px;align-items:center;cursor:pointer;list-style:none}
+.spell-h::-webkit-details-marker{display:none}
+.spell-h .nm{grid-area:nm;font-weight:700;min-width:0}
+.sp-meta{grid-area:meta;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;min-width:0}
+.sp-act{grid-area:act;display:flex;gap:4px;align-items:center;justify-content:flex-end}
+@media (max-width:560px){.spell-h{grid-template-columns:1fr auto;grid-template-areas:"nm act" "meta meta"}.sp-meta{padding-left:1em}}
+.spell-h .nm::before{content:"▸";display:inline-block;width:1em;color:var(--muted);transition:transform .15s}
+.spell[open] .spell-h .nm::before{transform:rotate(90deg)}
+.spell .sp-q{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.spell .sp-body{display:flex;flex-direction:column;gap:6px;padding:8px 0 4px 1em}
+.spell .sp-text{white-space:pre-line}
+.spell .btn.on{background:var(--sunk);border-color:var(--ok);color:var(--ok)}
+.pin{border:0;background:none;font-size:1rem;line-height:1;color:var(--line);padding:2px 4px;cursor:pointer}
+.pin.on{color:var(--gold)}
+.pin:hover{color:var(--gold)}
 .spell .facts{display:flex;gap:4px 14px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
 .spell .facts b{color:var(--ink);font-weight:700}
 .spell p{margin:0;font-size:.88rem;max-width:68ch}
@@ -261,7 +274,7 @@ const TIME_LABEL={action:"1 action",bonus:"1 bonus action",reaction:"1 reaction"
 const ECON_LABEL={action:"Action",bonus:"Bonus action",reaction:"Reaction",free:"Free",minute:"1 minute",special:"Special"};
 const KIND_LABEL={attack:"Attack",spell:"Spell",feature:"Feature",hp:"HP",rest:"Rest",combat:"Combat",note:"Note",level:"Level up",item:"Item",session:"Session"};
 const slug=t=>String(t).toLowerCase().replace(/['’]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-function fixSpell(o){o=Object.assign({},o);if(o.lvl==null)o.lvl=+o.level||0;if(o.time&&!TIME_LABEL[o.time]){const t=String(o.time).toLowerCase();if(/bonus/.test(t))o.time="bonus";else if(/reaction/.test(t))o.time="reaction";else if(/^1 action$|^action$/.test(t))o.time="action";else{o.castTime=o.time;o.time="minute"}}if(!o.time)o.time="action";return o}
+function fixSpell(o){o=Object.assign({},o);if(o.lvl==null)o.lvl=+o.level||0;if(o.time&&!TIME_LABEL[o.time]){const t=String(o.time).toLowerCase();if(/bonus/.test(t))o.time="bonus";else if(/reaction/.test(t)){o.time="reaction";const m=/reaction,\s*(?:which you take\s+)?(.+)$/i.exec(t);if(m)o.trigger=m[1]}else if(/^1 action$|^action$/.test(t))o.time="action";else{o.castTime=o.time;o.time="minute"}}if(!o.time)o.time="action";return o}
 
 /* ================= CONTENT PACKS ================= */
 const COLLS=["classes","subclasses","races","backgrounds","feats","optionSets","spells","items","creatures"];
@@ -427,7 +440,7 @@ function defaultState(){return{schema:2,hp:null,temp:0,used:{},slotsUsed:{},hdUs
 function blankCharacter(){return{schema:2,edition:"2014",packs:[],name:"",player:"",alias:"",race:"",subrace:"",background:"",size:"Medium",alignment:"",age:"",look:"",backstory:"",cover:"",
   campaign:{name:"",dm:"",start:"",notes:""},abilityMode:"final",abilities:{str:10,dex:10,con:10,int:10,wis:10,cha:10},classes:[],levelHistory:[],hp:{rolls:[],max:null},
   choices:{},proficiencies:{saves:[],skills:[],expertise:[],tools:[],armor:[],weapons:[],languages:[]},spells:{},customSpells:[],inventory:[],attacks:[],gold:{gp:0},companions:[],
-  custom:{features:[],resources:[]},overrides:{},levelPlan:[]}}
+  custom:{features:[],resources:[]},overrides:{},levelPlan:[],pinnedSpells:[]}}
 
 /* ================= VERSION 1 → 2 =================
    Version 1 characters (from before content packs) are converted when they load. Nothing about the
@@ -719,6 +732,57 @@ function knownSpells(){const d=D();const by={};
   return Object.values(by).sort((a,b)=>a.lvl-b.lvl||a.name.localeCompare(b.name));
 }
 function spellDCFor(s){const g=(s.grants||[]).find(x=>x.ability);if(g&&!(s.how||[]).length)return D().abilityDC(g.ability);return D().spellDC(s.cls)}
+/* ================= SPELL DETAILS =================
+   Packs store damage, healing and durations as prose, so they're read from the spell's text here. */
+const DMG_TYPES="acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder";
+const mulDice=(a,k)=>String(a).replace(/^(\d+)d/,(m,n)=>(+n*k)+"d");
+// "8d6" plus n × "1d6" is "9d6"; different dice are added on: "2d8+1d6".
+function addDice(a,b,n){const ma=/^(\d+)d(\d+)(.*)$/.exec(a),mb=/^(\d+)d(\d+)$/.exec(b);if(!ma||!mb||!n)return a;
+  return ma[2]===mb[2]?(+ma[1]+n*+mb[1])+"d"+ma[2]+ma[3]:a+"+"+(n*+mb[1])+"d"+mb[2]}
+function spellMod(cls){const d=D();const cst=d.casters.find(x=>x.cls===cls)||d.casters[0];return cst?d.M(cst.ability):0}
+// What a spell does when cast with a slot of level `slot`: damage dice, healing, attack or save, and a note for
+// upcasts that add targets instead of dice ("+2 darts").
+function spellMath(s,slot){
+  const txt=String(s.sum||""),up=String(s.up||"");const L=totalLv(C);
+  const r={dmg:[],heal:null,note:"",save:s.save||null,
+    attack:(s.attack||((/\b(ranged|melee) spell attack/i.exec(txt)||[])[1])||"").toLowerCase()||null};
+  // "8d6 fire damage", "force damage equal to 1d8 + your spellcasting ability modifier", "3d8 damage of the type you chose"
+  const D_="(\\d+d\\d+(?:\\s*[+-]\\s*\\d+(?:d\\d+)?)*)",MOD="(\\s*\\+\\s*your\\s+spellcasting\\s+ability\\s+modifier)?";const sm=spellMod(s.cls);const seen=new Set();
+  const put=(dice,type,mod)=>{dice=dice.replace(/\s+/g,"");if(mod&&sm)dice+=(sm>0?"+":"")+sm;const k=dice+type;if(seen.has(k)||r.dmg.length>=3)return;seen.add(k);r.dmg.push({dice:dice,type:type})};
+  const pats=[[new RegExp(D_+MOD+"\\s+("+DMG_TYPES+")\\s+damage","gi"),m=>put(m[1],m[3].toLowerCase(),m[2])],
+    [new RegExp("("+DMG_TYPES+")\\s+damage\\s+equal\\s+to\\s+"+D_+MOD,"gi"),m=>put(m[2],m[1].toLowerCase(),m[3])]];
+  const hits=[];pats.forEach(([re,f])=>{for(const m of txt.matchAll(re))hits.push([m.index,()=>f(m)])});hits.sort((a,b)=>a[0]-b[0]).forEach(h=>h[1]());
+  if(!r.dmg.length){const m=new RegExp(D_+MOD+"\\s+(?:extra\\s+)?damage","i").exec(txt);if(m)put(m[1],"",m[2])}
+  const hm=/regains?\s+(?:a\s+number\s+of\s+)?hit\s+points\s+equal\s+to\s+(\d+d\d+)(\s*\+\s*your\s+spellcasting\s+ability\s+modifier)?/i.exec(txt);
+  if(hm)r.heal={dice:hm[1],mod:hm[2]?spellMod(s.cls):0};
+  if(s.lvl===0&&r.dmg.length&&/5th level/i.test(txt+" "+(s.scale||""))){const k=1+(L>=5)+(L>=11)+(L>=17);if(k>1){r.dmg=r.dmg.map(x=>({dice:mulDice(x.dice,k),type:x.type}));r.note="Cantrip damage at character level "+L}}
+  const above=slot&&s.lvl>0?slot-s.lvl:0;
+  if(above>0&&up){
+    const um=/(\d+d\d+)\s+for\s+each\s+(?:spell\s+)?slot\s+level\s+above/i.exec(up);
+    if(um){const before=up.slice(0,um.index);
+      if(r.heal&&(/heal|hit points/i.test(before)||!r.dmg.length))r.heal=Object.assign({},r.heal,{dice:addDice(r.heal.dice,um[1],above)});
+      else if(r.dmg.length){const t=new RegExp("("+DMG_TYPES+")","i").exec(before);const tgt=(t&&r.dmg.find(x=>x.type===t[1].toLowerCase()))||r.dmg[0];tgt.dice=addDice(tgt.dice,um[1],above)}
+      r.note="Upcast to "+ord(slot)+" level";}
+    else{const nm=/\b(?:one|an)\s+(?:more|additional)\s+([a-z]+)/i.exec(up);if(nm)r.note="+"+above+" "+nm[1]+(above>1&&!/s$/.test(nm[1])?"s":"")+" at "+ord(slot)+" level"}
+  }
+  return r;
+}
+const dmgText=r=>r.dmg.map(x=>(x.dice+" "+x.type).trim()).join(" / ")+(r.heal?(r.dmg.length?" · ":"")+"heals "+r.heal.dice+(r.heal.mod?" "+sg(r.heal.mod):""):"");
+// Rounds a duration lasts ("Concentration, up to 1 minute" is 10), or null for "Instantaneous" and "Until dispelled".
+function durRounds(dur){const m=/(\d+)\s*(round|minute|hour|day)/i.exec(String(dur||""));return m?+m[1]*{round:1,minute:10,hour:600,day:14400}[m[2].toLowerCase()]:null}
+// A material component with a gp cost: {text, gp, consumed, noun}. The noun ("diamond") is matched against your inventory.
+// A material component with a gp cost: {text, gp, consumed, keys}. The keys ("diamond", "pearl") are matched against your inventory.
+const MAT_SKIP=new Set("worth least which spell consumes consumed must that with value each small tiny bit piece pieces powdered crushed dust powder ounce ounces pound pounds brass brazier fire used total combined".split(" "));
+function spellMaterial(s){const m=/\bM\s*\(([^)]*)\)?/.exec(s.comp||"");if(!m)return null;const t=m[1].trim();const g=/([\d,]+)\s*gp/i.exec(t);if(!g)return null;
+  const keys=[...new Set((t.toLowerCase().match(/[a-z]{4,}/g)||[]).filter(w=>!MAT_SKIP.has(w)).map(w=>w.replace(/(ie)?s$/,(x,ie)=>ie?"y":"")))];
+  return{text:t,gp:+g[1].replace(/,/g,""),consumed:/consume/i.test(t),keys:keys}}
+function materialItem(mat){if(!mat||!mat.keys.length)return null;return (C.inventory||[]).find(i=>(i.qty||0)>0&&mat.keys.some(k=>itemName(i).toLowerCase().includes(k)))||null}
+// How often a spell has been cast: overall, this session, and when last.
+function spellCasts(key){const evs=EVENTS.filter(e=>e.spell===key&&!e.undone);return{n:evs.length,sess:ST.session?evs.filter(e=>e.s===ST.session).length:0,last:evs.length?evs[evs.length-1].t:null}}
+// Can it be cast right now with what's left (a slot, pact slot, free use, ritual or at will)?
+function castableNow(s){if(!(s.castable||s.ritualOnly))return false;if(s.lvl===0||s.ritualOnly||s.ritual)return true;
+  if(s.grants.some(g=>g.noSlot&&(!g.resId||resLeft(getRes(g.resId)||{max:0})>0)))return true;
+  if(slots().some((n,i)=>i+1>=s.lvl&&slotLeft(i+1)>0))return true;const pi=pactInfo(),pr=getRes("pact");return !!(pi&&pr&&pi.lvl>=s.lvl&&resLeft(pr)>0)}
 function xpNow(c){return c.xp!=null?c.xp:XP_TABLE[Math.max(0,Math.min(19,totalLv(c)-1))]}
 function xpInfo(c){const L=totalLv(c),xp=xpNow(c);const lo=XP_TABLE[Math.max(0,Math.min(19,L-1))],hi=L>=20?null:XP_TABLE[L];
   const earned=XP_TABLE.filter(t=>xp>=t).length;
@@ -850,16 +914,34 @@ function actCast(key){
   const leftOf=v=>v==="atwill"||v==="ritual"?1:v==="pact"?resLeft(getRes("pact")):v.startsWith("grant:")?resLeft(getRes(v.slice(6))||{max:0}):v[0]==="s"?slotLeft(+v.slice(1)):0;
   const firstOk=opts.find(o=>leftOf(o[0])>0)||opts[0];
   const timeFor=v=>v==="ritual"?"minute":(timeOf[v]||sp.time);
-  const dc=spellDCFor(sp);
+  const dc=spellDCFor(sp);const mat=spellMaterial(sp);const matIt=materialItem(mat);
+  const slotOf=v=>v&&v[0]==="s"?+v.slice(1):v==="pact"?(pactInfo()||{}).lvl||sp.lvl:sp.lvl;
+  const rolled={};
   openModal(`<h2>Cast ${esc(sp.name)}</h2>
    <div class="row"><span class="tag ${sp.time==="bonus"?"ba":""}">${esc(sp.castTime||TIME_LABEL[sp.time]||sp.time)}</span><span class="tag">${esc(sp.range||"")}</span><span class="tag">${esc(sp.dur||"")}</span>${sp.conc?'<span class="tag conc">Concentration</span>':""}${sp.save?`<span class="tag">${esc(sp.save)} save DC ${dc}</span>`:""}${sp.attack?`<span class="tag">Spell attack ${sg(spellAtk(C,sp.cls))}</span>`:""}</div>
    <p style="margin:0;font-size:.9rem">${esc(sp.sum||"")}</p>${sp.up?`<p class="muted" style="margin:0;font-size:.84rem">Higher levels: ${esc(sp.up)}</p>`:""}
    ${remindersHTML("cast")}
    ${opts.length?`<div class="field"><span class="label">${isCantrip?"How":"Spend"}</span>${segHTML("slot",opts,firstOk?firstOk[0]:"")}</div>`:`<div class="warn bad">You have no spell slots of ${ord(sp.lvl)} level or higher yet.</div>`}
    <div id="cast-warn"></div>
+   <div id="cast-math" class="stack" style="gap:6px"></div>
+   ${mat?`<div class="warn">Needs ${esc(mat.text)}.${matIt?` You have ${esc(itemName(matIt))} (${matIt.qty}).`:" Nothing matching is in your inventory."}</div>${mat.consumed&&matIt?`<label class="check"><input type="checkbox" id="cast-use" checked> Use up 1 ${esc(itemName(matIt))} from your inventory</label>`:""}`:""}
    <div class="field"><span class="label">Target or effect (optional)</span><input id="cast-target" autocomplete="off" placeholder="e.g. the bandit captain, failed save"></div>
    <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="cast-ok" ${opts.length?"":"disabled"}>Log cast</button></div>`,m=>{
-    const upd=()=>{const v=segVal(m,"slot");const msgs=[];
+    // Damage, healing and rolls for the slot picked. Rolls stay put when you switch slots; the dice shown update.
+    const math=()=>{const v=segVal(m,"slot");const r=spellMath(sp,slotOf(v));const box=m.querySelector("#cast-math");const parts=[];
+      if(r.attack)parts.push(`<div class="row"><button class="btn small" type="button" id="cast-atk">Roll ${esc(r.attack)} spell attack ${sg(spellAtk(C,sp.cls))}</button><span id="cast-atk-r" class="num">${rolled.atk?esc(rolled.atk.text):""}</span></div>`);
+      r.dmg.forEach((x,k)=>parts.push(`<div class="row"><span><b>${esc(x.dice)}</b> ${esc(x.type)} damage</span><button class="btn small" type="button" data-rolldmg="${k}">Roll${rolled.crit?" (crit)":""}</button></div>`));
+      if(r.heal)parts.push(`<div class="row"><span>Heals <b>${esc(r.heal.dice)}${r.heal.mod?" "+sg(r.heal.mod):""}</b></span><button class="btn small" type="button" id="cast-heal">Roll</button><label class="check"><input type="checkbox" id="cast-self"> It's me</label></div>`);
+      if(r.note)parts.push(`<p class="muted" style="margin:0;font-size:.82rem">${esc(r.note)}${r.dmg.length||r.heal?": "+esc(dmgText(r)):""}.</p>`);
+      if(r.dmg.length||r.heal)parts.push(`<div class="field"><span class="label">${r.heal&&!r.dmg.length?"HP healed":"Damage dealt"} (optional)</span><input id="cast-amt" class="num" inputmode="numeric" value="${rolled.amt!=null?rolled.amt:""}" style="width:110px"></div>`);
+      const keepSelf=(m.querySelector("#cast-self")||{}).checked;box.innerHTML=parts.join("");if(keepSelf&&m.querySelector("#cast-self"))m.querySelector("#cast-self").checked=true;
+      const q=sel=>box.querySelector(sel);
+      if(q("#cast-atk"))q("#cast-atk").onclick=()=>{const x=rollDice("1d20");const tot=x.total+spellAtk(C,sp.cls);rolled.crit=x.rolls[0]===20;rolled.atk={total:tot,nat:x.rolls[0],text:"d20 "+x.rolls[0]+" → "+tot+(x.rolls[0]===20?" · critical hit!":x.rolls[0]===1?" · miss":"")};math()};
+      box.querySelectorAll("[data-rolldmg]").forEach(b=>b.onclick=()=>{const x=r.dmg[+b.dataset.rolldmg];const y=rollExpr(x.dice,rolled.crit);rolled.amt=y.total;rolled.dmgType=x.type;toast("Rolled "+x.dice+(rolled.crit?" (doubled dice)":"")+": "+y.text+" = "+y.total+" "+x.type);math()});
+      if(q("#cast-heal"))q("#cast-heal").onclick=()=>{const y=rollExpr(r.heal.dice);rolled.amt=y.total+r.heal.mod;toast("Rolled "+r.heal.dice+": "+y.text+(r.heal.mod?" "+sg(r.heal.mod):"")+" = "+rolled.amt);math()};
+      if(q("#cast-amt"))q("#cast-amt").oninput=e=>{rolled.amt=e.target.value===""?null:parseInt(e.target.value)};
+      box._r=r};
+    const upd=()=>{const v=segVal(m,"slot");const msgs=[];math();
       if(v&&leftOf(v)<=0)msgs.push((v[0]==="s"?"No "+ord(+v.slice(1))+"-level slots":"None")+" left. Logging will still record it.");
       const w=econWarn(timeFor(v));if(w)msgs.push(w);
       const cb=ST.combat;if(cb){const lvl=!isCantrip;const t=timeFor(v);
@@ -871,15 +953,21 @@ function actCast(key){
     bindSeg(m,"slot",upd);upd();
     m.querySelector("#cast-ok").onclick=()=>{
       const before=begin();const v=segVal(m,"slot");const tgt=m.querySelector("#cast-target").value.trim();let how="";const fx={res:{},slots:{}};let slot=0;
+      const r=m.querySelector("#cast-math")._r||spellMath(sp,slotOf(v));const amt=parseInt((m.querySelector("#cast-amt")||{}).value);const extras=[];
+      if(rolled.atk)extras.push("Attack "+rolled.atk.total+(rolled.crit?" (critical)":""));
+      if(!isNaN(amt)&&amt>0){if(r.heal&&!r.dmg.length){const self=(m.querySelector("#cast-self")||{}).checked;if(self){const was=ST.hp;ST.hp=Math.min(maxHP(C),ST.hp+amt);fx.hp=ST.hp-was;if(was===0&&ST.hp>0)ST.death={s:0,f:0};extras.push("Healed me "+(ST.hp-was)+" ("+ST.hp+"/"+maxHP(C)+")")}else extras.push("Healed "+amt)}
+        else extras.push(amt+" "+(rolled.dmgType||(r.dmg[0]||{}).type||"")+" damage")}
+      const use=m.querySelector("#cast-use");if(use&&use.checked&&matIt){matIt.qty=Math.max(0,(matIt.qty||1)-1);if(!matIt.qty)C.inventory=C.inventory.filter(x=>x!==matIt);saveChar();extras.push("Used up "+itemName(matIt))}
+      const rounds=durRounds(sp.dur);const until=ST.combat&&rounds&&rounds<=100?ST.combat.round+rounds:null;
       if(v&&v.startsWith("grant:")){const id=v.slice(6);ST.used[id]=(ST.used[id]||0)+1;fx.res[id]=1;how="Free cast ("+(sp.grants.find(g=>g.resId===id)||{}).src+")"}
       else if(v==="pact"){ST.used.pact=(ST.used.pact||0)+1;fx.res.pact=1;how="Pact slot"}
       else if(v==="ritual")how="Ritual";
       else if(v&&v[0]==="s"){slot=+v.slice(1);ST.slotsUsed[slot]=(ST.slotsUsed[slot]||0)+1;how=ord(slot)+"-level slot"}
       else how=isCantrip?"Cantrip":"At will, no slot";
       const t=timeFor(v);if(ST.combat){econUse(t);if(t==="bonus")ST.combat.baSpell=true;if(t==="action"&&!isCantrip)ST.combat.actSpellLeveled=true}
-      let endNote="";if(sp.conc){if(ST.conc)endNote="Ended concentration on "+ST.conc.name;ST.conc={name:sp.name,key:sp.key,since:new Date().toISOString(),round:ST.combat?ST.combat.round:null}}
-      else if(sp.effects&&sp.effects.length&&!(ST.spellFx||[]).some(x=>x.key===sp.key))ST.spellFx=(ST.spellFx||[]).concat([{key:sp.key,name:sp.name,since:new Date().toISOString()}]);
-      closeModal();log("spell",sp.name+(tgt?" → "+tgt:""),[how,sp.conc?"Concentrating":"",sp.effects&&sp.effects.length&&!sp.conc?"Active on you":"",endNote].filter(Boolean).join(" · "),before,{spell:sp.key,slot:slot,fx:fx});
+      let endNote="";if(sp.conc){if(ST.conc)endNote="Ended concentration on "+ST.conc.name;ST.conc={name:sp.name,key:sp.key,since:new Date().toISOString(),round:ST.combat?ST.combat.round:null,until:until,dur:sp.dur||""}}
+      else if(sp.effects&&sp.effects.length&&!(ST.spellFx||[]).some(x=>x.key===sp.key))ST.spellFx=(ST.spellFx||[]).concat([{key:sp.key,name:sp.name,since:new Date().toISOString(),until:until,dur:sp.dur||""}]);
+      closeModal();log("spell",sp.name+(tgt?" → "+tgt:""),[how,...extras,sp.conc?"Concentrating"+(until?" until round "+until:""):"",sp.effects&&sp.effects.length&&!sp.conc?"Active on you":"",endNote].filter(Boolean).join(" · "),before,{spell:sp.key,slot:slot,fx:fx});
     };
   });
 }
@@ -943,15 +1031,35 @@ function actHP(kind){
   const before=begin();const max=maxHP(C);let det="";
   if(kind==="dmg"){let left=n;const fromTemp=Math.min(ST.temp,left);ST.temp-=fromTemp;left-=fromTemp;ST.hp=Math.max(0,ST.hp-left);
     det=(fromTemp?fromTemp+" absorbed by temp HP · ":"")+"Now "+ST.hp+"/"+max;
-    if(ST.conc)det+=" · Concentration save DC "+Math.max(10,Math.floor(n/2))+" for "+ST.conc.name;
+    const conc=ST.conc;
+    if(conc&&ST.hp===0){det+=" · Lost concentration on "+conc.name;ST.conc=null}
+    else if(conc)det+=" · Concentration save DC "+Math.max(10,Math.floor(n/2))+" for "+conc.name;
     if(ST.hp===0)det+=" · Down! Start death saves";
     log("hp","Took "+n+" damage",det,before);
-    if(ST.conc)toast("Concentration check: Con save DC "+Math.max(10,Math.floor(n/2))+" to keep "+ST.conc.name+".");
+    if(ST.conc)concSave(n);
   }else if(kind==="heal"){const was=ST.hp;ST.hp=Math.min(max,ST.hp+n);if(was===0&&ST.hp>0)ST.death={s:0,f:0};log("hp","Healed "+(ST.hp-was),"Now "+ST.hp+"/"+max,before)}
   else{ST.temp=Math.max(ST.temp,n);log("hp","Gained "+n+" temporary HP","Temp HP don't stack; you keep the higher amount.",before)}
   if(inp)inp.value="";
 }
-function endConc(){if(!ST.conc)return;const before=begin();const n=ST.conc.name;ST.conc=null;log("spell","Stopped concentrating on "+n,"",before)}
+function endConc(why){if(!ST.conc)return;const before=begin();const n=ST.conc.name;ST.conc=null;log("spell",(why?"Lost":"Stopped")+" concentration on "+n,why||"",before)}
+// After damage while concentrating: Con save, DC 10 or half the damage. War Caster and similar give advantage.
+function concSave(dmg){
+  const d=D();const dc=Math.max(10,Math.floor(dmg/2));const bonus=d.save("con");const adv=d.advantages.filter(a=>/concentrat/i.test(a.on));const name=ST.conc.name;
+  openModal(`<h2>Keep concentrating?</h2><p style="margin:0">You took ${dmg} damage while concentrating on <b>${esc(name)}</b>.</p>
+   <div class="row"><span class="tag">Con save DC ${dc}</span><span class="tag">Your bonus ${sg(bonus)}</span>${adv.length?`<span class="tag ok-tag">Advantage (${esc(adv.map(a=>a.src).join(", "))})</span>`:""}</div>
+   ${remindersHTML("save")}
+   <div class="row"><input id="cs-r" class="num" inputmode="numeric" placeholder="Total" style="width:90px"><button class="btn" id="cs-roll" type="button">Roll ${adv.length?"2d20, keep higher":"d20"} ${sg(bonus)}</button></div><div id="cs-out" class="muted"></div>
+   <div class="modal-f"><button class="btn danger" id="cs-lost">Lost it</button><button class="btn primary" id="cs-kept">Kept it</button></div>`,m=>{
+    const q=x=>m.querySelector(x);
+    const judge=()=>{const v=parseInt(q("#cs-r").value);q("#cs-out").textContent=isNaN(v)?"":v>=dc?"That's a success.":"That's a failure.";
+      q(v>=dc?"#cs-kept":"#cs-lost").classList.add("primary");q(v>=dc?"#cs-lost":"#cs-kept").classList.remove("primary")};
+    q("#cs-roll").onclick=()=>{const a=rollDice("1d20").total,b=adv.length?rollDice("1d20").total:null;const top=b==null?a:Math.max(a,b);q("#cs-r").value=top+bonus;toast("Rolled "+(b==null?a:a+" and "+b)+" "+sg(bonus)+" = "+(top+bonus));judge()};
+    q("#cs-r").oninput=judge;
+    const val=()=>{const v=parseInt(q("#cs-r").value);return isNaN(v)?"":"Con save "+v+" vs DC "+dc};
+    q("#cs-kept").onclick=()=>{const det=val();closeModal();log("spell","Kept concentration on "+name,det||"Con save vs DC "+dc,null)};
+    q("#cs-lost").onclick=()=>{const det=val();closeModal();endConc((det||"Failed the Con save vs DC "+dc))};
+  });
+}
 function spendPip(kind,id,idx){
   const before=begin();
   if(kind==="res"){const r=getRes(id);if(!r)return;const used=ST.used[r.id]||0;const nowUsed=idx<0?used+(idx===-1?1:-1):idx<r.max-used?used+1:used-1;ST.used[r.id]=Math.max(0,Math.min(r.max,nowUsed));
@@ -971,7 +1079,11 @@ function startCombat(){
       closeModal();log("combat","Combat started"+(nm?": "+nm:""),ini?"Initiative "+ini:"",before)};
   });
 }
-function nextRound(){const before=begin();const cb=ST.combat;cb.round+=1;cb.used={};cb.attacks=0;const keep={};Object.keys(cb.riders||{}).forEach(k=>{const r=D().riders.find(x=>x.id===k);if(r&&r.oncePer==="combat")keep[k]=true});cb.riders=keep;cb.baSpell=false;cb.actSpellLeveled=false;log("combat","Round "+cb.round,"",before)}
+function nextRound(){const before=begin();const cb=ST.combat;cb.round+=1;cb.used={};cb.attacks=0;const keep={};Object.keys(cb.riders||{}).forEach(k=>{const r=D().riders.find(x=>x.id===k);if(r&&r.oncePer==="combat")keep[k]=true});cb.riders=keep;cb.baSpell=false;cb.actSpellLeveled=false;
+  // Spells cast during this fight run out at the start of the round they end on (Shield: your next turn).
+  const ended=[];if(ST.conc&&ST.conc.until&&cb.round>=ST.conc.until){ended.push(ST.conc.name);ST.conc=null}
+  ST.spellFx=(ST.spellFx||[]).filter(x=>{if(x.until&&cb.round>=x.until){ended.push(x.name);return false}return true});
+  log("combat","Round "+cb.round,ended.length?"Ended: "+ended.join(", ")+" (duration over)":"",before)}
 function toggleEcon(k){const cb=ST.combat;if(!cb)return;cb.used[k]=!cb.used[k];saveState();render()}
 function endCombat(){
   const cb=ST.combat;const evs=EVENTS.slice(cb.startIdx||0).filter(e=>!e.undone);
@@ -1013,15 +1125,21 @@ function longRest(){
   openModal(`<h2>Long rest</h2><p class="muted" style="margin:0">At least 8 hours, no more than one per 24 hours.</p>
    <ul style="margin:0;padding-left:18px;font-size:.9rem"><li>HP back to ${maxHP(C)}, temporary HP cleared</li><li>All spell slots restored</li><li>Every feature use restored (dawn uses too)</li><li>Regain up to ${regain} spent hit dice</li><li>Concentration, active spells, rage and death saves cleared</li></ul>
    ${remindersHTML("longRest")}
+   ${D().casters.some(k=>k.prepared!=null)?`<label class="check"><input type="checkbox" id="lr-prep"> Then change my prepared spells</label>`:""}
    <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="lr-ok">Take long rest</button></div>`,m=>{
     m.querySelector("#lr-ok").onclick=()=>{const before=begin();const was=ST.hp;ST.hp=maxHP(C);ST.temp=0;ST.slotsUsed={};ST.used={};ST.conc=null;ST.death={s:0,f:0};ST.combat=null;ST.toggles=[];ST.spellFx=[];
       let left=regain;Object.keys(ST.hdUsed).sort((a,b)=>parseInt(b.slice(1))-parseInt(a.slice(1))).forEach(d=>{const g=Math.min(left,ST.hdUsed[d]||0);ST.hdUsed[d]-=g;left-=g});
       if(ST.conditions.includes("Exhaustion"))ST.conditions=ST.conditions.filter(x=>x!=="Exhaustion");
-      closeModal();log("rest","Long rest","HP "+was+" → "+ST.hp+" · all slots and features restored · regained up to "+regain+" hit dice",before)};
+      const prep=(m.querySelector("#lr-prep")||{}).checked;
+      closeModal();log("rest","Long rest","HP "+was+" → "+ST.hp+" · all slots and features restored · regained up to "+regain+" hit dice",before);
+      if(prep){const k=D().casters.find(x=>x.prepared!=null);if(k)prepareSpells(k.cls)}};
   });
 }
 function deathSave(kind){const before=begin();ST.death[kind]=Math.min(3,(ST.death[kind]||0)+1);const t=kind==="s"?"Death save success":"Death save failure";let d=ST.death.s+" successes, "+ST.death.f+" failures";if(ST.death.s>=3)d+=" · Stable";if(ST.death.f>=3)d+=" · "+C.name+" has died";log("hp",t,d,before)}
-function toggleCondition(c){const before=begin();const on=ST.conditions.includes(c);ST.conditions=on?ST.conditions.filter(x=>x!==c):ST.conditions.concat([c]);log("note",(on?"No longer ":"Now ")+c.toLowerCase(),"",before)}
+function toggleCondition(c){const before=begin();const on=ST.conditions.includes(c);ST.conditions=on?ST.conditions.filter(x=>x!==c):ST.conditions.concat([c]);
+  // Incapacitated (and the conditions that include it) ends concentration.
+  let det="";if(!on&&ST.conc&&["Incapacitated","Paralyzed","Petrified","Stunned","Unconscious"].includes(c)){det="Lost concentration on "+ST.conc.name;ST.conc=null}
+  log("note",(on?"No longer ":"Now ")+c.toLowerCase(),det,before)}
 
 /* ================= SESSION JOURNAL PANEL =================
    Lives outside <main> so it stays open while you switch tabs. Writes to the live session's notes. */
@@ -1406,7 +1524,7 @@ function levelUp(){
       const c1=d0.casters.find(x=>x.cls===cls),c2=d2.casters.find(x=>x.cls===cls);const notes=[];
       if(c2){const dd=(a,b)=>Math.max(0,(b||0)-(a||0));if(dd(c1&&c1.cantrips,c2.cantrips))notes.push("Learn "+dd(c1&&c1.cantrips,c2.cantrips)+" new cantrip"+(dd(c1&&c1.cantrips,c2.cantrips)>1?"s":""));
         if(c2.known!=null&&dd(c1&&c1.known,c2.known))notes.push("Learn "+dd(c1&&c1.known,c2.known)+" new spell"+(dd(c1&&c1.known,c2.known)>1?"s":"")+" (and you may swap one)");
-        if(c2.spellbook!=null)notes.push("Add "+(c1?2:6)+" wizard spells to your spellbook");
+        if(c2.spellbook!=null)notes.push(c1?"Pick 2 free spells for your spellbook next":"Add 6 wizard spells to your spellbook");
         if(c2.prepared!=null&&dd(c1&&c1.prepared,c2.prepared))notes.push("Prepare "+c2.prepared+" spells (up from "+((c1&&c1.prepared)||0)+")")}
       if(d2.slots.length>d0.slots.length)notes.push("New: "+ord(d2.slots.length)+"-level spell slots");
       const mc=!have&&tl>0?def.multiclass||{}:null;
@@ -1439,6 +1557,7 @@ function levelUp(){
       log("level","Reached "+def.name+" "+k.level+" (level "+totalLv(C)+")",["+"+gain+" max HP ("+maxHP(C)+")",ss?"Subclass: "+subName(k.subclass):"",
         ...Object.values(answers).map(a=>a.ch.name+": "+choiceSummary(Object.assign({},a.ch,{value:a.v})))].filter(Boolean).join(" · "),before);
       toast("Level "+totalLv(C)+"! "+(nd.casters.some(x=>x.cls===cls)?"Check the Spells tab for new spells.":"New features are on the Sheet tab."));
+      const bk=nd.casters.find(x=>x.cls===cls&&x.spellbook!=null);if(bk&&k.level>1)addSpell(cls,{free:2,of:2});
     };
   });
 }
@@ -1487,7 +1606,16 @@ function viewPlay(){
   const atkBtns=allAttacks().map(a=>{const am=ammoItem(a);return `<button class="qa" data-atk="${esc(a.id)}"><b>${esc(a.name)}</b><span class="num">${sg(attackBonus(a))} · ${esc(attackDmg(a))}${am?" · "+am.qty+" left":""}</span></button>`}).join("");
   const actBtns=d.actions.map(a=>{const r=a.cost&&a.cost.resource?getRes(a.cost.resource):null;return `<button class="qa ${QA_COLOR[a.econ]||"info"}" data-act="${esc(a.id)}"><b>${esc(a.name)}</b><span>${esc(ECON_LABEL[a.econ]||a.econ)}${a.save?" · DC "+a.save.dc:""}${r?" · "+resLeft(r)+"/"+r.max+(r.die?" "+esc(r.die):""):""}</span></button>`}).join("");
   const ks=knownSpells();
-  const cantrips=ks.filter(s=>s.lvl===0&&s.castable&&s.time!=="minute").slice(0,3).map(s=>`<button class="qa psy" data-cast="${esc(s.key)}"><b>${esc(s.name)}</b><span>Cantrip · ${esc(TIME_LABEL[s.time])}${s.save?" · DC "+spellDCFor(s):""}</span></button>`).join("");
+  // Pinned spells (★ on the Spells tab), or your first three cantrips until you pin some.
+  const pinned=ks.filter(s=>isPinned(s.key)&&(s.castable||s.ritualOnly));
+  const spellBtn=s=>{const r=spellMath(s,s.lvl);const dt=dmgText(r);const left=s.lvl?(castableNow(s)?"":" · no slots left"):"";
+    return `<button class="qa psy" data-cast="${esc(s.key)}"><b>${esc(s.name)}</b><span>${s.lvl?ord(s.lvl):"Cantrip"} · ${esc(TIME_LABEL[s.time]||s.castTime||s.time)}${dt?" · "+esc(dt):""}${r.save?" · DC "+spellDCFor(s):""}${left}</span></button>`};
+  const cantrips=(pinned.length?pinned:ks.filter(s=>s.lvl===0&&s.castable&&s.time!=="minute").slice(0,3)).map(spellBtn).join("");
+  // Reaction spells while your reaction is unused: Shield, Absorb Elements, Counterspell…
+  const reacts=cb?ks.filter(s=>s.castable&&s.time==="reaction"&&!pinned.includes(s)):[];
+  const reactCard=reacts.length?`<section class="card"><div class="card-h"><h2>Reactions</h2><span class="muted">${cb.used.reaction?"Reaction used this round":"Reaction ready"}</span></div>
+     <div class="quick">${reacts.map(s=>{const r=spellMath(s,s.lvl);return `<button class="qa info" data-cast="${esc(s.key)}" ${cb.used.reaction||!castableNow(s)?"disabled":""}><b>${esc(s.name)}</b><span>${s.lvl?ord(s.lvl)+" level":"Cantrip"}${dmgText(r)?" · "+esc(dmgText(r)):""}${castableNow(s)?"":" · no slots left"}</span></button>`}).join("")}</div>
+     ${reacts.some(s=>s.trigger)?`<p class="muted" style="margin:0;font-size:.8rem">${reacts.filter(s=>s.trigger).map(s=>"<b>"+esc(s.name)+"</b> "+esc(s.trigger)).join(" · ")}</p>`:""}</section>`:"";
   const res=resources(C);const sl=slots(C);const toggles=d.toggles.filter(t=>(ST.toggles||[]).includes(t.id));
   const firstRound=cb&&cb.round===1&&(d.riders.some(r=>/firstRound/.test(JSON.stringify(r)))||Object.values(d.bonus).flat().length)?d.reminders.filter(r=>r.on==="initiative"):[];
   return `<div class="grid"><div class="col">
@@ -1500,6 +1628,7 @@ function viewPlay(){
       ${d.casters.length||ks.some(s=>s.castable)?`<button class="qa info" id="p-spells"><b>Cast a spell</b><span>${sl.map((n,i)=>slotLeft(i+1)+"/"+n+" "+ord(i+1)).join(" · ")||(d.pact?"Pact slots "+resLeft(getRes("pact"))+"/"+d.pact.n:"No slots")}</span></button>`:""}
      </div>
    </section>
+   ${reactCard}
    <section class="card"><div class="card-h"><h2>Recent</h2>${(ST.undo||[]).length?`<button class="btn small" id="p-undo">Undo last</button>`:""}<button class="btn ghost small" data-goto="history">Full history</button></div>
      ${recent.length?`<div class="log">${recent.map(evHTML).join("")}</div>`:`<div class="empty">Nothing logged yet. Open a session, then every attack, spell, rest and note you log lands here and in History.</div>`}
    </section>
@@ -1520,15 +1649,18 @@ function viewPlay(){
      ${res.length?res.map(r=>`<div class="res"><span class="nm">${esc(r.name)}</span>${pipsHTML("res",r.id,r.max,ST.used[r.id]||0,r.color)}<span class="meta">${recTag(r.rec)} ${r.die?esc(r.die)+" · ":""}${r.meta?esc(r.meta):""}</span></div>`).join(""):'<p class="muted" style="margin:0">No limited-use features. Add your own trackers on the Backup & level up tab.</p>'}
    </section>
    <section class="card"><div class="card-h"><h2>Conditions</h2></div>
-     ${ST.conc?`<div class="row"><span class="tag conc">Concentrating</span><b>${esc(ST.conc.name)}</b><button class="btn small" id="p-endconc">Stop</button></div>`:'<p class="muted" style="margin:0;font-size:.85rem">Not concentrating on anything.</p>'}
+     ${ST.conc?`<div class="row"><span class="tag conc">Concentrating</span><b>${esc(ST.conc.name)}</b><span class="muted" style="font-size:.8rem">${esc(spellLeft(ST.conc))}</span><button class="btn small" id="p-endconc">Stop</button></div>`:'<p class="muted" style="margin:0;font-size:.85rem">Not concentrating on anything.</p>'}
      ${toggles.map(t=>`<div class="row"><span class="tag long">On</span><b>${esc(t.name)}</b><button class="btn small" data-endtoggle="${esc(t.id)}">End</button></div>`).join("")}
-     ${(ST.spellFx||[]).map(s=>`<div class="row"><span class="tag conc">Active</span><b>${esc(s.name)}</b><button class="btn small" data-endfx="${esc(s.key)}">End</button></div>`).join("")}
+     ${(ST.spellFx||[]).map(s=>`<div class="row"><span class="tag conc">Active</span><b>${esc(s.name)}</b><span class="muted" style="font-size:.8rem">${esc(spellLeft(s))}</span><button class="btn small" data-endfx="${esc(s.key)}">End</button></div>`).join("")}
      <div class="econ">${CONDITIONS.map(c=>`<button class="chip ${ST.conditions.includes(c)?"on":""}" data-cond="${c}">${c}${d.defenses.conditionImmunity.includes(c)?" (immune)":""}</button>`).join("")}</div>
      <label class="check"><input type="checkbox" id="p-insp" ${ST.inspiration?"checked":""}> Inspiration from the DM</label>
      ${d.reminders.filter(r=>r.on==="always").map(r=>`<p class="muted" style="margin:0;font-size:.82rem">${esc(r.text)}</p>`).join("")}
    </section>
   </div></div>`;
 }
+// "3 rounds left", or for longer spells "1 hour, cast at 10:32".
+function spellLeft(x){const cb=ST.combat;if(x.until&&cb){const n=x.until-cb.round;return n<=1?"ends next round":n+" rounds left"}
+  return [String(x.dur||"").replace(/^concentration,\s*/i,""),x.since?"cast at "+fmtTime(x.since):""].filter(Boolean).join(", ")}
 function bindPlay(v){
   const on=(sel,fn)=>{const e=v.querySelector(sel);if(e)e.onclick=fn};
   on("#p-startc",startCombat);on("#p-next",nextRound);on("#p-endc",endCombat);on("#p-free",actFree);
@@ -1550,29 +1682,53 @@ function bindPlay(v){
 
 /* ================= SPELLS TAB ================= */
 const spellsOf=cls=>C.spells[cls]=C.spells[cls]||{};
+let SPELL_OPEN=new Set();let spellFilter={show:"all",q:""};try{spellFilter=Object.assign(spellFilter,JSON.parse(localStorage.getItem(LK+"spellFilter")||"{}"),{q:""})}catch(e){}
+const isPinned=k=>(C.pinnedSpells||[]).includes(k);
+// One line per spell (name, casting time, damage, DC, Cast); tap it for the full text and the rest.
 function spellRow(s,cst){
-  const prepTog=cst&&cst.spellbook!=null&&s.inBook&&s.lvl>0;const isPrep=(spellsOf(s.cls).prepared||[]).includes(s.key);
+  const prepTog=cst&&cst.spellbook!=null&&s.inBook&&s.lvl>0&&!s.how.includes("always");const isPrep=(spellsOf(s.cls).prepared||[]).includes(s.key);
   const castable=s.castable||s.ritualOnly;const fromGrant=s.grants.length&&!s.how.filter(h=>h!=="always").length;
-  return `<div class="spell"><div class="spell-h"><span class="nm">${esc(s.name)}</span>${s.conc?'<span class="tag conc">Conc.</span>':""}${s.ritual?'<span class="tag">Ritual</span>':""}${s.how.includes("always")?'<span class="tag ok-tag">Always prepared</span>':""}<span class="tag ${s.time==="bonus"?"ba":""}">${esc(s.castTime||TIME_LABEL[s.time]||s.time)}</span>
-    ${prepTog?`<label class="check" style="font-size:.8rem"><input type="checkbox" data-prep="${esc(s.key)}" data-cls="${esc(s.cls)}" ${isPrep?"checked":""}> Prepared</label>`:""}
-    ${castable?`<button class="btn small ${s.ritualOnly?"":"primary"}" data-cast="${esc(s.key)}">${s.ritualOnly?"Ritual":"Cast"}</button>`:""}</div>
-    <div class="facts"><span><b>Range</b> ${esc(s.range||"—")}</span><span><b>Duration</b> ${esc(s.dur||"—")}</span><span><b>Components</b> ${esc(s.comp||"—")}</span>${s.save?`<span><b>Save</b> ${esc(s.save)} DC ${spellDCFor(s)}</span>`:""}<span>${esc(s.school||"")}${s.grants.length?" · "+esc([...new Set(s.grants.map(g=>g.src))].join(", ")):""}${s._src&&s._src!=="SRD 5.1"&&s._src!=="Base"?" · "+esc(s._src):""}</span></div>
-    <p>${esc(s.sum||"")}</p>${s.up||s.scale?`<p class="muted" style="font-size:.82rem">${esc(s.up?"Higher levels: "+s.up:"Scaling: "+s.scale)}</p>`:""}
-    ${fromGrant?"":`<details><summary>Remove or swap</summary><div class="row" style="margin-top:6px"><button class="btn small danger" data-rmspell="${esc(s.key)}" data-cls="${esc(s.cls||"")}">Remove ${esc(s.name)}</button></div></details>`}</div>`}
+  const r=spellMath(s,s.lvl);const dt=dmgText(r);const mat=spellMaterial(s);const h=spellCasts(s.key);
+  const tags=["all",castable?"ready":"",castableNow(s)?"now":"",isPinned(s.key)?"pinned":"",s.time,s.conc?"conc":"",s.ritual?"ritual":""].filter(Boolean).join(" ");
+  return `<details class="spell" data-spell="${esc(s.key)}" data-tags="${tags}" data-name="${esc((s.name+" "+(s.school||"")).toLowerCase())}" ${SPELL_OPEN.has(s.key)?"open":""}>
+   <summary class="spell-h"><span class="nm">${esc(s.name)}</span><span class="sp-meta">
+    <span class="tag ${s.time==="bonus"?"ba":s.time==="reaction"?"short":""}">${esc(s.castTime||TIME_LABEL[s.time]||s.time)}</span>${s.conc?'<span class="tag conc">Conc.</span>':""}${s.ritual?'<span class="tag">Ritual</span>':""}${s.how.includes("always")?'<span class="tag ok-tag">Always</span>':""}
+    ${dt?`<span class="sp-q">${esc(dt)}</span>`:""}${r.save?`<span class="sp-q">${esc(r.save)} DC ${spellDCFor(s)}</span>`:r.attack?`<span class="sp-q">${sg(spellAtk(C,s.cls))} to hit</span>`:""}${mat?`<span class="tag" title="${esc(mat.text)}">${mat.gp} gp${mat.consumed?" used up":""}</span>`:""}</span><span class="sp-act">
+    ${prepTog?`<button class="btn small ${isPrep?"on":"ghost"}" data-prep="${esc(s.key)}" data-cls="${esc(s.cls)}" aria-pressed="${isPrep}">${isPrep?"Prepared":"Prepare"}</button>`:""}
+    <button class="pin ${isPinned(s.key)?"on":""}" data-pin="${esc(s.key)}" aria-label="${isPinned(s.key)?"Unpin":"Pin"} ${esc(s.name)} on the Play tab" title="${isPinned(s.key)?"Pinned to the Play tab":"Pin to the Play tab"}">★</button>
+    ${castable?`<button class="btn small ${s.ritualOnly?"":"primary"}" data-cast="${esc(s.key)}">${s.ritualOnly?"Ritual":"Cast"}</button>`:""}</span></summary>
+   <div class="sp-body">
+    <div class="facts"><span><b>Range</b> ${esc(s.range||"—")}</span><span><b>Duration</b> ${esc(s.dur||"—")}</span><span><b>Components</b> ${esc(s.comp||"—")}</span><span>${esc(s.school||"")}${s.grants.length?" · "+esc([...new Set(s.grants.map(g=>g.src))].join(", ")):""}${s._src&&s._src!=="SRD 5.1"&&s._src!=="Base"?" · "+esc(s._src):""}</span></div>
+    <p class="sp-text">${esc(s.sum||"")}</p>${s.up||s.scale?`<p class="muted" style="font-size:.82rem">${esc(s.up?"Higher levels: "+s.up:"Scaling: "+s.scale)}</p>`:""}
+    ${r.note&&s.lvl===0?`<p class="muted" style="font-size:.82rem">${esc(r.note)}: ${esc(dt)}.</p>`:""}
+    ${mat?`<p class="muted" style="font-size:.82rem">Needs ${esc(mat.text)}. ${materialItem(mat)?"You have "+esc(itemName(materialItem(mat)))+".":"Nothing matching is in your inventory."}</p>`:""}
+    <p class="muted" style="font-size:.8rem">${h.n?`Cast ${h.n} time${h.n>1?"s":""}${ST.session?", "+h.sess+" this session":""} · last ${esc(fmtDate(h.last.slice(0,10)))}`:"Not cast yet."}</p>
+    ${fromGrant?"":`<div class="row"><button class="btn small danger ghost" data-rmspell="${esc(s.key)}" data-cls="${esc(s.cls||"")}">Remove ${esc(s.name)}</button></div>`}
+   </div></details>`}
 function spellGroups(list,cst){const g={};list.forEach(s=>{(g[s.lvl]=g[s.lvl]||[]).push(s)});const sl=slots(C);
   const info=l=>l===0?"At will":(sl[l-1]?slotLeft(l)+" of "+sl[l-1]+" slots left":D().pact&&D().pact.lvl>=l?"Pact slots":"No slots of this level yet");
-  return Object.keys(g).sort((a,b)=>a-b).map(l=>`<div class="lvl-h">${+l===0?"Cantrips":ord(+l)+" level"}<span class="muted" style="font-family:var(--f-body);font-size:.8rem">${info(+l)}</span></div><div>${g[l].map(s=>spellRow(s,cst)).join("")}</div>`).join("")}
+  return Object.keys(g).sort((a,b)=>a-b).map(l=>`<div class="sp-grp"><div class="lvl-h">${+l===0?"Cantrips":ord(+l)+" level"}<span class="muted" style="font-family:var(--f-body);font-size:.8rem">${info(+l)}</span></div><div>${g[l].map(s=>spellRow(s,cst)).join("")}</div></div>`).join("")}
+const SPELL_SHOWS=[["all","All"],["ready","Prepared"],["now","Can cast now"],["pinned","Pinned"],["action","Action"],["bonus","Bonus action"],["reaction","Reaction"],["conc","Concentration"],["ritual","Ritual"]];
+// Filters hide rows in place so typing in the search box keeps its focus.
+function applySpellFilter(v){const t=spellFilter.q.trim().toLowerCase();
+  v.querySelectorAll("[data-spell]").forEach(r=>{r.hidden=!(r.dataset.tags.split(" ").includes(spellFilter.show)&&(!t||r.dataset.name.includes(t)))});
+  v.querySelectorAll(".sp-grp").forEach(g=>{g.hidden=!g.querySelector("[data-spell]:not([hidden])")});
+  v.querySelectorAll(".sp-card").forEach(c=>{const any=c.querySelector("[data-spell]"),vis=c.querySelector("[data-spell]:not([hidden])");const e=c.querySelector(".sp-none");if(e)e.hidden=!any||!!vis});
+  v.querySelectorAll("[data-show]").forEach(b=>b.classList.toggle("on",b.dataset.show===spellFilter.show))}
 function viewSpells(){
   const d=D();const ks=knownSpells();const sl=slots(C);
   const cards=d.casters.map(cst=>{const mine=ks.filter(s=>s.cls===cst.cls);const L=spellsOf(cst.cls);
     const nCan=(L.cantrips||[]).length,nKnown=(L.known||[]).length,nPrep=(L.prepared||[]).length,nBook=(L.spellbook||[]).length;
     const counts=[cst.cantrips?"Cantrips "+nCan+"/"+cst.cantrips:"",cst.known!=null?"Spells known "+nKnown+"/"+cst.known:"",cst.prepared!=null?"Prepared "+nPrep+"/"+cst.prepared:"",cst.spellbook!=null?"Spellbook "+nBook+" (at least "+cst.spellbook+" by now)":""].filter(Boolean).join(" · ");
-    return `<section class="card"><div class="card-h"><h2>${esc(cst.name)} spells</h2>${cst.prepared!=null?`<button class="btn small" data-prepare="${esc(cst.cls)}">Prepare spells</button>`:""}<button class="btn primary small" data-addspell="${esc(cst.cls)}">Add a spell</button></div>
-      <p class="muted" style="margin:0;font-size:.85rem">${esc(counts)}. ${cst.spellbook!=null?"Tick Prepared on spells in your book after each long rest. "+(cst.ritual==="spellbook"?"Rituals in your book can be cast without preparing them.":""):cst.prepared!=null?"Prepare from the whole "+esc(cst.name.toLowerCase())+" list after each long rest.":"You can swap one spell each time you gain a level."} Always-prepared spells don't count.</p>
-      ${mine.length?spellGroups(mine,cst):'<div class="empty">No spells yet. Use Add a spell.</div>'}</section>`}).join("");
+    return `<section class="card sp-card"><div class="card-h"><h2>${esc(cst.name)} spells</h2>${cst.prepared!=null?`<button class="btn small" data-prepare="${esc(cst.cls)}">Prepare spells</button>`:""}<button class="btn primary small" data-addspell="${esc(cst.cls)}">Add a spell</button></div>
+      <p class="muted" style="margin:0;font-size:.85rem">${esc(counts)}. ${cst.spellbook!=null?"Tap Prepare on spells in your book after each long rest, or use Prepare spells. "+(cst.ritual==="spellbook"?"Rituals in your book can be cast without preparing them.":""):cst.prepared!=null?"Prepare from the whole "+esc(cst.name.toLowerCase())+" list after each long rest.":"You can swap one spell each time you gain a level."} Always-prepared spells don't count.</p>
+      ${mine.length?spellGroups(mine,cst)+'<div class="empty sp-none" hidden>No spells match the filter.</div>':'<div class="empty">No spells yet. Use Add a spell.</div>'}</section>`}).join("");
   const other=ks.filter(s=>!d.casters.some(c=>c.cls===s.cls));
-  return `<div class="grid"><div class="col">${cards||""}
-   ${other.length?`<section class="card"><div class="card-h"><h2>${d.casters.length?"Other spells":"Spells"}</h2></div><p class="muted" style="margin:0;font-size:.85rem">From your race, feats, items or other features.</p>${spellGroups(other,null)}</section>`:""}
+  const bar=ks.length?`<section class="card"><div class="row" style="gap:8px"><input id="sp-q" type="search" autocomplete="off" placeholder="Search your spells" aria-label="Search your spells" style="flex:1;min-width:160px"></div>
+    <div class="econ" role="group" aria-label="Show">${SPELL_SHOWS.map(([k,n])=>`<button class="chip" data-show="${k}">${n}</button>`).join("")}</div>
+    <p class="muted" style="margin:0;font-size:.8rem">Tap a spell for its full text. ★ pins it to the Play tab.</p></section>`:"";
+  return `<div class="grid"><div class="col">${bar}${cards||""}
+   ${other.length?`<section class="card sp-card"><div class="card-h"><h2>${d.casters.length?"Other spells":"Spells"}</h2></div><p class="muted" style="margin:0;font-size:.85rem">From your race, feats, items or other features.</p>${spellGroups(other,null)}<div class="empty sp-none" hidden>No spells match the filter.</div></section>`:""}
    ${!cards&&!other.length?`<section class="card"><div class="empty">${esc(C.name)} doesn't cast spells. Spellcasting comes from a class, subclass, race or feat in your content packs.</div></section>`:""}
    </div><div class="col">
    <section class="card"><div class="card-h"><h2>Casting</h2></div>
@@ -1583,17 +1739,21 @@ function viewSpells(){
    </section></div></div>`;
 }
 const onList=(s,cls)=>{const c=ref("classes",cls);const names=[slug(cls),c?slug(c.name):""];const cst=D().casters.find(x=>x.cls===cls);if(cst&&cst.list)names.push(slug(cst.list));return (s.classes||[]).some(x=>names.includes(slug(x)))};
-function addSpell(cls){
+// opts.free: spells left to add for free (a wizard gets 2 per level up).
+function addSpell(cls,opts){opts=opts||{};
   const d=D();const cst=d.casters.find(x=>x.cls===cls)||d.casters[0];if(!cst){toast("This character has no spellcasting class.");return}cls=cst.cls;
   const L=spellsOf(cls);const have=new Set([].concat(L.cantrips||[],L.known||[],L.spellbook||[],L.prepared||[]));
   const lists=[["cantrips","Cantrip"]].concat(cst.spellbook!=null?[["spellbook","Spellbook"]]:cst.known!=null?[["known","Spells known"]]:[["prepared","Prepared today"]]);
   const maxL=Math.max(d.slots.length,d.pact?d.pact.lvl:0,1);
   const lib=Object.values(R.spells).filter(s=>!have.has(s.id)).sort((a,b)=>a.lvl-b.lvl||a.name.localeCompare(b.name));
-  openModal(`<h2>Add a ${esc(cst.name.toLowerCase())} spell</h2>
+  const book=cst.spellbook!=null;
+  openModal(`<h2>${opts.free?"Free spellbook spell"+(opts.of>1?" "+(opts.of-opts.free+1)+" of "+opts.of:""):"Add a "+esc(cst.name.toLowerCase())+" spell"}</h2>
+   ${opts.free?`<p class="muted" style="margin:0;font-size:.85rem">Each ${esc(cst.name.toLowerCase())} level adds two ${esc(cst.name.toLowerCase())} spells of a level you have slots for to your spellbook, free.</p>`:""}
    <div class="field"><span class="label">Add it to</span>${segHTML("as-list",lists,lists[1]?lists[1][0]:"cantrips")}</div>
    <div class="fgrid"><div class="field"><span class="label">Search ${lib.length} spells</span><input id="as-q" autocomplete="off" placeholder="Name or words in it"></div>
     <div class="field"><span class="label">Level</span><select id="as-fl"><option value="">Any</option>${[0,1,2,3,4,5,6,7,8,9].map(l=>`<option value="${l}">${l?ord(l):"Cantrip"}</option>`).join("")}</select></div></div>
-   <label class="check"><input type="checkbox" id="as-mine" checked> Only the ${esc(cst.name.toLowerCase())} list${cst.spellbook==null?" up to "+ord(maxL)+" level":""}</label>
+   <label class="check"><input type="checkbox" id="as-mine" checked> Only the ${esc(cst.name.toLowerCase())} list up to ${ord(maxL)} level</label>
+   ${book?`<div class="field" id="as-howf"><span class="label">How it gets in your book</span>${segHTML("as-how",[["free","Free (level up)"],["copy","Copied from a scroll or book"]],opts.free?"free":"copy")}<div id="as-cost" class="muted" style="font-size:.82rem;margin-top:4px"></div></div>`:""}
    <div class="field"><span class="label">Pick one</span><select id="as-lib" size="8" style="min-height:180px"></select></div>
    <div id="as-prev" class="muted" style="font-size:.85rem;white-space:pre-wrap"></div>
    <label class="check"><input type="checkbox" id="as-own"> Write my own instead</label>
@@ -1608,10 +1768,14 @@ function addSpell(cls){
    <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="as-ok">Add spell</button></div>`,m=>{
     const sel=m.querySelector("#as-lib"),q=m.querySelector("#as-q"),fl=m.querySelector("#as-fl"),mn=m.querySelector("#as-mine"),own=m.querySelector("#as-own");
     const draw=()=>{const t=q.value.trim().toLowerCase(),Lv=fl.value,list=segVal(m,"as-list");
-      const hits=lib.filter(s=>(list==="cantrips"?s.lvl===0:s.lvl>0)&&(Lv===""||s.lvl===+Lv)&&(!mn.checked||(onList(s,cls)&&(cst.spellbook!=null||s.lvl<=maxL)))&&(!t||s.name.toLowerCase().includes(t)||(s.sum||"").toLowerCase().includes(t))).slice(0,400);
+      const hits=lib.filter(s=>(list==="cantrips"?s.lvl===0:s.lvl>0)&&(Lv===""||s.lvl===+Lv)&&(!mn.checked||(onList(s,cls)&&s.lvl<=maxL))&&(!t||s.name.toLowerCase().includes(t)||(s.sum||"").toLowerCase().includes(t))).slice(0,400);
       sel.innerHTML=hits.map(s=>`<option value="${esc(s.id)}">${esc(s.name)} · ${s.lvl?ord(s.lvl):"cantrip"}${s._src&&s._src!=="SRD 5.1"&&s._src!=="Base"?" · "+esc(s._src):""}</option>`).join("")||'<option value="" disabled>No matches</option>';prev()};
-    const prev=()=>{const s=ref("spells",sel.value);m.querySelector("#as-prev").textContent=s?[s.school,s.castTime||TIME_LABEL[s.time],s.range,s.dur,s.conc?"concentration":"",s.ritual?"ritual":""].filter(Boolean).join(" · ")+(s.classes?" · "+s.classes.join(", "):"")+"\n"+(s.sum||"").slice(0,320)+((s.sum||"").length>320?"…":""):""};
-    bindSeg(m,"as-list",draw);q.oninput=draw;fl.onchange=draw;mn.onchange=draw;sel.onchange=prev;
+    // Copying a spell into a spellbook costs 50 gp and 2 hours per spell level.
+    const cost=()=>{const s=ref("spells",sel.value);const hf=m.querySelector("#as-howf");if(!hf)return;const lst=segVal(m,"as-list");hf.hidden=lst==="cantrips";
+      const c=m.querySelector("#as-cost");if(segVal(m,"as-how")!=="copy"||!s||!s.lvl){c.textContent="";return}
+      const gp=50*s.lvl;c.textContent=gp+" gp and "+(2*s.lvl)+" hours for a "+ord(s.lvl)+"-level spell. You have "+coinStr(C.gold)+"."+(coinApply(C.gold,-1,gp,"gp")?"":" That's not enough.")};
+    const prev=()=>{cost();const s=ref("spells",sel.value);m.querySelector("#as-prev").textContent=s?[s.school,s.castTime||TIME_LABEL[s.time],s.range,s.dur,s.conc?"concentration":"",s.ritual?"ritual":""].filter(Boolean).join(" · ")+(s.classes?" · "+s.classes.join(", "):"")+"\n"+(s.sum||"").slice(0,320)+((s.sum||"").length>320?"…":""):""};
+    bindSeg(m,"as-list",draw);bindSeg(m,"as-how",cost);q.oninput=draw;fl.onchange=draw;mn.onchange=draw;sel.onchange=prev;
     own.onchange=()=>{m.querySelector("#as-custom").hidden=!own.checked;sel.disabled=own.checked};
     draw();q.focus();
     m.querySelector("#as-ok").onclick=()=>{const list=segVal(m,"as-list");let id,name;
@@ -1619,7 +1783,13 @@ function addSpell(cls){
       else{name=m.querySelector("#as-name").value.trim();if(!name){m.querySelector("#as-name").focus();return}id="c-"+slug(name);if(C.customSpells.some(s=>s.id===id))id+="-"+uid().slice(-4);
         C.customSpells.push({id:id,name:name,lvl:+m.querySelector("#as-lvl").value,time:m.querySelector("#as-time").value,range:m.querySelector("#as-range").value.trim(),dur:m.querySelector("#as-dur").value.trim(),comp:m.querySelector("#as-comp").value.trim(),save:m.querySelector("#as-save").value||undefined,conc:m.querySelector("#as-conc").checked,ritual:m.querySelector("#as-rit").checked,sum:m.querySelector("#as-sum").value.trim(),school:"Custom",classes:[cls]})}
       const lst=(+((C.customSpells.find(s=>s.id===id)||ref("spells",id)||{}).lvl)===0)?"cantrips":list==="cantrips"?(cst.spellbook!=null?"spellbook":cst.known!=null?"known":"prepared"):list;
-      L[lst]=L[lst]||[];if(!L[lst].includes(id))L[lst].push(id);saveChar();closeModal();log("level",(lst==="spellbook"?"Copied "+name+" into the spellbook":lst==="prepared"?"Prepared "+name:"Learned "+name),cst.name+" spell",null);
+      const def=C.customSpells.find(s=>s.id===id)||ref("spells",id)||{};const lvl=+def.lvl||0;
+      let paid=null;if(lst==="spellbook"&&lvl&&segVal(m,"as-how")==="copy"){const gp=50*lvl;const r=coinApply(C.gold,-1,gp,"gp");
+        if(!r){toast("Copying it costs "+gp+" gp and you have "+coinStr(C.gold)+". Pick Free if your DM says so.",true);return}C.gold=r.g;paid={gp:gp,hours:2*lvl,change:r.change}}
+      L[lst]=L[lst]||[];if(!L[lst].includes(id))L[lst].push(id);saveChar();closeModal();
+      if(paid)log("item","Spent "+paid.gp+" gp: copying "+name+" into the spellbook","Now "+coinStr(C.gold)+paid.change+" · "+paid.hours+" hours of work",null,{coin:{dir:-1,amt:paid.gp,d:"gp",note:"copying "+name+" into the spellbook"}});
+      log("level",(lst==="spellbook"?(paid?"Copied ":"Added ")+name+" to the spellbook":lst==="prepared"?"Prepared "+name:"Learned "+name),cst.name+" spell"+(lst==="spellbook"&&!paid&&lvl?" · free":""),null);
+      if(opts.free>1)addSpell(cls,{free:opts.free-1,of:opts.of});
     };
   });
 }
@@ -1631,10 +1801,19 @@ function prepareSpells(cls){
   openModal(`<h2>Prepare ${esc(cst.name.toLowerCase())} spells</h2>
    <p class="muted" style="margin:0;font-size:.85rem">Choose up to ${cst.prepared} (${esc(cst.ability.toUpperCase())} modifier + ${cst.progression==="half"||cst.progression==="artificer"?"half your":"your"} ${esc(cst.name.toLowerCase())} level). ${cst.spellbook!=null?"From your spellbook.":"From the whole class list."}</p>
    <div class="field"><input id="pp-q" autocomplete="off" placeholder="Filter"></div>
-   <div id="pp-n" class="label"></div>
+   <div id="pp-n" class="label"></div><div id="pp-lv" class="muted" style="font-size:.8rem"></div>
+   ${Object.keys(L.sets||{}).length?`<div class="row"><select id="pp-set" aria-label="Saved lists"><option value="">Load a saved list…</option>${Object.keys(L.sets).sort().map(n=>`<option>${esc(n)}</option>`).join("")}</select><button class="btn small ghost" id="pp-del" type="button">Delete it</button></div>`:""}
    <div id="pp-list" style="max-height:50vh;overflow:auto">${src.map(s=>`<label class="check" data-name="${esc(s.name.toLowerCase())}" style="font-size:.88rem"><input type="checkbox" value="${esc(s.id)}" ${cur.has(s.id)?"checked":""}> ${esc(s.name)} <span class="muted">${ord(s.lvl)}${s.ritual?" · ritual":""}${s.conc?" · conc.":""}</span></label>`).join("")||'<p class="muted">Nothing to prepare yet.</p>'}</div>
+   <div class="row"><input id="pp-name" autocomplete="off" placeholder="Name this list, e.g. Dungeon day" style="flex:1"><button class="btn small" id="pp-save" type="button">Save list</button></div>
    <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="pp-ok">Save</button></div>`,m=>{
-    const cnt=()=>{const n=m.querySelectorAll("#pp-list input:checked").length;m.querySelector("#pp-n").textContent=n+" of "+cst.prepared+" prepared"+(n>cst.prepared?" · that's more than you can prepare":"")};
+    const lvOf=Object.fromEntries(src.map(x=>[x.id,x.lvl]));
+    const cnt=()=>{const on=[...m.querySelectorAll("#pp-list input:checked")];const n=on.length;m.querySelector("#pp-n").textContent=n+" of "+cst.prepared+" prepared"+(n>cst.prepared?" · that's more than you can prepare":"");
+      const by={};on.forEach(i=>{const l=lvOf[i.value];by[l]=(by[l]||0)+1});m.querySelector("#pp-lv").textContent=Object.keys(by).sort((a,b)=>a-b).map(l=>ord(+l)+": "+by[l]).join(" · ")};
+    const sel=m.querySelector("#pp-set");
+    if(sel)sel.onchange=()=>{const ids=new Set((L.sets||{})[sel.value]||[]);if(!sel.value)return;m.querySelectorAll("#pp-list input").forEach(i=>i.checked=ids.has(i.value));cnt()};
+    const del=m.querySelector("#pp-del");if(del)del.onclick=()=>{const nm=sel.value;if(!nm)return;delete L.sets[nm];saveChar();[...sel.options].filter(o=>o.value===nm).forEach(o=>o.remove());sel.value="";toast("Deleted \u201c"+nm+"\u201d.")};
+    m.querySelector("#pp-save").onclick=()=>{const nm=m.querySelector("#pp-name").value.trim();if(!nm){m.querySelector("#pp-name").focus();return}
+      L.sets=L.sets||{};L.sets[nm]=[...m.querySelectorAll("#pp-list input:checked")].map(x=>x.value);saveChar();m.querySelector("#pp-name").value="";toast("Saved \u201c"+nm+"\u201d. Load it from this dialog after any long rest.")};
     m.querySelectorAll("#pp-list input").forEach(i=>i.onchange=cnt);cnt();
     m.querySelector("#pp-q").oninput=e=>{const t=e.target.value.toLowerCase();m.querySelectorAll("#pp-list [data-name]").forEach(x=>x.hidden=t&&!x.dataset.name.includes(t))};
     m.querySelector("#pp-ok").onclick=()=>{const ids=[...m.querySelectorAll("#pp-list input:checked")].map(x=>x.value);const keep=(L.prepared||[]).filter(id=>!src.some(s=>s.id===id));
@@ -1642,10 +1821,17 @@ function prepareSpells(cls){
   });
 }
 function bindSpells(v){
-  v.querySelectorAll("[data-cast]").forEach(b=>b.onclick=()=>actCast(b.dataset.cast));
+  // Buttons sit inside each row's summary, so they mustn't also open or close the row.
+  const btn=(sel,fn)=>v.querySelectorAll(sel).forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();fn(b)});
+  btn("[data-cast]",b=>actCast(b.dataset.cast));
+  btn("[data-pin]",b=>{const k=b.dataset.pin;C.pinnedSpells=isPinned(k)?C.pinnedSpells.filter(x=>x!==k):(C.pinnedSpells||[]).concat([k]);saveChar();render()});
+  btn("[data-prep]",b=>{const L=spellsOf(b.dataset.cls);const id=b.dataset.prep;const was=(L.prepared||[]).includes(id);L.prepared=(L.prepared||[]).filter(x=>x!==id);if(!was)L.prepared.push(id);saveChar();render()});
+  v.querySelectorAll("details[data-spell]").forEach(dl=>dl.addEventListener("toggle",()=>{if(dl.open)SPELL_OPEN.add(dl.dataset.spell);else SPELL_OPEN.delete(dl.dataset.spell)}));
+  v.querySelectorAll("[data-show]").forEach(b=>b.onclick=()=>{spellFilter.show=b.dataset.show;try{localStorage.setItem(LK+"spellFilter",JSON.stringify({show:spellFilter.show}))}catch(e){}applySpellFilter(v)});
+  const q=v.querySelector("#sp-q");if(q){q.value=spellFilter.q;q.oninput=()=>{spellFilter.q=q.value;applySpellFilter(v)}}
+  applySpellFilter(v);
   v.querySelectorAll("[data-addspell]").forEach(b=>b.onclick=()=>addSpell(b.dataset.addspell));
   v.querySelectorAll("[data-prepare]").forEach(b=>b.onclick=()=>prepareSpells(b.dataset.prepare));
-  v.querySelectorAll("[data-prep]").forEach(b=>b.onchange=()=>{const L=spellsOf(b.dataset.cls);const id=b.dataset.prep;L.prepared=(L.prepared||[]).filter(x=>x!==id);if(b.checked)L.prepared.push(id);saveChar();render()});
   v.querySelectorAll("[data-rmspell]").forEach(b=>b.onclick=()=>{const k=b.dataset.rmspell,cls=b.dataset.cls;const s=spellDef(k)||{name:k};
     openModal(`<h2>Remove ${esc(s.name)}?</h2><p style="margin:0">It leaves your spell lists. The history keeps every time you cast it.</p><div class="modal-f"><button class="btn" data-close>Keep it</button><button class="btn danger" id="rm-ok">Remove</button></div>`,m=>{
       m.querySelector("#rm-ok").onclick=()=>{const L=spellsOf(cls);["cantrips","known","prepared","spellbook"].forEach(k2=>{if(L[k2])L[k2]=L[k2].filter(x=>x!==k)});saveChar();closeModal();log("level","Forgot "+s.name,"Removed from spell lists",null)}})});

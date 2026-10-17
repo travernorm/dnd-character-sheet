@@ -309,7 +309,8 @@ For familiars, summons, animated dead and wild shapes. The app shows a compact s
   "companions": [],
   "custom": {"features": [], "resources": []},
   "overrides": {},
-  "levelPlan": []
+  "levelPlan": [],
+  "pinnedSpells": []
 }
 ```
 
@@ -350,7 +351,8 @@ Only `name`, `abilities` and `classes` are required.
     "bard": {"cantrips": ["vicious-mockery"], "known": ["healing-word", "dissonant-whispers"]}
   }
   ```
-  Spells granted by effects (domain spells, racial spells) aren't listed here.
+  Spells granted by effects (domain spells, racial spells) aren't listed here. A class can also keep `sets`: saved prepared lists by name, such as `{"Dungeon day": ["web", "shield"]}`, which the *Prepare spells* dialog loads.
+- **`pinnedSpells`**: spell ids pinned to the Play tab's quick buttons (the ★ on the Spells tab).
 - **`customSpells`**: full spell objects with an `id`, for spells not in any loaded pack. If a pack has a spell with the same id, the character's copy wins.
 - **`inventory`**: every item, mundane or magic.
   ```json
