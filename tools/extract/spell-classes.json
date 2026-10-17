@@ -1,0 +1,1668 @@
+{
+ "Blade Ward": {
+  "lvl": 0,
+  "school": "Abjuration",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ]
+ },
+ "Friends": {
+  "lvl": 0,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ]
+ },
+ "Thorn Whip": {
+  "lvl": 0,
+  "school": "Transmutation",
+  "classes": [
+   "druid"
+  ]
+ },
+ "Armor of Agathys": {
+  "lvl": 1,
+  "school": "Abjuration",
+  "classes": [
+   "warlock"
+  ]
+ },
+ "Arms of Hadar": {
+  "lvl": 1,
+  "school": "Conjuration",
+  "classes": [
+   "warlock"
+  ]
+ },
+ "Chromatic Orb": {
+  "lvl": 1,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ]
+ },
+ "Compelled Duel": {
+  "lvl": 1,
+  "school": "Enchantment",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Dissonant Whispers": {
+  "lvl": 1,
+  "school": "Enchantment",
+  "classes": [
+   "bard"
+  ]
+ },
+ "Ensnaring Strike": {
+  "lvl": 1,
+  "school": "Conjuration",
+  "classes": [
+   "ranger"
+  ]
+ },
+ "Hail of Thorns": {
+  "lvl": 1,
+  "school": "Conjuration",
+  "classes": [
+   "ranger"
+  ]
+ },
+ "Hex": {
+  "lvl": 1,
+  "school": "Enchantment",
+  "classes": [
+   "warlock"
+  ]
+ },
+ "Ray of Sickness": {
+  "lvl": 1,
+  "school": "Necromancy",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ]
+ },
+ "Searing Smite": {
+  "lvl": 1,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Thunderous Smite": {
+  "lvl": 1,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Witch Bolt": {
+  "lvl": 1,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ]
+ },
+ "Wrathful Smite": {
+  "lvl": 1,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Beast Sense": {
+  "lvl": 2,
+  "school": "Divination",
+  "classes": [
+   "druid",
+   "ranger"
+  ]
+ },
+ "Branding Smite": {
+  "lvl": 2,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Cloud of Daggers": {
+  "lvl": 2,
+  "school": "Conjuration",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ]
+ },
+ "Cordon of Arrows": {
+  "lvl": 2,
+  "school": "Transmutation",
+  "classes": [
+   "ranger"
+  ]
+ },
+ "Crown of Madness": {
+  "lvl": 2,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ]
+ },
+ "Phantasmal Force": {
+  "lvl": 2,
+  "school": "Illusion",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "wizard"
+  ]
+ },
+ "Aura of Vitality": {
+  "lvl": 3,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Blinding Smite": {
+  "lvl": 3,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Conjure Barrage": {
+  "lvl": 3,
+  "school": "Conjuration",
+  "classes": [
+   "ranger"
+  ]
+ },
+ "Crusader's Mantle": {
+  "lvl": 3,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Elemental Weapon": {
+  "lvl": 3,
+  "school": "Transmutation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Feign Death": {
+  "lvl": 3,
+  "school": "Necromancy",
+  "classes": [
+   "bard",
+   "cleric",
+   "druid",
+   "wizard"
+  ]
+ },
+ "Hunger of Hadar": {
+  "lvl": 3,
+  "school": "Conjuration",
+  "classes": [
+   "warlock"
+  ]
+ },
+ "Lightning Arrow": {
+  "lvl": 3,
+  "school": "Transmutation",
+  "classes": [
+   "ranger"
+  ]
+ },
+ "Aura of Life": {
+  "lvl": 4,
+  "school": "Abjuration",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Aura of Purity": {
+  "lvl": 4,
+  "school": "Abjuration",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Grasping Vine": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "ranger"
+  ]
+ },
+ "Staggering Smite": {
+  "lvl": 4,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Banishing Smite": {
+  "lvl": 5,
+  "school": "Abjuration",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Circle of Power": {
+  "lvl": 5,
+  "school": "Abjuration",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Conjure Volley": {
+  "lvl": 5,
+  "school": "Conjuration",
+  "classes": [
+   "ranger"
+  ]
+ },
+ "Destructive Wave": {
+  "lvl": 5,
+  "school": "Evocation",
+  "classes": [
+   "paladin"
+  ]
+ },
+ "Swift Quiver": {
+  "lvl": 5,
+  "school": "Transmutation",
+  "classes": [
+   "ranger"
+  ]
+ },
+ "Telepathy": {
+  "lvl": 8,
+  "school": "Evocation",
+  "classes": [
+   "wizard"
+  ]
+ },
+ "Tsunami": {
+  "lvl": 8,
+  "school": "Conjuration",
+  "classes": [
+   "druid"
+  ]
+ },
+ "Bigby's Hand": {
+  "lvl": 5,
+  "school": "Evocation",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "arcane-hand"
+ },
+ "Leomund's Secret Chest": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "secret-chest"
+ },
+ "Leomund's Tiny Hut": {
+  "lvl": 3,
+  "school": "Evocation",
+  "classes": [
+   "bard",
+   "wizard"
+  ],
+  "srd": "tiny-hut"
+ },
+ "Mordenkainen's Faithful Hound": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "faithful-hound"
+ },
+ "Mordenkainen's Magnificent Mansion": {
+  "lvl": 7,
+  "school": "Conjuration",
+  "classes": [
+   "bard",
+   "wizard"
+  ],
+  "srd": "magnificent-mansion"
+ },
+ "Mordenkainen's Private Sanctum": {
+  "lvl": 4,
+  "school": "Abjuration",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "private-sanctum"
+ },
+ "Mordenkainen's Sword": {
+  "lvl": 7,
+  "school": "Evocation",
+  "classes": [
+   "bard",
+   "wizard"
+  ],
+  "srd": "arcane-sword"
+ },
+ "Melf's Acid Arrow": {
+  "lvl": 2,
+  "school": "Evocation",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "acid-arrow"
+ },
+ "Nystul's Magic Aura": {
+  "lvl": 2,
+  "school": "Illusion",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "arcanists-magic-aura"
+ },
+ "Otiluke's Freezing Sphere": {
+  "lvl": 6,
+  "school": "Evocation",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "freezing-sphere"
+ },
+ "Otiluke's Resilient Sphere": {
+  "lvl": 4,
+  "school": "Evocation",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "resilient-sphere"
+ },
+ "Otto's Irresistible Dance": {
+  "lvl": 6,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "wizard"
+  ],
+  "srd": "irresistible-dance"
+ },
+ "Rary's Telepathic Bond": {
+  "lvl": 5,
+  "school": "Divination",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "telepathic-bond"
+ },
+ "Tasha's Hideous Laughter": {
+  "lvl": 1,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "wizard"
+  ],
+  "srd": "hideous-laughter"
+ },
+ "Tenser's Floating Disk": {
+  "lvl": 1,
+  "school": "Conjuration",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "floating-disk"
+ },
+ "Drawmij's Instant Summons": {
+  "lvl": 6,
+  "school": "Conjuration",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "instant-summons"
+ },
+ "Evard's Black Tentacles": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "wizard"
+  ],
+  "srd": "black-tentacles"
+ },
+ "Arcane Gate": {
+  "lvl": 6,
+  "school": "Conjuration",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ]
+ },
+ "Power Word Heal": {
+  "lvl": 9,
+  "school": "Evocation",
+  "classes": [
+   "bard"
+  ]
+ },
+ "Control Flames": {
+  "lvl": 0,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Create Bonfire": {
+  "lvl": 0,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Frostbite": {
+  "lvl": 0,
+  "school": "Evocation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Gust": {
+  "lvl": 0,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Infestation": {
+  "lvl": 0,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Magic Stone": {
+  "lvl": 0,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "warlock",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Mold Earth": {
+  "lvl": 0,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Primal Savagery": {
+  "lvl": 0,
+  "school": "Transmutation",
+  "classes": [
+   "druid"
+  ],
+  "book": "xge"
+ },
+ "Shape Water": {
+  "lvl": 0,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Thunderclap": {
+  "lvl": 0,
+  "school": "Evocation",
+  "classes": [
+   "bard",
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Toll the Dead": {
+  "lvl": 0,
+  "school": "Necromancy",
+  "classes": [
+   "cleric",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Word of Radiance": {
+  "lvl": 0,
+  "school": "Evocation",
+  "classes": [
+   "cleric"
+  ],
+  "book": "xge"
+ },
+ "Absorb Elements": {
+  "lvl": 1,
+  "school": "Abjuration",
+  "classes": [
+   "druid",
+   "ranger",
+   "sorcerer",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Beast Bond": {
+  "lvl": 1,
+  "school": "Divination",
+  "classes": [
+   "druid",
+   "ranger"
+  ],
+  "book": "xge"
+ },
+ "Catapult": {
+  "lvl": 1,
+  "school": "Transmutation",
+  "classes": [
+   "sorcerer",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Cause Fear": {
+  "lvl": 1,
+  "school": "Necromancy",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Ceremony": {
+  "lvl": 1,
+  "school": "Abjuration",
+  "classes": [
+   "cleric",
+   "paladin"
+  ],
+  "book": "xge"
+ },
+ "Chaos Bolt": {
+  "lvl": 1,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer"
+  ],
+  "book": "xge"
+ },
+ "Earth Tremor": {
+  "lvl": 1,
+  "school": "Evocation",
+  "classes": [
+   "bard",
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Ice Knife": {
+  "lvl": 1,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Snare": {
+  "lvl": 1,
+  "school": "Abjuration",
+  "classes": [
+   "druid",
+   "ranger",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Zephyr Strike": {
+  "lvl": 1,
+  "school": "Transmutation",
+  "classes": [
+   "ranger"
+  ],
+  "book": "xge"
+ },
+ "Aganazzar's Scorcher": {
+  "lvl": 2,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Dragon's Breath": {
+  "lvl": 2,
+  "school": "Transmutation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Dust Devil": {
+  "lvl": 2,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Earthbind": {
+  "lvl": 2,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Healing Spirit": {
+  "lvl": 2,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "ranger"
+  ],
+  "book": "xge"
+ },
+ "Maximilian's Earthen Grasp": {
+  "lvl": 2,
+  "school": "Transmutation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Mind Spike": {
+  "lvl": 2,
+  "school": "Divination",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Pyrotechnics": {
+  "lvl": 2,
+  "school": "Transmutation",
+  "classes": [
+   "sorcerer",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Shadow Blade": {
+  "lvl": 2,
+  "school": "Illusion",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Skywrite": {
+  "lvl": 2,
+  "school": "Transmutation",
+  "classes": [
+   "bard",
+   "druid",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Snilloc's Snowball Swarm": {
+  "lvl": 2,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Warding Wind": {
+  "lvl": 2,
+  "school": "Evocation",
+  "classes": [
+   "bard",
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Catnap": {
+  "lvl": 3,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Enemies Abound": {
+  "lvl": 3,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "warlock",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Erupting Earth": {
+  "lvl": 3,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Flame Arrows": {
+  "lvl": 3,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "ranger",
+   "sorcerer",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Life Transference": {
+  "lvl": 3,
+  "school": "Necromancy",
+  "classes": [
+   "cleric",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Summon Lesser Demons": {
+  "lvl": 3,
+  "school": "Conjuration",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Thunder Step": {
+  "lvl": 3,
+  "school": "Conjuration",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Tidal Wave": {
+  "lvl": 3,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Tiny Servant": {
+  "lvl": 3,
+  "school": "Transmutation",
+  "classes": [
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Wall of Sand": {
+  "lvl": 3,
+  "school": "Evocation",
+  "classes": [
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Wall of Water": {
+  "lvl": 3,
+  "school": "Evocation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Charm Monster": {
+  "lvl": 4,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Elemental Bane": {
+  "lvl": 4,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "warlock",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Find Greater Steed": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "paladin"
+  ],
+  "book": "xge"
+ },
+ "Guardian of Nature": {
+  "lvl": 4,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "ranger"
+  ],
+  "book": "xge"
+ },
+ "Shadow of Moil": {
+  "lvl": 4,
+  "school": "Necromancy",
+  "classes": [
+   "warlock"
+  ],
+  "book": "xge"
+ },
+ "Sickening Radiance": {
+  "lvl": 4,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Storm Sphere": {
+  "lvl": 4,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Summon Greater Demon": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Vitriolic Sphere": {
+  "lvl": 4,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Watery Sphere": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Control Winds": {
+  "lvl": 5,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Danse Macabre": {
+  "lvl": 5,
+  "school": "Necromancy",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Dawn": {
+  "lvl": 5,
+  "school": "Evocation",
+  "classes": [
+   "cleric",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Enervation": {
+  "lvl": 5,
+  "school": "Necromancy",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Far Step": {
+  "lvl": 5,
+  "school": "Conjuration",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Holy Weapon": {
+  "lvl": 5,
+  "school": "Evocation",
+  "classes": [
+   "cleric",
+   "paladin"
+  ],
+  "book": "xge"
+ },
+ "Immolation": {
+  "lvl": 5,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Infernal Calling": {
+  "lvl": 5,
+  "school": "Conjuration",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Negative Energy Flood": {
+  "lvl": 5,
+  "school": "Necromancy",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Skill Empowerment": {
+  "lvl": 5,
+  "school": "Transmutation",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Steel Wind Strike": {
+  "lvl": 5,
+  "school": "Conjuration",
+  "classes": [
+   "ranger",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Synaptic Static": {
+  "lvl": 5,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Transmute Rock": {
+  "lvl": 5,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "wizard",
+   "artificer"
+  ],
+  "book": "xge"
+ },
+ "Wall of Light": {
+  "lvl": 5,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Wrath of Nature": {
+  "lvl": 5,
+  "school": "Evocation",
+  "classes": [
+   "druid",
+   "ranger"
+  ],
+  "book": "xge"
+ },
+ "Bones of the Earth": {
+  "lvl": 6,
+  "school": "Transmutation",
+  "classes": [
+   "druid"
+  ],
+  "book": "xge"
+ },
+ "Create Homunculus": {
+  "lvl": 6,
+  "school": "Transmutation",
+  "classes": [
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Druid Grove": {
+  "lvl": 6,
+  "school": "Abjuration",
+  "classes": [
+   "druid"
+  ],
+  "book": "xge"
+ },
+ "Investiture of Flame": {
+  "lvl": 6,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Investiture of Ice": {
+  "lvl": 6,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Investiture of Stone": {
+  "lvl": 6,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Investiture of Wind": {
+  "lvl": 6,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Mental Prison": {
+  "lvl": 6,
+  "school": "Illusion",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Primordial Ward": {
+  "lvl": 6,
+  "school": "Abjuration",
+  "classes": [
+   "druid"
+  ],
+  "book": "xge"
+ },
+ "Scatter": {
+  "lvl": 6,
+  "school": "Conjuration",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Soul Cage": {
+  "lvl": 6,
+  "school": "Necromancy",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Tenser's Transformation": {
+  "lvl": 6,
+  "school": "Transmutation",
+  "classes": [
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Crown of Stars": {
+  "lvl": 7,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Power Word Pain": {
+  "lvl": 7,
+  "school": "Enchantment",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Temple of the Gods": {
+  "lvl": 7,
+  "school": "Conjuration",
+  "classes": [
+   "cleric"
+  ],
+  "book": "xge"
+ },
+ "Whirlwind": {
+  "lvl": 7,
+  "school": "Evocation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Abi-Dalzim's Horrid Wilting": {
+  "lvl": 8,
+  "school": "Necromancy",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Illusory Dragon": {
+  "lvl": 8,
+  "school": "Illusion",
+  "classes": [
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Maddening Darkness": {
+  "lvl": 8,
+  "school": "Evocation",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Mighty Fortress": {
+  "lvl": 8,
+  "school": "Conjuration",
+  "classes": [
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Invulnerability": {
+  "lvl": 9,
+  "school": "Abjuration",
+  "classes": [
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Mass Polymorph": {
+  "lvl": 9,
+  "school": "Transmutation",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Psychic Scream": {
+  "lvl": 9,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Booming Blade": {
+  "lvl": 0,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard",
+   "artificer"
+  ],
+  "book": "tce"
+ },
+ "Green-Flame Blade": {
+  "lvl": 0,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard",
+   "artificer"
+  ],
+  "book": "tce"
+ },
+ "Lightning Lure": {
+  "lvl": 0,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard",
+   "artificer"
+  ],
+  "book": "tce"
+ },
+ "Mind Sliver": {
+  "lvl": 0,
+  "school": "Enchantment",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Sword Burst": {
+  "lvl": 0,
+  "school": "Conjuration",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard",
+   "artificer"
+  ],
+  "book": "tce"
+ },
+ "Tasha's Caustic Brew": {
+  "lvl": 1,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard",
+   "artificer"
+  ],
+  "book": "tce"
+ },
+ "Summon Beast": {
+  "lvl": 2,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "ranger"
+  ],
+  "book": "tce"
+ },
+ "Tasha's Mind Whip": {
+  "lvl": 2,
+  "school": "Enchantment",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Intellect Fortress": {
+  "lvl": 3,
+  "school": "Abjuration",
+  "classes": [
+   "artificer",
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Spirit Shroud": {
+  "lvl": 3,
+  "school": "Necromancy",
+  "classes": [
+   "cleric",
+   "warlock",
+   "paladin",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Summon Fey": {
+  "lvl": 3,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "ranger",
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Summon Shadowspawn": {
+  "lvl": 3,
+  "school": "Conjuration",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Summon Undead": {
+  "lvl": 3,
+  "school": "Necromancy",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Summon Aberration": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Summon Construct": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "artificer",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Summon Elemental": {
+  "lvl": 4,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "ranger",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Summon Celestial": {
+  "lvl": 5,
+  "school": "Conjuration",
+  "classes": [
+   "cleric",
+   "paladin"
+  ],
+  "book": "tce"
+ },
+ "Summon Fiend": {
+  "lvl": 6,
+  "school": "Conjuration",
+  "classes": [
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Tasha's Otherworldly Guise": {
+  "lvl": 6,
+  "school": "Transmutation",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Dream of the Blue Veil": {
+  "lvl": 7,
+  "school": "Conjuration",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Blade of Disaster": {
+  "lvl": 9,
+  "school": "Conjuration",
+  "classes": [
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "tce"
+ },
+ "Maelstrom": {
+  "lvl": 5,
+  "school": "Conjuration",
+  "classes": [
+   "druid"
+  ],
+  "book": "xge"
+ },
+ "Melf's Minute Meteors": {
+  "lvl": 3,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "xge"
+ },
+ "Ashardalon's Stride": {
+  "lvl": 3,
+  "school": "Transmutation",
+  "classes": [
+   "artificer",
+   "ranger",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "ftd"
+ },
+ "Draconic Transformation": {
+  "lvl": 7,
+  "school": "Transmutation",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "ftd"
+ },
+ "Fizban's Platinum Shield": {
+  "lvl": 6,
+  "school": "Abjuration",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "ftd"
+ },
+ "Nathair's Mischief": {
+  "lvl": 2,
+  "school": "Illusion",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "ftd"
+ },
+ "Raulothim's Psychic Lance": {
+  "lvl": 4,
+  "school": "Enchantment",
+  "classes": [
+   "bard",
+   "sorcerer",
+   "warlock",
+   "wizard"
+  ],
+  "book": "ftd"
+ },
+ "Rime's Binding Ice": {
+  "lvl": 2,
+  "school": "Evocation",
+  "classes": [
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "ftd"
+ },
+ "Summon Draconic Spirit": {
+  "lvl": 5,
+  "school": "Conjuration",
+  "classes": [
+   "druid",
+   "sorcerer",
+   "wizard"
+  ],
+  "book": "ftd"
+ }
+}

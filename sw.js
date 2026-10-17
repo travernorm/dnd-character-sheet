@@ -1,7 +1,7 @@
 // Keeps the ledger opening when the local server isn't running. Network first, so a
 // git pull shows up on the next launch; the cached copy is only used when offline.
-const CACHE = "dnd-ledger-v1";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "data/example-character.json", "data/character-template.json", "data/srd-spells.json", "data/srd-items.json", "data/content-pack-example.json", "assets/icons/icon-192.png", "assets/icons/icon-512.png"];
+const CACHE = "dnd-ledger-v2";
+const SHELL = ["./", "index.html", "manifest.webmanifest", "data/example-character.json", "data/character-template.json", "data/srd-spells.json", "data/srd-items.json", "data/base-pack.json", "data/content-pack-example.json", "assets/icons/icon-192.png", "assets/icons/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", e => {

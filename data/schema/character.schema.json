@@ -1,0 +1,565 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-ledger.local/schema/character.schema.json",
+  "title": "D&D Ledger character (version 2, 2014 rules)",
+  "description": "Either the character object itself or {\"format\": \"dnd-character\", \"character\": {...}}. See docs/data-formats.md.",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "format",
+        "character"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "const": "dnd-character"
+        },
+        "_about": {
+          "type": "string"
+        },
+        "character": {
+          "$ref": "#/$defs/character"
+        }
+      }
+    },
+    {
+      "$ref": "#/$defs/character"
+    }
+  ],
+  "$defs": {
+    "character": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "const": "dnd-character"
+        },
+        "schema": {
+          "const": 2
+        },
+        "edition": {
+          "const": "2014"
+        },
+        "_about": {
+          "type": "string"
+        },
+        "packs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "player": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "race": {
+          "type": "string"
+        },
+        "subrace": {
+          "type": "string"
+        },
+        "background": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string"
+        },
+        "alignment": {
+          "type": "string"
+        },
+        "age": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "look": {
+          "type": "string"
+        },
+        "backstory": {
+          "type": "string"
+        },
+        "cover": {
+          "type": "string"
+        },
+        "campaign": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "dm": {
+              "type": "string"
+            },
+            "start": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "abilityMode": {
+          "enum": [
+            "final",
+            "base"
+          ]
+        },
+        "abilities": {
+          "type": "object",
+          "properties": {
+            "str": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30
+            },
+            "dex": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30
+            },
+            "con": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30
+            },
+            "int": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30
+            },
+            "wis": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30
+            },
+            "cha": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "str",
+            "dex",
+            "con",
+            "int",
+            "wis",
+            "cha"
+          ]
+        },
+        "classes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "class": {
+                "type": "string"
+              },
+              "subclass": {
+                "type": "string"
+              },
+              "level": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "class",
+              "level"
+            ]
+          }
+        },
+        "levelHistory": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hp": {
+          "type": "object",
+          "properties": {
+            "rolls": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "max": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "xp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "choices": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z0-9:-]+/[a-z0-9-]+$"
+          }
+        },
+        "proficiencies": {
+          "type": "object",
+          "properties": {
+            "saves": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "str",
+                  "dex",
+                  "con",
+                  "int",
+                  "wis",
+                  "cha"
+                ]
+              }
+            },
+            "skills": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "acrobatics",
+                  "animalHandling",
+                  "arcana",
+                  "athletics",
+                  "deception",
+                  "history",
+                  "insight",
+                  "intimidation",
+                  "investigation",
+                  "medicine",
+                  "nature",
+                  "perception",
+                  "performance",
+                  "persuasion",
+                  "religion",
+                  "sleightOfHand",
+                  "stealth",
+                  "survival"
+                ]
+              }
+            },
+            "expertise": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "armor": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "weapons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "languages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "spells": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "cantrips": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "known": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "spellbook": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "prepared": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "customSpells": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "https://dnd-ledger.local/schema/content-pack.schema.json#/$defs/spell"
+              },
+              {
+                "required": [
+                  "id",
+                  "name",
+                  "lvl"
+                ]
+              }
+            ]
+          }
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "item": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "qty": {
+                "type": "number",
+                "minimum": 0
+              },
+              "equipped": {
+                "type": "boolean"
+              },
+              "attuned": {
+                "type": "boolean"
+              },
+              "charges": {
+                "type": "integer"
+              },
+              "magic": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3
+              },
+              "container": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "attacks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "ability": {
+                "enum": [
+                  "str",
+                  "dex",
+                  "con",
+                  "int",
+                  "wis",
+                  "cha",
+                  "finesse",
+                  "spell"
+                ]
+              },
+              "prof": {
+                "type": "boolean"
+              },
+              "ranged": {
+                "type": "boolean"
+              },
+              "dmg": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "range": {
+                "type": "string"
+              },
+              "props": {
+                "type": "string"
+              },
+              "ammo": {
+                "type": "string"
+              },
+              "magic": {
+                "type": "integer"
+              },
+              "item": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "dmg"
+            ]
+          }
+        },
+        "gold": {
+          "type": "object",
+          "properties": {
+            "pp": {
+              "type": "number",
+              "minimum": 0
+            },
+            "gp": {
+              "type": "number",
+              "minimum": 0
+            },
+            "ep": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sp": {
+              "type": "number",
+              "minimum": 0
+            },
+            "cp": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "companions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "creature": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "hp": {
+                "type": "integer"
+              },
+              "maxHp": {
+                "type": "integer"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "custom": {
+          "type": "object",
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "https://dnd-ledger.local/schema/content-pack.schema.json#/$defs/feature"
+              }
+            },
+            "resources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "https://dnd-ledger.local/schema/content-pack.schema.json#/$defs/id"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "max": {
+                    "$ref": "https://dnd-ledger.local/schema/content-pack.schema.json#/$defs/amount"
+                  },
+                  "recharge": {
+                    "$ref": "https://dnd-ledger.local/schema/content-pack.schema.json#/$defs/recharge"
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "name",
+                  "max"
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "overrides": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^(ac|maxHP|initiative|speed|spellDC\\.[a-z-]+|spellAttack\\.[a-z-]+|save\\.(str|dex|con|int|wis|cha)|skill\\.[a-zA-Z]+)$"
+          },
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "levelPlan": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "abilities",
+        "classes"
+      ]
+    }
+  }
+}

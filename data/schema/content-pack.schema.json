@@ -1,0 +1,2695 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnd-ledger.local/schema/content-pack.schema.json",
+  "title": "D&D Ledger content pack (version 2, 2014 rules)",
+  "description": "See docs/data-formats.md.",
+  "type": "object",
+  "required": [
+    "format"
+  ],
+  "properties": {
+    "format": {
+      "const": "dnd-content-pack"
+    },
+    "schema": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "edition": {
+      "const": "2014"
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "name": {
+      "type": "string"
+    },
+    "_about": {
+      "type": "string"
+    },
+    "loadOrder": {
+      "type": "integer",
+      "description": "Packs load in this order (default 50); a later pack wins for the same id."
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "abbr": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "classes": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/class"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/class"
+          },
+          "description": "Keyed by id (version 1 style)."
+        }
+      ]
+    },
+    "subclasses": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/subclass"
+          }
+        },
+        {
+          "type": "object",
+          "description": "Version 1: {Class: {Subclass: {level: [feature names]}}}"
+        }
+      ]
+    },
+    "races": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/race"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/race"
+          },
+          "description": "Keyed by id (version 1 style)."
+        }
+      ]
+    },
+    "backgrounds": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/background"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/background"
+          },
+          "description": "Keyed by id (version 1 style)."
+        }
+      ]
+    },
+    "feats": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feat"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/feat"
+          },
+          "description": "Keyed by id (version 1 style)."
+        }
+      ]
+    },
+    "optionSets": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/optionSet"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/optionSet"
+          },
+          "description": "Keyed by id (version 1 style)."
+        }
+      ]
+    },
+    "features": {
+      "description": "Version 1 shared feature texts, or version 2 standalone features.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "spells": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/spell"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/spell"
+          },
+          "description": "Keyed by id (version 1 style)."
+        }
+      ]
+    },
+    "items": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/item"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/item"
+          },
+          "description": "Keyed by id (version 1 style)."
+        }
+      ]
+    },
+    "creatures": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/creature"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/creature"
+          },
+          "description": "Keyed by id (version 1 style)."
+        }
+      ]
+    },
+    "spellEffects": {
+      "type": "object",
+      "description": "Effects to add to spells defined elsewhere (e.g. SRD spells), keyed by spell id.",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/effect"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^([a-z0-9-]+:)?[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "amount": {
+      "description": "A number, a formula string, or a scale keyed by level.",
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "$ref": "#/$defs/scale"
+        }
+      ]
+    },
+    "scale": {
+      "type": "object",
+      "properties": {
+        "by": {
+          "enum": [
+            "level",
+            "classLevel"
+          ]
+        }
+      },
+      "patternProperties": {
+        "^([1-9]|1[0-9]|20)$": {
+          "type": [
+            "number",
+            "string"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "recharge": {
+      "oneOf": [
+        {
+          "enum": [
+            "short",
+            "long",
+            "dawn",
+            "turn",
+            "never"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "by": {
+              "enum": [
+                "level",
+                "classLevel"
+              ]
+            }
+          },
+          "patternProperties": {
+            "^([1-9]|1[0-9]|20)$": {
+              "enum": [
+                "short",
+                "long",
+                "dawn",
+                "turn",
+                "never"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        }
+      ]
+    },
+    "econ": {
+      "enum": [
+        "action",
+        "bonus",
+        "reaction",
+        "free",
+        "minute",
+        "special"
+      ]
+    },
+    "when": {
+      "type": "string",
+      "description": "unarmored, noShield, wearingArmor, lightArmor, noHeavyArmor, firstRound, concentrating, attuned, equipped, or toggle:<id>",
+      "pattern": "^(unarmored|noShield|wearingArmor|lightArmor|noHeavyArmor|firstRound|concentrating|attuned|equipped|toggle:[a-z0-9-]+)( and (unarmored|noShield|wearingArmor|lightArmor|noHeavyArmor|firstRound|concentrating|attuned|equipped|toggle:[a-z0-9-]+))*$"
+    },
+    "target": {
+      "type": "string",
+      "pattern": "^(ac|initiative|speed|hp\\.max|hp\\.perLevel|attacksPerAction|critRange|save\\.(all|str|dex|con|int|wis|cha)|check\\.(all|str|dex|con|int|wis|cha)|skill\\.[a-zA-Z]+|passive\\.[a-zA-Z]+|attack\\.(all|melee|ranged|spell|weapon)|damage\\.(melee|ranged|weapon|spell)|spell\\.(dc|attack)(\\.[a-z0-9-]+)?|ability\\.(str|dex|con|int|wis|cha))$"
+    },
+    "cost": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "resource": {
+              "$ref": "#/$defs/id"
+            },
+            "amount": {
+              "$ref": "#/$defs/amount"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "resource"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "slot": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "slot"
+          ]
+        }
+      ]
+    },
+    "gain": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "resource": {
+              "$ref": "#/$defs/id"
+            },
+            "amount": {
+              "$ref": "#/$defs/amount"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "resource"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "slots": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "$ref": "#/$defs/amount"
+                },
+                "maxLevel": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "total"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "slots"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "hp": {
+              "$ref": "#/$defs/amount"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "hp"
+          ]
+        }
+      ]
+    },
+    "damage": {
+      "type": "object",
+      "properties": {
+        "dice": {
+          "$ref": "#/$defs/amount"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "dice"
+      ]
+    },
+    "prerequisite": {
+      "type": "object",
+      "properties": {
+        "formula": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "effect": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "abilityScore",
+            "acFormula",
+            "action",
+            "advantage",
+            "asi",
+            "attackRider",
+            "bonus",
+            "choice",
+            "conditionImmunity",
+            "expertise",
+            "grantSpells",
+            "immunity",
+            "proficiency",
+            "reminder",
+            "resistance",
+            "resource",
+            "resourceMod",
+            "sense",
+            "set",
+            "speed",
+            "spellcasting",
+            "toggle",
+            "vulnerability"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "abilityScore"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_abilityScore"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "acFormula"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_acFormula"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "action"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_action"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "advantage"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_advantage"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "asi"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_asi"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "attackRider"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_attackRider"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "bonus"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_bonus"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "choice"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_choice"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "conditionImmunity"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_conditionImmunity"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "expertise"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_expertise"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantSpells"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_grantSpells"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "immunity"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_immunity"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "proficiency"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_proficiency"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "reminder"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_reminder"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "resistance"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_resistance"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "resource"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_resource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "resourceMod"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_resourceMod"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sense"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_sense"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "set"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_set"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "speed"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_speed"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "spellcasting"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_spellcasting"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "toggle"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_toggle"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "vulnerability"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/effect_vulnerability"
+          }
+        }
+      ]
+    },
+    "feature": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "text": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "prerequisite": {
+          "$ref": "#/$defs/prerequisite"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "class": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "hitDie": {
+          "enum": [
+            6,
+            8,
+            10,
+            12
+          ]
+        },
+        "primaryAbility": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ]
+          }
+        },
+        "saves": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ]
+          },
+          "maxItems": 2
+        },
+        "proficiencies": {
+          "type": "object",
+          "properties": {
+            "armor": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "weapons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "skills": {
+              "type": "object",
+              "properties": {
+                "choose": {
+                  "type": "integer"
+                },
+                "from": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "choose",
+                "from"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "multiclass": {
+          "type": "object",
+          "properties": {
+            "requires": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            },
+            "proficiencies": {
+              "type": "object",
+              "properties": {
+                "armor": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "weapons": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "tools": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skills": {
+                  "type": "object",
+                  "properties": {
+                    "choose": {
+                      "type": "integer"
+                    },
+                    "from": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "subclassLevel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "subclassTitle": {
+          "type": "string"
+        },
+        "table": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 20,
+            "maxItems": 20,
+            "items": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        },
+        "startingEquipment": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "hitDie",
+        "features"
+      ]
+    },
+    "subclass": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "class": {
+          "$ref": "#/$defs/id"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        },
+        "spells": {
+          "$ref": "#/$defs/effect_grantSpells"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "class",
+        "features"
+      ]
+    },
+    "race": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string"
+        },
+        "speed": {
+          "type": "integer"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        },
+        "subraces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "name": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "source": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "features": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/feature"
+                }
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "background": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        },
+        "equipment": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "feat": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "prerequisite": {
+          "$ref": "#/$defs/prerequisite"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "optionSet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "options"
+      ]
+    },
+    "spell": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "lvl": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "level": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "school": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string"
+        },
+        "castTime": {
+          "type": "string"
+        },
+        "range": {
+          "type": "string"
+        },
+        "comp": {
+          "type": "string"
+        },
+        "dur": {
+          "type": "string"
+        },
+        "conc": {
+          "type": "boolean"
+        },
+        "ritual": {
+          "type": "boolean"
+        },
+        "save": {
+          "enum": [
+            "Str",
+            "Dex",
+            "Con",
+            "Int",
+            "Wis",
+            "Cha"
+          ]
+        },
+        "sum": {
+          "type": "string"
+        },
+        "up": {
+          "type": "string"
+        },
+        "scale": {
+          "type": "string"
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "srd": {
+          "type": "boolean"
+        },
+        "cls": {
+          "type": "string"
+        },
+        "attack": {
+          "enum": [
+            "melee",
+            "ranged"
+          ]
+        },
+        "damage": {
+          "$ref": "#/$defs/damage"
+        },
+        "scaling": {
+          "$ref": "#/$defs/scale"
+        },
+        "perSlot": {
+          "type": "string"
+        },
+        "heal": {
+          "$ref": "#/$defs/amount"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "item": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "rarity": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "attune": {
+          "type": [
+            "boolean",
+            "string"
+          ]
+        },
+        "srd": {
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "weapon",
+            "armor",
+            "shield",
+            "gear",
+            "tool",
+            "wondrous",
+            "potion",
+            "scroll",
+            "wand",
+            "rod",
+            "staff",
+            "ring",
+            "ammunition"
+          ]
+        },
+        "weapon": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "enum": [
+                "simple",
+                "martial"
+              ]
+            },
+            "ranged": {
+              "type": "boolean"
+            },
+            "dmg": {
+              "type": "string"
+            },
+            "damageType": {
+              "type": "string"
+            },
+            "versatile": {
+              "type": "string"
+            },
+            "range": {
+              "type": "string"
+            },
+            "props": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ammo": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "armor": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "enum": [
+                "light",
+                "medium",
+                "heavy"
+              ]
+            },
+            "base": {
+              "type": "integer"
+            },
+            "dexCap": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "strength": {
+              "type": "integer"
+            },
+            "stealthDisadvantage": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "magic": {
+          "type": "integer"
+        },
+        "weight": {
+          "type": "number"
+        },
+        "cost": {
+          "type": "string"
+        },
+        "charges": {
+          "type": "object",
+          "properties": {
+            "max": {
+              "$ref": "#/$defs/amount"
+            },
+            "recharge": {
+              "$ref": "#/$defs/recharge"
+            },
+            "regain": {
+              "$ref": "#/$defs/amount"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "max"
+          ]
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "creature": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "alignment": {
+          "type": "string"
+        },
+        "ac": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "hp": {
+          "type": "object",
+          "properties": {
+            "average": {
+              "type": "integer"
+            },
+            "dice": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "speed": {
+          "type": "string"
+        },
+        "abilities": {
+          "type": "object",
+          "properties": {
+            "str": {
+              "type": "integer"
+            },
+            "dex": {
+              "type": "integer"
+            },
+            "con": {
+              "type": "integer"
+            },
+            "int": {
+              "type": "integer"
+            },
+            "wis": {
+              "type": "integer"
+            },
+            "cha": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false
+        },
+        "saves": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "string"
+        },
+        "senses": {
+          "type": "string"
+        },
+        "languages": {
+          "type": "string"
+        },
+        "cr": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "acNote": {
+          "type": "string"
+        },
+        "vulnerabilities": {
+          "type": "string"
+        },
+        "resistances": {
+          "type": "string"
+        },
+        "immunities": {
+          "type": "string"
+        },
+        "conditionImmunities": {
+          "type": "string"
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "text"
+            ]
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "text"
+            ]
+          }
+        },
+        "bonusActions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "text"
+            ]
+          }
+        },
+        "reactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "text"
+            ]
+          }
+        },
+        "legendary": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "text"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "effect_resource": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "max": {
+          "$ref": "#/$defs/amount"
+        },
+        "recharge": {
+          "$ref": "#/$defs/recharge"
+        },
+        "die": {
+          "$ref": "#/$defs/amount"
+        },
+        "color": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "max",
+        "recharge"
+      ]
+    },
+    "effect_resourceMod": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "resource": {
+          "$ref": "#/$defs/id"
+        },
+        "max": {
+          "$ref": "#/$defs/amount"
+        },
+        "recharge": {
+          "$ref": "#/$defs/recharge"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "resource"
+      ]
+    },
+    "effect_action": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "econ": {
+          "$ref": "#/$defs/econ"
+        },
+        "cost": {
+          "$ref": "#/$defs/cost"
+        },
+        "roll": {
+          "$ref": "#/$defs/amount"
+        },
+        "heal": {
+          "$ref": "#/$defs/amount"
+        },
+        "tempHp": {
+          "$ref": "#/$defs/amount"
+        },
+        "damage": {
+          "$ref": "#/$defs/damage"
+        },
+        "save": {
+          "type": "object",
+          "properties": {
+            "ability": {
+              "enum": [
+                "str",
+                "dex",
+                "con",
+                "int",
+                "wis",
+                "cha"
+              ]
+            },
+            "dc": {
+              "$ref": "#/$defs/amount"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "ability"
+          ]
+        },
+        "gain": {
+          "$ref": "#/$defs/gain"
+        },
+        "toggle": {
+          "$ref": "#/$defs/id"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "econ"
+      ]
+    },
+    "effect_toggle": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "endsOn": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "shortRest",
+              "longRest",
+              "combatEnd",
+              "manual",
+              "unconscious"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "effect_attackRider": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "damage": {
+          "$ref": "#/$defs/amount"
+        },
+        "damageType": {
+          "type": "string"
+        },
+        "cost": {
+          "$ref": "#/$defs/cost"
+        },
+        "oncePer": {
+          "enum": [
+            "turn",
+            "round",
+            "combat"
+          ]
+        },
+        "perSlotLevel": {
+          "type": "string"
+        },
+        "maxDice": {
+          "type": "integer"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "melee",
+              "ranged",
+              "finesseOrRanged",
+              "weapon",
+              "spell",
+              "advantageOrAlly",
+              "hit"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "effect_bonus": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "value": {
+          "$ref": "#/$defs/amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "value"
+      ]
+    },
+    "effect_set": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "value": {
+          "$ref": "#/$defs/amount"
+        },
+        "mode": {
+          "enum": [
+            "max",
+            "min",
+            "override"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "value"
+      ]
+    },
+    "effect_acFormula": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "formula": {
+          "type": "string"
+        },
+        "allowShield": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "formula"
+      ]
+    },
+    "effect_proficiency": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "kind": {
+          "enum": [
+            "save",
+            "skill",
+            "tool",
+            "armor",
+            "weapon",
+            "language",
+            "check"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "level": {
+          "enum": [
+            "full",
+            "half",
+            "halfUp"
+          ]
+        },
+        "onlyIfNotProficient": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "values"
+      ]
+    },
+    "effect_expertise": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "kind": {
+          "enum": [
+            "skill",
+            "tool"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "values"
+      ]
+    },
+    "effect_abilityScore": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "ability": {
+          "enum": [
+            "str",
+            "dex",
+            "con",
+            "int",
+            "wis",
+            "cha"
+          ]
+        },
+        "add": {
+          "type": "integer"
+        },
+        "max": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "ability",
+        "add"
+      ]
+    },
+    "effect_spellcasting": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "ability": {
+          "enum": [
+            "str",
+            "dex",
+            "con",
+            "int",
+            "wis",
+            "cha"
+          ]
+        },
+        "progression": {
+          "enum": [
+            "full",
+            "half",
+            "third",
+            "artificer",
+            "pact"
+          ]
+        },
+        "list": {
+          "type": "string"
+        },
+        "cantrips": {
+          "$ref": "#/$defs/amount"
+        },
+        "known": {
+          "$ref": "#/$defs/amount"
+        },
+        "prepared": {
+          "$ref": "#/$defs/amount"
+        },
+        "spellbook": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "integer"
+            },
+            "perLevel": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "perLevel"
+          ]
+        },
+        "ritual": {
+          "enum": [
+            "spellbook",
+            "prepared",
+            "known",
+            "none"
+          ]
+        },
+        "focus": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "ability",
+        "progression",
+        "list"
+      ]
+    },
+    "effect_grantSpells": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "spells": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "minLevel": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              },
+              "uses": {
+                "$ref": "#/$defs/amount"
+              },
+              "recharge": {
+                "$ref": "#/$defs/recharge"
+              },
+              "noSlot": {
+                "type": "boolean"
+              },
+              "econ": {
+                "$ref": "#/$defs/econ"
+              },
+              "atLevel": {
+                "type": "integer"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "alwaysPrepared": {
+          "type": "boolean"
+        },
+        "countsAgainst": {
+          "type": "boolean"
+        },
+        "ability": {
+          "enum": [
+            "str",
+            "dex",
+            "con",
+            "int",
+            "wis",
+            "cha"
+          ]
+        },
+        "class": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "spells"
+      ]
+    },
+    "effect_choice": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "option",
+            "skill",
+            "expertise",
+            "tool",
+            "language",
+            "ability",
+            "spell",
+            "feat",
+            "text"
+          ]
+        },
+        "choose": {
+          "$ref": "#/$defs/amount"
+        },
+        "from": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "optionSet": {
+                  "$ref": "#/$defs/id"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "optionSet"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/id"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "ids"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "skills": {
+                  "oneOf": [
+                    {
+                      "enum": [
+                        "any",
+                        "proficient"
+                      ]
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "skills"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "abilities": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "str",
+                      "dex",
+                      "con",
+                      "int",
+                      "wis",
+                      "cha"
+                    ]
+                  }
+                },
+                "add": {
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "abilities"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "spells": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "string"
+                    },
+                    "maxLevel": {
+                      "oneOf": [
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "const": "slot"
+                        }
+                      ]
+                    },
+                    "level": {
+                      "type": "integer"
+                    },
+                    "school": {
+                      "type": "string"
+                    },
+                    "ritual": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "spells"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "list"
+              ]
+            }
+          ]
+        },
+        "grants": {
+          "type": "object",
+          "properties": {
+            "uses": {
+              "$ref": "#/$defs/amount"
+            },
+            "recharge": {
+              "$ref": "#/$defs/recharge"
+            },
+            "noSlot": {
+              "type": "boolean"
+            },
+            "alwaysPrepared": {
+              "type": "boolean"
+            },
+            "class": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "kind"
+      ]
+    },
+    "effect_asi": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ]
+    },
+    "effect_sense": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "sense": {
+          "enum": [
+            "darkvision",
+            "blindsight",
+            "tremorsense",
+            "truesight"
+          ]
+        },
+        "range": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "sense",
+        "range"
+      ]
+    },
+    "effect_speed": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "mode": {
+          "enum": [
+            "walk",
+            "fly",
+            "swim",
+            "climb",
+            "burrow"
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/amount"
+            },
+            {
+              "const": "walk"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "value"
+      ]
+    },
+    "effect_resistance": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "damage": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "damage"
+      ]
+    },
+    "effect_immunity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "damage": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "damage"
+      ]
+    },
+    "effect_vulnerability": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "damage": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "damage"
+      ]
+    },
+    "effect_conditionImmunity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "conditions"
+      ]
+    },
+    "effect_advantage": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "on": {
+          "type": "string"
+        },
+        "disadvantage": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "on"
+      ]
+    },
+    "effect_reminder": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/when"
+        },
+        "on": {
+          "enum": [
+            "shortRest",
+            "longRest",
+            "initiative",
+            "turnStart",
+            "levelUp",
+            "attack",
+            "hit",
+            "cast",
+            "kill",
+            "damaged",
+            "always"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "on",
+        "text"
+      ]
+    }
+  }
+}

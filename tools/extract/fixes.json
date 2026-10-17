@@ -1,0 +1,34 @@
+{
+ "_about": "Hand corrections the parsers can't make: short field values, and textEnd markers (a few words where a feature's text should stop). Never book text.",
+ "phb": {
+  "spells": {
+   "conjure-barrage": {
+    "range": "Self (60-foot cone)"
+   },
+   "delayed-blast-fireball": {
+    "range": "150 feet"
+   },
+   "dispel-evil-and-good": {
+    "range": "Self"
+   },
+   "forcecage": {
+    "dur": "1 hour"
+   },
+   "spike-growth": {
+    "range": "150 feet"
+   },
+   "wish": {
+    "time": "1 action"
+   }
+  },
+  "textEnd": {
+   "Disciple of the Elements": {
+    "before": "Monks of the Way of Shadow"
+   },
+   "Spell Bombardment": {
+    "after": "only once per tur",
+    "append": "n."
+   }
+  }
+ }
+}

@@ -13,8 +13,18 @@ PORT=8790
 URL="http://localhost:$PORT/"
 LOG="$HOME/Library/Logs/dnd-ledger.log"
 
+# Run the real interpreter inside Python.app. The python3 command is a stub that re-launches it,
+# and macOS refuses that re-launch when it comes from this unsigned app ("posix_spawn ... Undefined error: 0").
+PY=python3
+for P in /Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/Current/Resources/Python.app/Contents/MacOS/Python \
+         /Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/Current/Resources/Python.app/Contents/MacOS/Python \
+         /Library/Frameworks/Python.framework/Versions/Current/Resources/Python.app/Contents/MacOS/Python; do
+  [ -x "$P" ] && PY="$P" && break
+done
+
 if ! curl -fs -o /dev/null "${URL}api/ping"; then
-  nohup python3 "$REPO/tools/serve.py" --port "$PORT" >>"$LOG" 2>&1 &
+  echo "$(date '+%Y-%m-%d %H:%M') starting server with $PY" >>"$LOG"
+  nohup "$PY" "$REPO/tools/serve.py" --port "$PORT" >>"$LOG" 2>&1 &
   for i in $(seq 1 50); do curl -fs -o /dev/null "${URL}api/ping" && break; sleep 0.2; done
 fi
 if ! curl -fs -o /dev/null "${URL}api/ping"; then

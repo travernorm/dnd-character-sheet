@@ -1,0 +1,7825 @@
+{
+ "format": "dnd-content-pack",
+ "schema": 2,
+ "edition": "2014",
+ "id": "base",
+ "name": "Built-in rules",
+ "_about": "The rules the ledger ships with: the 2014 classes (SRD features plus short summaries), subclass names, the SRD races, background, feat, armor and weapons, and the few subclasses and items the original ledger supported. Text is short original summaries. Generated; see docs/data-formats.md.",
+ "source": {
+  "abbr": "Base",
+  "title": "D&D Ledger built-in rules"
+ },
+ "classes": [
+  {
+   "id": "artificer",
+   "name": "Artificer",
+   "hitDie": 8,
+   "primaryAbility": [
+    "int"
+   ],
+   "saves": [
+    "con",
+    "int"
+   ],
+   "proficiencies": {
+    "armor": [
+     "Light armor",
+     "Medium armor",
+     "Shields"
+    ],
+    "weapons": [
+     "Simple weapons"
+    ],
+    "tools": [
+     "Thieves' tools",
+     "Tinker's tools",
+     "One type of artisan's tools"
+    ],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "arcana",
+      "history",
+      "investigation",
+      "medicine",
+      "nature",
+      "perception",
+      "sleightOfHand"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.int >= 13",
+    "text": "Intelligence 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor",
+      "Medium armor",
+      "Shields"
+     ],
+     "tools": [
+      "Thieves' tools",
+      "Tinker's tools"
+     ]
+    }
+   },
+   "subclassLevel": 3,
+   "subclassTitle": "Artificer Specialist",
+   "table": {
+    "cantrips": [
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4
+    ]
+   },
+   "features": [
+    {
+     "id": "magical-tinkering",
+     "name": "Magical Tinkering",
+     "level": 1,
+     "text": "Use tinker's tools to give a tiny object a small magical trick, such as light, a recorded message, a smell or a still image."
+    },
+    {
+     "id": "spellcasting",
+     "name": "Spellcasting",
+     "level": 1,
+     "text": "Artificer spells use Intelligence. Prepare Int modifier + half your artificer level (rounded down) spells each long rest.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "int",
+       "progression": "artificer",
+       "list": "artificer",
+       "cantrips": "col.cantrips",
+       "prepared": "max(1, mod.int + floor(classLevel / 2))",
+       "ritual": "prepared",
+       "focus": "Thieves' or artisan's tools"
+      }
+     ]
+    },
+    {
+     "id": "infuse-item",
+     "name": "Infuse Item",
+     "level": 2,
+     "text": "After a long rest, turn some nonmagical items into temporary magic items using the infusions you know."
+    },
+    {
+     "id": "the-right-tool-for-the-job",
+     "name": "The Right Tool for the Job",
+     "level": 3,
+     "text": "With thieves' or artisan's tools, spend an hour to make one set of artisan's tools."
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "tool-expertise",
+     "name": "Tool Expertise",
+     "level": 6,
+     "text": "Double your proficiency bonus for checks with tools you're proficient in."
+    },
+    {
+     "id": "flash-of-genius",
+     "name": "Flash of Genius",
+     "level": 7,
+     "text": "Reaction: add your Intelligence modifier to an ability check or saving throw you or a creature you can see within 30 ft makes. Uses equal your Int modifier per long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "flash-of-genius",
+       "name": "Flash of Genius",
+       "max": "max(1, mod.int)",
+       "recharge": "long",
+       "color": "gold"
+      },
+      {
+       "type": "action",
+       "id": "use-flash-of-genius",
+       "name": "Flash of Genius",
+       "econ": "reaction",
+       "cost": {
+        "resource": "flash-of-genius",
+        "amount": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "magic-item-adept",
+     "name": "Magic Item Adept",
+     "level": 10,
+     "text": "Attune to up to four magic items; crafting common and uncommon items is faster and cheaper."
+    },
+    {
+     "id": "spell-storing-item",
+     "name": "Spell-Storing Item",
+     "level": 11,
+     "text": "Store a 1st or 2nd level artificer spell in a weapon or focus; whoever holds it can cast it a number of times equal to twice your Int modifier."
+    },
+    {
+     "id": "magic-item-savant",
+     "name": "Magic Item Savant",
+     "level": 14,
+     "text": "Attune to up to five magic items and ignore class, race, spell and level requirements on them."
+    },
+    {
+     "id": "magic-item-master",
+     "name": "Magic Item Master",
+     "level": 18,
+     "text": "Attune to up to six magic items."
+    },
+    {
+     "id": "soul-of-artifice",
+     "name": "Soul of Artifice",
+     "level": 20,
+     "text": "+1 to all saves per attuned item, and you can end an infusion to drop to 1 HP instead of 0."
+    }
+   ]
+  },
+  {
+   "id": "barbarian",
+   "name": "Barbarian",
+   "hitDie": 12,
+   "primaryAbility": [
+    "str"
+   ],
+   "saves": [
+    "str",
+    "con"
+   ],
+   "proficiencies": {
+    "armor": [
+     "Light armor",
+     "Medium armor",
+     "Shields"
+    ],
+    "weapons": [
+     "Simple weapons",
+     "Martial weapons"
+    ],
+    "tools": [],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "animalHandling",
+      "athletics",
+      "intimidation",
+      "nature",
+      "perception",
+      "survival"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.str >= 13",
+    "text": "Strength 13",
+    "proficiencies": {
+     "armor": [
+      "Shields"
+     ],
+     "weapons": [
+      "Simple weapons",
+      "Martial weapons"
+     ]
+    }
+   },
+   "subclassLevel": 3,
+   "subclassTitle": "Primal Path",
+   "table": {
+    "rages": [
+     2,
+     2,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     5,
+     5,
+     5,
+     5,
+     5,
+     6,
+     6,
+     6,
+     99
+    ],
+    "rageDamage": [
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4
+    ]
+   },
+   "features": [
+    {
+     "id": "rage",
+     "name": "Rage",
+     "level": 1,
+     "text": "Bonus action: rage for 1 minute. Advantage on Strength checks and saves, extra damage on Strength melee weapon hits, and resistance to bludgeoning, piercing and slashing damage. No spellcasting or concentration while raging.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "rage",
+       "name": "Rage",
+       "max": "col.rages",
+       "recharge": "long",
+       "color": "gold"
+      },
+      {
+       "type": "toggle",
+       "id": "raging",
+       "name": "Raging",
+       "endsOn": [
+        "combatEnd",
+        "unconscious",
+        "manual"
+       ]
+      },
+      {
+       "type": "action",
+       "id": "start-rage",
+       "name": "Rage",
+       "econ": "bonus",
+       "cost": {
+        "resource": "rage",
+        "amount": 1
+       },
+       "toggle": "raging",
+       "duration": "1 minute"
+      },
+      {
+       "type": "bonus",
+       "target": "damage.melee",
+       "value": "col.rageDamage",
+       "when": "toggle:raging",
+       "note": "Strength melee weapon attacks"
+      },
+      {
+       "type": "resistance",
+       "damage": [
+        "bludgeoning",
+        "piercing",
+        "slashing"
+       ],
+       "when": "toggle:raging"
+      },
+      {
+       "type": "advantage",
+       "on": "Strength checks and saves",
+       "when": "toggle:raging"
+      }
+     ]
+    },
+    {
+     "id": "unarmored-defense",
+     "name": "Unarmored Defense",
+     "level": 1,
+     "text": "Without armor, AC is 10 + Dex modifier + Con modifier. A shield still counts.",
+     "effects": [
+      {
+       "type": "acFormula",
+       "formula": "10 + mod.dex + mod.con",
+       "when": "unarmored",
+       "allowShield": true
+      }
+     ]
+    },
+    {
+     "id": "reckless-attack",
+     "name": "Reckless Attack",
+     "level": 2,
+     "text": "On your first attack of the turn: advantage on Strength melee attacks this turn, but attacks against you have advantage until your next turn.",
+     "effects": [
+      {
+       "type": "reminder",
+       "on": "attack",
+       "text": "Reckless Attack: advantage on Strength melee attacks this turn; attacks against you have advantage."
+      }
+     ]
+    },
+    {
+     "id": "danger-sense",
+     "name": "Danger Sense",
+     "level": 2,
+     "text": "Advantage on Dexterity saves against effects you can see.",
+     "effects": [
+      {
+       "type": "advantage",
+       "on": "Dexterity saves against effects you can see"
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "extra-attack",
+     "name": "Extra Attack",
+     "level": 5,
+     "text": "Attack twice when you take the Attack action.",
+     "effects": [
+      {
+       "type": "set",
+       "target": "attacksPerAction",
+       "value": 2,
+       "mode": "max"
+      }
+     ]
+    },
+    {
+     "id": "fast-movement",
+     "name": "Fast Movement",
+     "level": 5,
+     "text": "+10 ft speed while not wearing heavy armor.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "speed",
+       "value": 10,
+       "when": "noHeavyArmor"
+      }
+     ]
+    },
+    {
+     "id": "feral-instinct",
+     "name": "Feral Instinct",
+     "level": 7,
+     "text": "Advantage on initiative; you can act on a surprise round if you rage first.",
+     "effects": [
+      {
+       "type": "advantage",
+       "on": "Initiative"
+      }
+     ]
+    },
+    {
+     "id": "brutal-critical",
+     "name": "Brutal Critical",
+     "level": 9,
+     "text": "Roll one extra weapon damage die on a melee critical hit (two at 13th, three at 17th)."
+    },
+    {
+     "id": "relentless-rage",
+     "name": "Relentless Rage",
+     "level": 11,
+     "text": "Drop to 0 HP while raging: DC 10 Con save (rising by 5 each use) to drop to 1 instead."
+    },
+    {
+     "id": "persistent-rage",
+     "name": "Persistent Rage",
+     "level": 15,
+     "text": "Rage only ends early if you fall unconscious or choose to end it."
+    },
+    {
+     "id": "indomitable-might",
+     "name": "Indomitable Might",
+     "level": 18,
+     "text": "A Strength check total lower than your Strength score uses the score instead."
+    },
+    {
+     "id": "primal-champion",
+     "name": "Primal Champion",
+     "level": 20,
+     "text": "Strength and Constitution +4, maximum 24.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "str",
+       "add": 4,
+       "max": 24
+      },
+      {
+       "type": "abilityScore",
+       "ability": "con",
+       "add": 4,
+       "max": 24
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bard",
+   "name": "Bard",
+   "hitDie": 8,
+   "primaryAbility": [
+    "cha"
+   ],
+   "saves": [
+    "dex",
+    "cha"
+   ],
+   "proficiencies": {
+    "armor": [
+     "Light armor"
+    ],
+    "weapons": [
+     "Simple weapons",
+     "Hand crossbows",
+     "Longswords",
+     "Rapiers",
+     "Shortswords"
+    ],
+    "tools": [
+     "Three musical instruments"
+    ],
+    "skills": {
+     "choose": 3,
+     "from": [
+      "any"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.cha >= 13",
+    "text": "Charisma 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor"
+     ],
+     "tools": [
+      "One musical instrument"
+     ],
+     "skills": {
+      "choose": 1,
+      "from": [
+       "any"
+      ]
+     }
+    }
+   },
+   "subclassLevel": 3,
+   "subclassTitle": "Bard College",
+   "table": {
+    "cantrips": [
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "spellsKnown": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     14,
+     15,
+     15,
+     16,
+     18,
+     19,
+     19,
+     20,
+     22,
+     22,
+     22
+    ]
+   },
+   "features": [
+    {
+     "id": "spellcasting",
+     "name": "Spellcasting",
+     "level": 1,
+     "text": "Bard spells use Charisma. You know a set number of spells and can swap one each time you gain a level.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "cha",
+       "progression": "full",
+       "list": "bard",
+       "cantrips": "col.cantrips",
+       "known": "col.spellsKnown",
+       "ritual": "known",
+       "focus": "Musical instrument"
+      }
+     ]
+    },
+    {
+     "id": "bardic-inspiration",
+     "name": "Bardic Inspiration",
+     "level": 1,
+     "text": "Bonus action: give a creature other than you within 60 ft that can hear you an inspiration die. Within 10 minutes it can add the die to one ability check, attack roll or save, after seeing the roll.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "bardic-inspiration",
+       "name": "Bardic Inspiration",
+       "max": "max(1, mod.cha)",
+       "recharge": {
+        "1": "long",
+        "5": "short"
+       },
+       "die": {
+        "1": "d6",
+        "5": "d8",
+        "10": "d10",
+        "15": "d12"
+       },
+       "color": "psy"
+      },
+      {
+       "type": "action",
+       "id": "inspire",
+       "name": "Give Bardic Inspiration",
+       "econ": "bonus",
+       "cost": {
+        "resource": "bardic-inspiration",
+        "amount": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "jack-of-all-trades",
+     "name": "Jack of All Trades",
+     "level": 2,
+     "text": "Add half your proficiency bonus (rounded down) to any ability check you aren't proficient in. Initiative counts.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "check",
+       "values": [
+        "all"
+       ],
+       "level": "half",
+       "onlyIfNotProficient": true
+      }
+     ]
+    },
+    {
+     "id": "song-of-rest",
+     "name": "Song of Rest",
+     "level": 2,
+     "text": "During a short rest, allies who hear your performance and spend hit dice regain extra HP.",
+     "effects": [
+      {
+       "type": "reminder",
+       "on": "shortRest",
+       "text": "Song of Rest: allies who spend hit dice this rest regain an extra 1d6 (1d8 at bard 9, 1d10 at 13, 1d12 at 17)."
+      }
+     ]
+    },
+    {
+     "id": "expertise-3",
+     "name": "Expertise",
+     "level": 3,
+     "text": "Double your proficiency bonus for two skills you're proficient in.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "expertise-3",
+       "name": "Expertise",
+       "kind": "expertise",
+       "choose": 2,
+       "from": {
+        "skills": "proficient"
+       }
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "font-of-inspiration",
+     "name": "Font of Inspiration",
+     "level": 5,
+     "text": "Bardic Inspiration now comes back on a short or long rest."
+    },
+    {
+     "id": "countercharm",
+     "name": "Countercharm",
+     "level": 6,
+     "text": "Action: perform until the end of your next turn. You and friends within 30 ft have advantage on saves against being frightened or charmed.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "countercharm",
+       "name": "Countercharm",
+       "econ": "action"
+      }
+     ]
+    },
+    {
+     "id": "expertise-10",
+     "name": "Expertise",
+     "level": 10,
+     "text": "Two more skills get double proficiency.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "expertise-10",
+       "name": "Expertise",
+       "kind": "expertise",
+       "choose": 2,
+       "from": {
+        "skills": "proficient"
+       }
+      }
+     ]
+    },
+    {
+     "id": "magical-secrets-10",
+     "name": "Magical Secrets",
+     "level": 10,
+     "text": "Learn two spells from any class list. They count as bard spells.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "magical-secrets-10",
+       "name": "Magical Secrets",
+       "kind": "spell",
+       "choose": 2,
+       "from": {
+        "spells": {
+         "list": "any",
+         "maxLevel": "slot"
+        }
+       },
+       "grants": {
+        "class": "bard"
+       }
+      }
+     ]
+    },
+    {
+     "id": "magical-secrets-14",
+     "name": "Magical Secrets",
+     "level": 14,
+     "text": "Learn two more spells from any class list.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "magical-secrets-14",
+       "name": "Magical Secrets",
+       "kind": "spell",
+       "choose": 2,
+       "from": {
+        "spells": {
+         "list": "any",
+         "maxLevel": "slot"
+        }
+       },
+       "grants": {
+        "class": "bard"
+       }
+      }
+     ]
+    },
+    {
+     "id": "magical-secrets-18",
+     "name": "Magical Secrets",
+     "level": 18,
+     "text": "Learn two more spells from any class list.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "magical-secrets-18",
+       "name": "Magical Secrets",
+       "kind": "spell",
+       "choose": 2,
+       "from": {
+        "spells": {
+         "list": "any",
+         "maxLevel": "slot"
+        }
+       },
+       "grants": {
+        "class": "bard"
+       }
+      }
+     ]
+    },
+    {
+     "id": "superior-inspiration",
+     "name": "Superior Inspiration",
+     "level": 20,
+     "text": "If you roll initiative with no Bardic Inspiration left, you regain one.",
+     "effects": [
+      {
+       "type": "reminder",
+       "on": "initiative",
+       "text": "Superior Inspiration: regain one Bardic Inspiration if you have none."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cleric",
+   "name": "Cleric",
+   "hitDie": 8,
+   "primaryAbility": [
+    "wis"
+   ],
+   "saves": [
+    "wis",
+    "cha"
+   ],
+   "proficiencies": {
+    "armor": [
+     "Light armor",
+     "Medium armor",
+     "Shields"
+    ],
+    "weapons": [
+     "Simple weapons"
+    ],
+    "tools": [],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "history",
+      "insight",
+      "medicine",
+      "persuasion",
+      "religion"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.wis >= 13",
+    "text": "Wisdom 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor",
+      "Medium armor",
+      "Shields"
+     ]
+    }
+   },
+   "subclassLevel": 1,
+   "subclassTitle": "Divine Domain",
+   "table": {
+    "cantrips": [
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5
+    ]
+   },
+   "features": [
+    {
+     "id": "spellcasting",
+     "name": "Spellcasting",
+     "level": 1,
+     "text": "Cleric spells use Wisdom. Prepare Wis modifier + cleric level spells from the cleric list each long rest.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "wis",
+       "progression": "full",
+       "list": "cleric",
+       "cantrips": "col.cantrips",
+       "prepared": "max(1, mod.wis + classLevel)",
+       "ritual": "prepared",
+       "focus": "Holy symbol"
+      }
+     ]
+    },
+    {
+     "id": "channel-divinity",
+     "name": "Channel Divinity",
+     "level": 2,
+     "text": "Use a divine power from your class or domain, such as Turn Undead. Recharges on a short rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "channel-divinity",
+       "name": "Channel Divinity",
+       "max": {
+        "2": 1,
+        "6": 2,
+        "18": 3
+       },
+       "recharge": "short",
+       "color": "gold"
+      },
+      {
+       "type": "action",
+       "id": "turn-undead",
+       "name": "Turn Undead",
+       "econ": "action",
+       "cost": {
+        "resource": "channel-divinity",
+        "amount": 1
+       },
+       "save": {
+        "ability": "wis",
+        "dc": "spellDC"
+       },
+       "text": "Undead within 30 ft that fail a Wisdom save are turned for 1 minute."
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "destroy-undead",
+     "name": "Destroy Undead",
+     "level": 5,
+     "text": "Turn Undead destroys low-CR undead outright (CR 1/2 at 5th, rising with level)."
+    },
+    {
+     "id": "divine-intervention",
+     "name": "Divine Intervention",
+     "level": 10,
+     "text": "Action: call on your deity; succeeds if you roll your cleric level or lower on a d100. Once a week if it works (automatic at 20th).",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "divine-intervention",
+       "name": "Divine Intervention",
+       "max": 1,
+       "recharge": "long",
+       "note": "A success can't be used again for 7 days"
+      },
+      {
+       "type": "action",
+       "id": "divine-intervention-call",
+       "name": "Divine Intervention",
+       "econ": "action",
+       "cost": {
+        "resource": "divine-intervention",
+        "amount": 1
+       },
+       "roll": "1d100"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "druid",
+   "name": "Druid",
+   "hitDie": 8,
+   "primaryAbility": [
+    "wis"
+   ],
+   "saves": [
+    "int",
+    "wis"
+   ],
+   "proficiencies": {
+    "armor": [
+     "Light armor",
+     "Medium armor",
+     "Shields (no metal)"
+    ],
+    "weapons": [
+     "Clubs",
+     "Daggers",
+     "Darts",
+     "Javelins",
+     "Maces",
+     "Quarterstaffs",
+     "Scimitars",
+     "Sickles",
+     "Slings",
+     "Spears"
+    ],
+    "tools": [
+     "Herbalism kit"
+    ],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "arcana",
+      "animalHandling",
+      "insight",
+      "medicine",
+      "nature",
+      "perception",
+      "religion",
+      "survival"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.wis >= 13",
+    "text": "Wisdom 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor",
+      "Medium armor",
+      "Shields (no metal)"
+     ]
+    }
+   },
+   "subclassLevel": 2,
+   "subclassTitle": "Druid Circle",
+   "table": {
+    "cantrips": [
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4
+    ]
+   },
+   "features": [
+    {
+     "id": "druidic",
+     "name": "Druidic",
+     "level": 1,
+     "text": "You know the secret language of druids.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Druidic"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "spellcasting",
+     "name": "Spellcasting",
+     "level": 1,
+     "text": "Druid spells use Wisdom. Prepare Wis modifier + druid level spells from the druid list each long rest.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "wis",
+       "progression": "full",
+       "list": "druid",
+       "cantrips": "col.cantrips",
+       "prepared": "max(1, mod.wis + classLevel)",
+       "ritual": "prepared",
+       "focus": "Druidic focus"
+      }
+     ]
+    },
+    {
+     "id": "wild-shape",
+     "name": "Wild Shape",
+     "level": 2,
+     "text": "Action: turn into a beast you've seen, for hours equal to half your druid level. Twice per short rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "wild-shape",
+       "name": "Wild Shape",
+       "max": {
+        "2": 2,
+        "20": 99
+       },
+       "recharge": "short"
+      },
+      {
+       "type": "action",
+       "id": "use-wild-shape",
+       "name": "Wild Shape",
+       "econ": "action",
+       "cost": {
+        "resource": "wild-shape",
+        "amount": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "timeless-body",
+     "name": "Timeless Body",
+     "level": 18,
+     "text": "You age one year for every ten that pass."
+    },
+    {
+     "id": "beast-spells",
+     "name": "Beast Spells",
+     "level": 18,
+     "text": "Cast many druid spells while in Wild Shape."
+    },
+    {
+     "id": "archdruid",
+     "name": "Archdruid",
+     "level": 20,
+     "text": "Unlimited Wild Shape, and ignore verbal, somatic and cheap material components."
+    }
+   ]
+  },
+  {
+   "id": "fighter",
+   "name": "Fighter",
+   "hitDie": 10,
+   "primaryAbility": [
+    "str",
+    "dex"
+   ],
+   "saves": [
+    "str",
+    "con"
+   ],
+   "proficiencies": {
+    "armor": [
+     "All armor",
+     "Shields"
+    ],
+    "weapons": [
+     "Simple weapons",
+     "Martial weapons"
+    ],
+    "tools": [],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "acrobatics",
+      "animalHandling",
+      "athletics",
+      "history",
+      "insight",
+      "intimidation",
+      "perception",
+      "survival"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.str >= 13 or score.dex >= 13",
+    "text": "Strength 13 or Dexterity 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor",
+      "Medium armor",
+      "Shields"
+     ],
+     "weapons": [
+      "Simple weapons",
+      "Martial weapons"
+     ]
+    }
+   },
+   "subclassLevel": 3,
+   "subclassTitle": "Martial Archetype",
+   "features": [
+    {
+     "id": "fighting-style",
+     "name": "Fighting Style",
+     "level": 1,
+     "text": "Adopt a style of fighting as your specialty.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "fighting-style",
+       "name": "Fighting Style",
+       "kind": "option",
+       "choose": 1,
+       "from": {
+        "optionSet": "fighting-styles"
+       }
+      }
+     ]
+    },
+    {
+     "id": "second-wind",
+     "name": "Second Wind",
+     "level": 1,
+     "text": "Bonus action: regain 1d10 + fighter level HP. Once per short rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "second-wind",
+       "name": "Second Wind",
+       "max": 1,
+       "recharge": "short"
+      },
+      {
+       "type": "action",
+       "id": "use-second-wind",
+       "name": "Second Wind",
+       "econ": "bonus",
+       "cost": {
+        "resource": "second-wind",
+        "amount": 1
+       },
+       "heal": "1d10 + classLevel"
+      }
+     ]
+    },
+    {
+     "id": "action-surge",
+     "name": "Action Surge",
+     "level": 2,
+     "text": "Take one extra action on your turn. Once per short rest (twice at 17th, but only once per turn).",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "action-surge",
+       "name": "Action Surge",
+       "max": {
+        "2": 1,
+        "17": 2
+       },
+       "recharge": "short",
+       "color": "gold"
+      },
+      {
+       "type": "action",
+       "id": "use-action-surge",
+       "name": "Action Surge",
+       "econ": "free",
+       "cost": {
+        "resource": "action-surge",
+        "amount": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-6",
+     "name": "Ability Score Improvement",
+     "level": 6,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-6"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-14",
+     "name": "Ability Score Improvement",
+     "level": 14,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-14"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "extra-attack",
+     "name": "Extra Attack",
+     "level": 5,
+     "text": "Attack twice when you take the Attack action (three times at 11th, four at 20th).",
+     "effects": [
+      {
+       "type": "set",
+       "target": "attacksPerAction",
+       "value": {
+        "5": 2,
+        "11": 3,
+        "20": 4
+       },
+       "mode": "max"
+      }
+     ]
+    },
+    {
+     "id": "indomitable",
+     "name": "Indomitable",
+     "level": 9,
+     "text": "Reroll a failed saving throw; you must use the new roll.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "indomitable",
+       "name": "Indomitable",
+       "max": {
+        "9": 1,
+        "13": 2,
+        "17": 3
+       },
+       "recharge": "long"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "monk",
+   "name": "Monk",
+   "hitDie": 8,
+   "primaryAbility": [
+    "dex",
+    "wis"
+   ],
+   "saves": [
+    "str",
+    "dex"
+   ],
+   "proficiencies": {
+    "armor": [],
+    "weapons": [
+     "Simple weapons",
+     "Shortswords"
+    ],
+    "tools": [
+     "One artisan's tool or musical instrument"
+    ],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "acrobatics",
+      "athletics",
+      "history",
+      "insight",
+      "religion",
+      "stealth"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.dex >= 13 and score.wis >= 13",
+    "text": "Dexterity 13 and Wisdom 13",
+    "proficiencies": {
+     "weapons": [
+      "Simple weapons",
+      "Shortswords"
+     ]
+    }
+   },
+   "subclassLevel": 3,
+   "subclassTitle": "Monastic Tradition",
+   "table": {
+    "martialArts": [
+     "1d4",
+     "1d4",
+     "1d4",
+     "1d4",
+     "1d6",
+     "1d6",
+     "1d6",
+     "1d6",
+     "1d6",
+     "1d6",
+     "1d8",
+     "1d8",
+     "1d8",
+     "1d8",
+     "1d8",
+     "1d8",
+     "1d10",
+     "1d10",
+     "1d10",
+     "1d10"
+    ],
+    "unarmoredMovement": [
+     0,
+     10,
+     10,
+     10,
+     10,
+     15,
+     15,
+     15,
+     15,
+     20,
+     20,
+     20,
+     20,
+     25,
+     25,
+     25,
+     25,
+     30,
+     30,
+     30
+    ]
+   },
+   "features": [
+    {
+     "id": "unarmored-defense",
+     "name": "Unarmored Defense",
+     "level": 1,
+     "text": "Without armor or a shield, AC is 10 + Dex modifier + Wis modifier.",
+     "effects": [
+      {
+       "type": "acFormula",
+       "formula": "10 + mod.dex + mod.wis",
+       "when": "unarmored and noShield",
+       "allowShield": false
+      }
+     ]
+    },
+    {
+     "id": "martial-arts",
+     "name": "Martial Arts",
+     "level": 1,
+     "text": "With unarmed strikes and monk weapons: use Dex instead of Str, roll your martial arts die for damage, and make one unarmed strike as a bonus action after attacking.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "martial-arts-strike",
+       "name": "Bonus unarmed strike",
+       "econ": "bonus",
+       "roll": "col.martialArts + mod.dex",
+       "text": "After taking the Attack action with an unarmed strike or monk weapon."
+      }
+     ]
+    },
+    {
+     "id": "ki",
+     "name": "Ki",
+     "level": 2,
+     "text": "Ki points equal to your monk level, spent on Flurry of Blows, Patient Defense and Step of the Wind. They come back on a short rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "ki",
+       "name": "Ki points",
+       "max": "classLevel",
+       "recharge": "short",
+       "color": "psy"
+      },
+      {
+       "type": "action",
+       "id": "flurry-of-blows",
+       "name": "Flurry of Blows",
+       "econ": "bonus",
+       "cost": {
+        "resource": "ki",
+        "amount": 1
+       },
+       "text": "After the Attack action: two unarmed strikes."
+      },
+      {
+       "type": "action",
+       "id": "patient-defense",
+       "name": "Patient Defense",
+       "econ": "bonus",
+       "cost": {
+        "resource": "ki",
+        "amount": 1
+       },
+       "text": "Take the Dodge action."
+      },
+      {
+       "type": "action",
+       "id": "step-of-the-wind",
+       "name": "Step of the Wind",
+       "econ": "bonus",
+       "cost": {
+        "resource": "ki",
+        "amount": 1
+       },
+       "text": "Disengage or Dash; jump distance doubled."
+      }
+     ]
+    },
+    {
+     "id": "unarmored-movement",
+     "name": "Unarmored Movement",
+     "level": 2,
+     "text": "Extra speed while not wearing armor or a shield.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "speed",
+       "value": "col.unarmoredMovement",
+       "when": "unarmored and noShield"
+      }
+     ]
+    },
+    {
+     "id": "deflect-missiles",
+     "name": "Deflect Missiles",
+     "level": 3,
+     "text": "Reaction when hit by a ranged weapon attack: reduce the damage by 1d10 + Dex modifier + monk level.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "deflect-missiles",
+       "name": "Deflect Missiles",
+       "econ": "reaction",
+       "roll": "1d10 + mod.dex + classLevel"
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "slow-fall",
+     "name": "Slow Fall",
+     "level": 4,
+     "text": "Reaction: reduce falling damage by five times your monk level."
+    },
+    {
+     "id": "extra-attack",
+     "name": "Extra Attack",
+     "level": 5,
+     "text": "Attack twice when you take the Attack action.",
+     "effects": [
+      {
+       "type": "set",
+       "target": "attacksPerAction",
+       "value": 2,
+       "mode": "max"
+      }
+     ]
+    },
+    {
+     "id": "stunning-strike",
+     "name": "Stunning Strike",
+     "level": 5,
+     "text": "When you hit with a melee weapon attack, spend 1 ki: the target makes a Con save or is stunned until the end of your next turn.",
+     "effects": [
+      {
+       "type": "attackRider",
+       "id": "stunning-strike",
+       "name": "Stunning Strike",
+       "cost": {
+        "resource": "ki",
+        "amount": 1
+       },
+       "requires": [
+        "melee",
+        "hit"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "ki-empowered-strikes",
+     "name": "Ki-Empowered Strikes",
+     "level": 6,
+     "text": "Your unarmed strikes count as magical."
+    },
+    {
+     "id": "evasion",
+     "name": "Evasion",
+     "level": 7,
+     "text": "On a Dex save for half damage, take none on a success and half on a failure."
+    },
+    {
+     "id": "stillness-of-mind",
+     "name": "Stillness of Mind",
+     "level": 7,
+     "text": "Action: end one effect causing you to be charmed or frightened."
+    },
+    {
+     "id": "purity-of-body",
+     "name": "Purity of Body",
+     "level": 10,
+     "text": "Immune to disease and poison.",
+     "effects": [
+      {
+       "type": "immunity",
+       "damage": [
+        "poison"
+       ]
+      },
+      {
+       "type": "conditionImmunity",
+       "conditions": [
+        "Poisoned"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "tongue-of-the-sun-and-moon",
+     "name": "Tongue of the Sun and Moon",
+     "level": 13,
+     "text": "Understand all spoken languages, and anyone who knows a language understands you."
+    },
+    {
+     "id": "diamond-soul",
+     "name": "Diamond Soul",
+     "level": 14,
+     "text": "Proficient in all saving throws; spend 1 ki to reroll a failed save.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "save",
+       "values": [
+        "str",
+        "dex",
+        "con",
+        "int",
+        "wis",
+        "cha"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "timeless-body",
+     "name": "Timeless Body",
+     "level": 15,
+     "text": "No frailty of old age; no need for food or water."
+    },
+    {
+     "id": "empty-body",
+     "name": "Empty Body",
+     "level": 18,
+     "text": "4 ki: invisible and resistant to all but force damage for 1 minute. 8 ki: cast astral projection."
+    },
+    {
+     "id": "perfect-self",
+     "name": "Perfect Self",
+     "level": 20,
+     "text": "If you roll initiative with no ki, regain 4.",
+     "effects": [
+      {
+       "type": "reminder",
+       "on": "initiative",
+       "text": "Perfect Self: regain 4 ki if you have none."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "paladin",
+   "name": "Paladin",
+   "hitDie": 10,
+   "primaryAbility": [
+    "str",
+    "cha"
+   ],
+   "saves": [
+    "wis",
+    "cha"
+   ],
+   "proficiencies": {
+    "armor": [
+     "All armor",
+     "Shields"
+    ],
+    "weapons": [
+     "Simple weapons",
+     "Martial weapons"
+    ],
+    "tools": [],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "athletics",
+      "insight",
+      "intimidation",
+      "medicine",
+      "persuasion",
+      "religion"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.str >= 13 and score.cha >= 13",
+    "text": "Strength 13 and Charisma 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor",
+      "Medium armor",
+      "Shields"
+     ],
+     "weapons": [
+      "Simple weapons",
+      "Martial weapons"
+     ]
+    }
+   },
+   "subclassLevel": 3,
+   "subclassTitle": "Sacred Oath",
+   "features": [
+    {
+     "id": "divine-sense",
+     "name": "Divine Sense",
+     "level": 1,
+     "text": "Action: sense celestials, fiends and undead within 60 ft. 1 + Charisma modifier times per long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "divine-sense",
+       "name": "Divine Sense",
+       "max": "max(1, 1 + mod.cha)",
+       "recharge": "long"
+      },
+      {
+       "type": "action",
+       "id": "use-divine-sense",
+       "name": "Divine Sense",
+       "econ": "action",
+       "cost": {
+        "resource": "divine-sense",
+        "amount": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "lay-on-hands",
+     "name": "Lay on Hands",
+     "level": 1,
+     "text": "A pool of healing equal to 5 × paladin level, refilled on a long rest. 5 points cure a disease or poison.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "lay-on-hands",
+       "name": "Lay on Hands (HP)",
+       "max": "5 * classLevel",
+       "recharge": "long"
+      },
+      {
+       "type": "action",
+       "id": "use-lay-on-hands",
+       "name": "Lay on Hands",
+       "econ": "action",
+       "cost": {
+        "resource": "lay-on-hands",
+        "amount": 1
+       },
+       "text": "Choose how many points to spend."
+      }
+     ]
+    },
+    {
+     "id": "fighting-style",
+     "name": "Fighting Style",
+     "level": 2,
+     "text": "Adopt a style of fighting as your specialty.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "fighting-style",
+       "name": "Fighting Style",
+       "kind": "option",
+       "choose": 1,
+       "from": {
+        "optionSet": "paladin-fighting-styles"
+       }
+      }
+     ]
+    },
+    {
+     "id": "spellcasting",
+     "name": "Spellcasting",
+     "level": 2,
+     "text": "Paladin spells use Charisma. Prepare Cha modifier + half your paladin level spells each long rest.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "cha",
+       "progression": "half",
+       "list": "paladin",
+       "prepared": "max(1, mod.cha + floor(classLevel / 2))",
+       "ritual": "none",
+       "focus": "Holy symbol"
+      }
+     ]
+    },
+    {
+     "id": "divine-smite",
+     "name": "Divine Smite",
+     "level": 2,
+     "text": "When you hit with a melee weapon attack, spend a spell slot for 2d8 radiant damage, +1d8 per slot level above 1st (max 5d8), +1d8 against undead or fiends.",
+     "effects": [
+      {
+       "type": "attackRider",
+       "id": "divine-smite",
+       "name": "Divine Smite",
+       "damage": "2d8",
+       "damageType": "radiant",
+       "cost": {
+        "slot": 1
+       },
+       "perSlotLevel": "1d8",
+       "maxDice": 5,
+       "requires": [
+        "melee",
+        "hit"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "divine-health",
+     "name": "Divine Health",
+     "level": 3,
+     "text": "Immune to disease."
+    },
+    {
+     "id": "channel-divinity",
+     "name": "Channel Divinity",
+     "level": 3,
+     "text": "Use your oath's Channel Divinity option. Once per short rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "channel-divinity",
+       "name": "Channel Divinity",
+       "max": 1,
+       "recharge": "short",
+       "color": "gold"
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "extra-attack",
+     "name": "Extra Attack",
+     "level": 5,
+     "text": "Attack twice when you take the Attack action.",
+     "effects": [
+      {
+       "type": "set",
+       "target": "attacksPerAction",
+       "value": 2,
+       "mode": "max"
+      }
+     ]
+    },
+    {
+     "id": "aura-of-protection",
+     "name": "Aura of Protection",
+     "level": 6,
+     "text": "You and friendly creatures within 10 ft add your Charisma modifier (minimum +1) to saving throws while you're conscious.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "save.all",
+       "value": "max(1, mod.cha)"
+      }
+     ]
+    },
+    {
+     "id": "aura-of-courage",
+     "name": "Aura of Courage",
+     "level": 10,
+     "text": "You and friends within 10 ft can't be frightened while you're conscious.",
+     "effects": [
+      {
+       "type": "conditionImmunity",
+       "conditions": [
+        "Frightened"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "improved-divine-smite",
+     "name": "Improved Divine Smite",
+     "level": 11,
+     "text": "Every melee weapon hit deals an extra 1d8 radiant damage.",
+     "effects": [
+      {
+       "type": "attackRider",
+       "id": "improved-divine-smite",
+       "name": "Improved Divine Smite",
+       "damage": "1d8",
+       "damageType": "radiant",
+       "requires": [
+        "melee",
+        "hit"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "cleansing-touch",
+     "name": "Cleansing Touch",
+     "level": 14,
+     "text": "Action: end one spell on yourself or a willing creature you touch. Cha modifier times per long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "cleansing-touch",
+       "name": "Cleansing Touch",
+       "max": "max(1, mod.cha)",
+       "recharge": "long"
+      },
+      {
+       "type": "action",
+       "id": "use-cleansing-touch",
+       "name": "Cleansing Touch",
+       "econ": "action",
+       "cost": {
+        "resource": "cleansing-touch",
+        "amount": 1
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ranger",
+   "name": "Ranger",
+   "hitDie": 10,
+   "primaryAbility": [
+    "dex",
+    "wis"
+   ],
+   "saves": [
+    "str",
+    "dex"
+   ],
+   "proficiencies": {
+    "armor": [
+     "Light armor",
+     "Medium armor",
+     "Shields"
+    ],
+    "weapons": [
+     "Simple weapons",
+     "Martial weapons"
+    ],
+    "tools": [],
+    "skills": {
+     "choose": 3,
+     "from": [
+      "animalHandling",
+      "athletics",
+      "insight",
+      "investigation",
+      "nature",
+      "perception",
+      "stealth",
+      "survival"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.dex >= 13 and score.wis >= 13",
+    "text": "Dexterity 13 and Wisdom 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor",
+      "Medium armor",
+      "Shields"
+     ],
+     "weapons": [
+      "Simple weapons",
+      "Martial weapons"
+     ],
+     "skills": {
+      "choose": 1,
+      "from": [
+       "animalHandling",
+       "athletics",
+       "insight",
+       "investigation",
+       "nature",
+       "perception",
+       "stealth",
+       "survival"
+      ]
+     }
+    }
+   },
+   "subclassLevel": 3,
+   "subclassTitle": "Ranger Archetype",
+   "table": {
+    "spellsKnown": [
+     0,
+     2,
+     3,
+     3,
+     4,
+     4,
+     5,
+     5,
+     6,
+     6,
+     7,
+     7,
+     8,
+     8,
+     9,
+     9,
+     10,
+     10,
+     11,
+     11
+    ]
+   },
+   "features": [
+    {
+     "id": "favored-enemy",
+     "name": "Favored Enemy",
+     "level": 1,
+     "text": "Pick a creature type (or two humanoid races). Advantage on Survival checks to track them and Intelligence checks to recall facts about them. Learn one of their languages.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "favored-enemy",
+       "name": "Favored enemy",
+       "kind": "text",
+       "choose": 1
+      }
+     ]
+    },
+    {
+     "id": "natural-explorer",
+     "name": "Natural Explorer",
+     "level": 1,
+     "text": "Pick a favored terrain. Travel and foraging benefits there, and you can't get lost in it by nonmagical means.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "favored-terrain",
+       "name": "Favored terrain",
+       "kind": "text",
+       "choose": 1
+      }
+     ]
+    },
+    {
+     "id": "fighting-style",
+     "name": "Fighting Style",
+     "level": 2,
+     "text": "Adopt a style of fighting as your specialty.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "fighting-style",
+       "name": "Fighting Style",
+       "kind": "option",
+       "choose": 1,
+       "from": {
+        "optionSet": "ranger-fighting-styles"
+       }
+      }
+     ]
+    },
+    {
+     "id": "spellcasting",
+     "name": "Spellcasting",
+     "level": 2,
+     "text": "Ranger spells use Wisdom. Ranger levels count half (rounded down) toward multiclass spell slots.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "wis",
+       "progression": "half",
+       "list": "ranger",
+       "known": "col.spellsKnown",
+       "ritual": "none"
+      }
+     ]
+    },
+    {
+     "id": "primeval-awareness",
+     "name": "Primeval Awareness",
+     "level": 3,
+     "text": "Action: spend a spell slot to sense certain creature types within 1 mile (6 in favored terrain) for 1 minute per slot level."
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "extra-attack",
+     "name": "Extra Attack",
+     "level": 5,
+     "text": "Attack twice when you take the Attack action.",
+     "effects": [
+      {
+       "type": "set",
+       "target": "attacksPerAction",
+       "value": 2,
+       "mode": "max"
+      }
+     ]
+    },
+    {
+     "id": "lands-stride",
+     "name": "Land's Stride",
+     "level": 8,
+     "text": "Nonmagical difficult terrain costs no extra movement; advantage on saves against magical plants."
+    },
+    {
+     "id": "hide-in-plain-sight",
+     "name": "Hide in Plain Sight",
+     "level": 10,
+     "text": "Spend 1 minute camouflaging yourself for +10 Stealth while you stay still."
+    },
+    {
+     "id": "vanish",
+     "name": "Vanish",
+     "level": 14,
+     "text": "Hide as a bonus action, and you can't be tracked by nonmagical means."
+    },
+    {
+     "id": "feral-senses",
+     "name": "Feral Senses",
+     "level": 18,
+     "text": "No disadvantage attacking creatures you can't see; you know where invisible creatures within 30 ft are."
+    },
+    {
+     "id": "foe-slayer",
+     "name": "Foe Slayer",
+     "level": 20,
+     "text": "Once per turn, add your Wisdom modifier to an attack or damage roll against a favored enemy."
+    }
+   ]
+  },
+  {
+   "id": "rogue",
+   "name": "Rogue",
+   "hitDie": 8,
+   "primaryAbility": [
+    "dex"
+   ],
+   "saves": [
+    "dex",
+    "int"
+   ],
+   "proficiencies": {
+    "armor": [
+     "Light armor"
+    ],
+    "weapons": [
+     "Simple weapons",
+     "Hand crossbows",
+     "Longswords",
+     "Rapiers",
+     "Shortswords"
+    ],
+    "tools": [
+     "Thieves' tools"
+    ],
+    "skills": {
+     "choose": 4,
+     "from": [
+      "acrobatics",
+      "athletics",
+      "deception",
+      "insight",
+      "intimidation",
+      "investigation",
+      "perception",
+      "performance",
+      "persuasion",
+      "sleightOfHand",
+      "stealth"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.dex >= 13",
+    "text": "Dexterity 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor"
+     ],
+     "tools": [
+      "Thieves' tools"
+     ],
+     "skills": {
+      "choose": 1,
+      "from": [
+       "acrobatics",
+       "athletics",
+       "deception",
+       "insight",
+       "intimidation",
+       "investigation",
+       "perception",
+       "performance",
+       "persuasion",
+       "sleightOfHand",
+       "stealth"
+      ]
+     }
+    }
+   },
+   "subclassLevel": 3,
+   "subclassTitle": "Roguish Archetype",
+   "table": {
+    "sneakAttack": [
+     "1d6",
+     "1d6",
+     "2d6",
+     "2d6",
+     "3d6",
+     "3d6",
+     "4d6",
+     "4d6",
+     "5d6",
+     "5d6",
+     "6d6",
+     "6d6",
+     "7d6",
+     "7d6",
+     "8d6",
+     "8d6",
+     "9d6",
+     "9d6",
+     "10d6",
+     "10d6"
+    ]
+   },
+   "features": [
+    {
+     "id": "expertise-1",
+     "name": "Expertise",
+     "level": 1,
+     "text": "Double your proficiency bonus for two of your skill proficiencies (or one and thieves' tools).",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "expertise-1",
+       "name": "Expertise",
+       "kind": "expertise",
+       "choose": 2,
+       "from": {
+        "skills": "proficient"
+       }
+      }
+     ]
+    },
+    {
+     "id": "sneak-attack",
+     "name": "Sneak Attack",
+     "level": 1,
+     "text": "Once per turn, extra damage when you hit with a finesse or ranged weapon and have advantage, or an ally is next to the target and you don't have disadvantage.",
+     "effects": [
+      {
+       "type": "attackRider",
+       "id": "sneak-attack",
+       "name": "Sneak Attack",
+       "damage": "col.sneakAttack",
+       "oncePer": "turn",
+       "requires": [
+        "finesseOrRanged",
+        "advantageOrAlly",
+        "hit"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "thieves-cant",
+     "name": "Thieves' Cant",
+     "level": 1,
+     "text": "A secret mix of dialect, jargon and code.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Thieves' cant"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "cunning-action",
+     "name": "Cunning Action",
+     "level": 2,
+     "text": "Bonus action: Dash, Disengage or Hide.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "cunning-action",
+       "name": "Cunning Action",
+       "econ": "bonus",
+       "text": "Dash, Disengage or Hide."
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-10",
+     "name": "Ability Score Improvement",
+     "level": 10,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-10"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "uncanny-dodge",
+     "name": "Uncanny Dodge",
+     "level": 5,
+     "text": "Reaction when an attacker you can see hits you: halve the damage.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "uncanny-dodge",
+       "name": "Uncanny Dodge",
+       "econ": "reaction",
+       "text": "Halve the attack's damage."
+      }
+     ]
+    },
+    {
+     "id": "expertise-6",
+     "name": "Expertise",
+     "level": 6,
+     "text": "Two more proficiencies get double proficiency.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "expertise-6",
+       "name": "Expertise",
+       "kind": "expertise",
+       "choose": 2,
+       "from": {
+        "skills": "proficient"
+       }
+      }
+     ]
+    },
+    {
+     "id": "evasion",
+     "name": "Evasion",
+     "level": 7,
+     "text": "On a Dex save for half damage, take none on a success and half on a failure."
+    },
+    {
+     "id": "reliable-talent",
+     "name": "Reliable Talent",
+     "level": 11,
+     "text": "Treat a d20 roll of 9 or lower as a 10 on ability checks that use a proficiency.",
+     "effects": [
+      {
+       "type": "reminder",
+       "on": "always",
+       "text": "Reliable Talent: d20 rolls of 9 or lower count as 10 on proficient checks."
+      }
+     ]
+    },
+    {
+     "id": "blindsense",
+     "name": "Blindsense",
+     "level": 14,
+     "text": "Know where hidden or invisible creatures within 10 ft are, if you can hear.",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "blindsight",
+       "range": 10,
+       "note": "Blindsense (hearing)"
+      }
+     ]
+    },
+    {
+     "id": "slippery-mind",
+     "name": "Slippery Mind",
+     "level": 15,
+     "text": "Proficiency in Wisdom saving throws.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "save",
+       "values": [
+        "wis"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "elusive",
+     "name": "Elusive",
+     "level": 18,
+     "text": "No attack roll has advantage against you while you aren't incapacitated."
+    },
+    {
+     "id": "stroke-of-luck",
+     "name": "Stroke of Luck",
+     "level": 20,
+     "text": "Turn a miss into a hit, or a failed check into a 20. Once per short rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "stroke-of-luck",
+       "name": "Stroke of Luck",
+       "max": 1,
+       "recharge": "short",
+       "color": "gold"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sorcerer",
+   "name": "Sorcerer",
+   "hitDie": 6,
+   "primaryAbility": [
+    "cha"
+   ],
+   "saves": [
+    "con",
+    "cha"
+   ],
+   "proficiencies": {
+    "armor": [],
+    "weapons": [
+     "Daggers",
+     "Darts",
+     "Slings",
+     "Quarterstaffs",
+     "Light crossbows"
+    ],
+    "tools": [],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "arcana",
+      "deception",
+      "insight",
+      "intimidation",
+      "persuasion",
+      "religion"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.cha >= 13",
+    "text": "Charisma 13",
+    "proficiencies": {}
+   },
+   "subclassLevel": 1,
+   "subclassTitle": "Sorcerous Origin",
+   "table": {
+    "cantrips": [
+     4,
+     4,
+     4,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6
+    ],
+    "spellsKnown": [
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     12,
+     13,
+     13,
+     14,
+     14,
+     15,
+     15,
+     15,
+     15
+    ]
+   },
+   "features": [
+    {
+     "id": "spellcasting",
+     "name": "Spellcasting",
+     "level": 1,
+     "text": "Sorcerer spells use Charisma. You know a set number of spells and can swap one each level.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "cha",
+       "progression": "full",
+       "list": "sorcerer",
+       "cantrips": "col.cantrips",
+       "known": "col.spellsKnown",
+       "ritual": "none",
+       "focus": "Arcane focus"
+      }
+     ]
+    },
+    {
+     "id": "font-of-magic",
+     "name": "Font of Magic",
+     "level": 2,
+     "text": "Sorcery points equal to your sorcerer level, spent on metamagic or turned into spell slots. Long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "sorcery-points",
+       "name": "Sorcery points",
+       "max": "classLevel",
+       "recharge": "long",
+       "color": "psy"
+      }
+     ]
+    },
+    {
+     "id": "metamagic",
+     "name": "Metamagic",
+     "level": 3,
+     "text": "Learn two Metamagic options (one more at 10th and 17th).",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "metamagic",
+       "name": "Metamagic",
+       "kind": "option",
+       "choose": {
+        "3": 2,
+        "10": 3,
+        "17": 4
+       },
+       "from": {
+        "optionSet": "metamagic"
+       }
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "sorcerous-restoration",
+     "name": "Sorcerous Restoration",
+     "level": 20,
+     "text": "Regain 4 sorcery points on a short rest.",
+     "effects": [
+      {
+       "type": "reminder",
+       "on": "shortRest",
+       "text": "Sorcerous Restoration: regain 4 sorcery points."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "warlock",
+   "name": "Warlock",
+   "hitDie": 8,
+   "primaryAbility": [
+    "cha"
+   ],
+   "saves": [
+    "wis",
+    "cha"
+   ],
+   "proficiencies": {
+    "armor": [
+     "Light armor"
+    ],
+    "weapons": [
+     "Simple weapons"
+    ],
+    "tools": [],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "arcana",
+      "deception",
+      "history",
+      "intimidation",
+      "investigation",
+      "nature",
+      "religion"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.cha >= 13",
+    "text": "Charisma 13",
+    "proficiencies": {
+     "armor": [
+      "Light armor"
+     ],
+     "weapons": [
+      "Simple weapons"
+     ]
+    }
+   },
+   "subclassLevel": 1,
+   "subclassTitle": "Otherworldly Patron",
+   "table": {
+    "cantrips": [
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "spellsKnown": [
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     10,
+     11,
+     11,
+     12,
+     12,
+     13,
+     13,
+     14,
+     14,
+     15,
+     15
+    ],
+    "invocations": [
+     0,
+     2,
+     2,
+     2,
+     3,
+     3,
+     4,
+     4,
+     5,
+     5,
+     5,
+     6,
+     6,
+     6,
+     7,
+     7,
+     7,
+     8,
+     8,
+     8
+    ]
+   },
+   "features": [
+    {
+     "id": "pact-magic",
+     "name": "Pact Magic",
+     "level": 1,
+     "text": "A few spell slots, all the same level, that come back on a short rest.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "cha",
+       "progression": "pact",
+       "list": "warlock",
+       "cantrips": "col.cantrips",
+       "known": "col.spellsKnown",
+       "ritual": "none",
+       "focus": "Arcane focus"
+      }
+     ]
+    },
+    {
+     "id": "eldritch-invocations",
+     "name": "Eldritch Invocations",
+     "level": 2,
+     "text": "Fragments of forbidden knowledge. You learn more as you level.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "invocations",
+       "name": "Eldritch Invocations",
+       "kind": "option",
+       "choose": "col.invocations",
+       "from": {
+        "optionSet": "eldritch-invocations"
+       }
+      }
+     ]
+    },
+    {
+     "id": "pact-boon",
+     "name": "Pact Boon",
+     "level": 3,
+     "text": "Your patron's gift: a familiar, a weapon or a book.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "pact-boon",
+       "name": "Pact Boon",
+       "kind": "option",
+       "choose": 1,
+       "from": {
+        "optionSet": "pact-boons"
+       }
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "mystic-arcanum-6",
+     "name": "Mystic Arcanum (6th level)",
+     "level": 11,
+     "text": "Cast one 6th-level warlock spell once per long rest without a slot.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "arcanum-6",
+       "name": "Mystic Arcanum (6th)",
+       "kind": "spell",
+       "choose": 1,
+       "from": {
+        "spells": {
+         "list": "warlock",
+         "level": 6
+        }
+       },
+       "grants": {
+        "uses": 1,
+        "recharge": "long",
+        "noSlot": true,
+        "class": "warlock"
+       }
+      }
+     ]
+    },
+    {
+     "id": "mystic-arcanum-7",
+     "name": "Mystic Arcanum (7th level)",
+     "level": 13,
+     "text": "Cast one 7th-level warlock spell once per long rest without a slot.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "arcanum-7",
+       "name": "Mystic Arcanum (7th)",
+       "kind": "spell",
+       "choose": 1,
+       "from": {
+        "spells": {
+         "list": "warlock",
+         "level": 7
+        }
+       },
+       "grants": {
+        "uses": 1,
+        "recharge": "long",
+        "noSlot": true,
+        "class": "warlock"
+       }
+      }
+     ]
+    },
+    {
+     "id": "mystic-arcanum-8",
+     "name": "Mystic Arcanum (8th level)",
+     "level": 15,
+     "text": "Cast one 8th-level warlock spell once per long rest without a slot.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "arcanum-8",
+       "name": "Mystic Arcanum (8th)",
+       "kind": "spell",
+       "choose": 1,
+       "from": {
+        "spells": {
+         "list": "warlock",
+         "level": 8
+        }
+       },
+       "grants": {
+        "uses": 1,
+        "recharge": "long",
+        "noSlot": true,
+        "class": "warlock"
+       }
+      }
+     ]
+    },
+    {
+     "id": "mystic-arcanum-9",
+     "name": "Mystic Arcanum (9th level)",
+     "level": 17,
+     "text": "Cast one 9th-level warlock spell once per long rest without a slot.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "arcanum-9",
+       "name": "Mystic Arcanum (9th)",
+       "kind": "spell",
+       "choose": 1,
+       "from": {
+        "spells": {
+         "list": "warlock",
+         "level": 9
+        }
+       },
+       "grants": {
+        "uses": 1,
+        "recharge": "long",
+        "noSlot": true,
+        "class": "warlock"
+       }
+      }
+     ]
+    },
+    {
+     "id": "eldritch-master",
+     "name": "Eldritch Master",
+     "level": 20,
+     "text": "Spend 1 minute to regain all pact slots, once per long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "eldritch-master",
+       "name": "Eldritch Master",
+       "max": 1,
+       "recharge": "long"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wizard",
+   "name": "Wizard",
+   "hitDie": 6,
+   "primaryAbility": [
+    "int"
+   ],
+   "saves": [
+    "int",
+    "wis"
+   ],
+   "proficiencies": {
+    "armor": [],
+    "weapons": [
+     "Daggers",
+     "Darts",
+     "Slings",
+     "Quarterstaffs",
+     "Light crossbows"
+    ],
+    "tools": [],
+    "skills": {
+     "choose": 2,
+     "from": [
+      "arcana",
+      "history",
+      "insight",
+      "investigation",
+      "medicine",
+      "religion"
+     ]
+    }
+   },
+   "multiclass": {
+    "requires": "score.int >= 13",
+    "text": "Intelligence 13",
+    "proficiencies": {}
+   },
+   "subclassLevel": 2,
+   "subclassTitle": "Arcane Tradition",
+   "table": {
+    "cantrips": [
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5
+    ]
+   },
+   "features": [
+    {
+     "id": "spellcasting",
+     "name": "Spellcasting",
+     "level": 1,
+     "text": "Wizard spells use Intelligence. Your spellbook starts with six 1st-level spells and gains two each level. Each long rest, prepare Int modifier + wizard level spells from it. Rituals in the book can be cast without preparing them.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "int",
+       "progression": "full",
+       "list": "wizard",
+       "cantrips": "col.cantrips",
+       "prepared": "max(1, mod.int + classLevel)",
+       "spellbook": {
+        "start": 6,
+        "perLevel": 2
+       },
+       "ritual": "spellbook",
+       "focus": "Arcane focus"
+      }
+     ]
+    },
+    {
+     "id": "arcane-recovery",
+     "name": "Arcane Recovery",
+     "level": 1,
+     "text": "Once a day during a short rest, regain spell slots totalling up to half your wizard level (rounded up), none higher than 5th.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "arcane-recovery",
+       "name": "Arcane Recovery",
+       "max": 1,
+       "recharge": "long"
+      },
+      {
+       "type": "action",
+       "id": "use-arcane-recovery",
+       "name": "Arcane Recovery",
+       "econ": "special",
+       "cost": {
+        "resource": "arcane-recovery",
+        "amount": 1
+       },
+       "gain": {
+        "slots": {
+         "total": "ceil(classLevel / 2)",
+         "maxLevel": 5
+        }
+       },
+       "text": "Use during a short rest."
+      },
+      {
+       "type": "reminder",
+       "on": "shortRest",
+       "text": "Arcane Recovery: once a day, regain slots totalling half your wizard level (rounded up)."
+      }
+     ]
+    },
+    {
+     "id": "asi-4",
+     "name": "Ability Score Improvement",
+     "level": 4,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-4"
+      }
+     ]
+    },
+    {
+     "id": "asi-8",
+     "name": "Ability Score Improvement",
+     "level": 8,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-8"
+      }
+     ]
+    },
+    {
+     "id": "asi-12",
+     "name": "Ability Score Improvement",
+     "level": 12,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-12"
+      }
+     ]
+    },
+    {
+     "id": "asi-16",
+     "name": "Ability Score Improvement",
+     "level": 16,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-16"
+      }
+     ]
+    },
+    {
+     "id": "asi-19",
+     "name": "Ability Score Improvement",
+     "level": 19,
+     "text": "+2 to one score or +1 to two (max 20), or a feat if your DM allows feats.",
+     "effects": [
+      {
+       "type": "asi",
+       "id": "asi-19"
+      }
+     ]
+    },
+    {
+     "id": "spell-mastery",
+     "name": "Spell Mastery",
+     "level": 18,
+     "text": "Cast one chosen 1st-level and one 2nd-level spell at their lowest level without a slot."
+    },
+    {
+     "id": "signature-spells",
+     "name": "Signature Spells",
+     "level": 20,
+     "text": "Two chosen 3rd-level spells are always prepared and can each be cast once per short rest without a slot."
+    }
+   ]
+  }
+ ],
+ "subclasses": [
+  {
+   "id": "alchemist",
+   "name": "Alchemist",
+   "class": "artificer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "armorer",
+   "name": "Armorer",
+   "class": "artificer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "artillerist",
+   "name": "Artillerist",
+   "class": "artificer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "battle-smith",
+   "name": "Battle Smith",
+   "class": "artificer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "path-of-the-berserker",
+   "name": "Path of the Berserker",
+   "class": "barbarian",
+   "features": [
+    {
+     "id": "frenzy",
+     "name": "Frenzy",
+     "level": 3,
+     "text": "When you rage you can go into a frenzy: one melee weapon attack as a bonus action each turn. You gain a level of exhaustion when the rage ends.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "frenzy-attack",
+       "name": "Frenzy attack",
+       "econ": "bonus",
+       "when": "toggle:raging"
+      }
+     ]
+    },
+    {
+     "id": "mindless-rage",
+     "name": "Mindless Rage",
+     "level": 6,
+     "text": "Can't be charmed or frightened while raging.",
+     "effects": [
+      {
+       "type": "conditionImmunity",
+       "conditions": [
+        "Charmed",
+        "Frightened"
+       ],
+       "when": "toggle:raging"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "path-of-the-totem-warrior",
+   "name": "Path of the Totem Warrior",
+   "class": "barbarian",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "path-of-the-ancestral-guardian",
+   "name": "Path of the Ancestral Guardian",
+   "class": "barbarian",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "path-of-the-storm-herald",
+   "name": "Path of the Storm Herald",
+   "class": "barbarian",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "path-of-the-zealot",
+   "name": "Path of the Zealot",
+   "class": "barbarian",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "path-of-the-beast",
+   "name": "Path of the Beast",
+   "class": "barbarian",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "path-of-wild-magic",
+   "name": "Path of Wild Magic",
+   "class": "barbarian",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "college-of-lore",
+   "name": "College of Lore",
+   "class": "bard",
+   "features": [
+    {
+     "id": "lore-bonus-proficiencies",
+     "name": "Bonus Proficiencies",
+     "level": 3,
+     "text": "Proficiency in three skills of your choice.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "lore-skills",
+       "name": "Bonus Proficiencies",
+       "kind": "skill",
+       "choose": 3,
+       "from": {
+        "skills": "any"
+       }
+      }
+     ]
+    },
+    {
+     "id": "cutting-words",
+     "name": "Cutting Words",
+     "level": 3,
+     "text": "Reaction: spend a Bardic Inspiration to subtract the die from a creature's attack roll, ability check or damage roll.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "cutting-words",
+       "name": "Cutting Words",
+       "econ": "reaction",
+       "cost": {
+        "resource": "bardic-inspiration",
+        "amount": 1
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "college-of-valor",
+   "name": "College of Valor",
+   "class": "bard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "college-of-glamour",
+   "name": "College of Glamour",
+   "class": "bard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "college-of-swords",
+   "name": "College of Swords",
+   "class": "bard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "college-of-whispers",
+   "name": "College of Whispers",
+   "class": "bard",
+   "features": [
+    {
+     "id": "psychic-blades",
+     "name": "Psychic Blades",
+     "level": 3,
+     "text": "When you hit with a weapon attack, spend one Bardic Inspiration to add psychic damage (2d6; 3d6 at bard 5, 5d6 at 10, 8d6 at 15). Once per round, on your turn.",
+     "effects": [
+      {
+       "type": "attackRider",
+       "id": "psychic-blades",
+       "name": "Psychic Blades",
+       "damage": {
+        "3": "2d6",
+        "5": "3d6",
+        "10": "5d6",
+        "15": "8d6"
+       },
+       "damageType": "psychic",
+       "cost": {
+        "resource": "bardic-inspiration",
+        "amount": 1
+       },
+       "oncePer": "round",
+       "requires": [
+        "weapon",
+        "hit"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "words-of-terror",
+     "name": "Words of Terror",
+     "level": 3,
+     "text": "Spend 1 minute talking alone with a humanoid. It makes a Wisdom save against your spell DC or is frightened of you or a creature you name for 1 hour. Once per short or long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "words-of-terror",
+       "name": "Words of Terror",
+       "max": 1,
+       "recharge": "short",
+       "color": "gold"
+      },
+      {
+       "type": "action",
+       "id": "use-words-of-terror",
+       "name": "Words of Terror",
+       "econ": "minute",
+       "cost": {
+        "resource": "words-of-terror",
+        "amount": 1
+       },
+       "save": {
+        "ability": "wis",
+        "dc": "spellDC"
+       }
+      }
+     ]
+    },
+    {
+     "id": "mantle-of-whispers",
+     "name": "Mantle of Whispers",
+     "level": 6,
+     "text": "Reaction when a humanoid dies within 30 ft: capture its shadow. Later, as an action, take on its appearance for 1 hour. A creature can see through it with Insight against your Deception +5. Once per short or long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "mantle-of-whispers",
+       "name": "Mantle of Whispers",
+       "max": 1,
+       "recharge": "short",
+       "color": "gold"
+      },
+      {
+       "type": "action",
+       "id": "use-mantle-of-whispers",
+       "name": "Mantle of Whispers",
+       "econ": "reaction",
+       "cost": {
+        "resource": "mantle-of-whispers",
+        "amount": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "shadow-lore",
+     "name": "Shadow Lore",
+     "level": 14,
+     "text": "Action: whisper to a creature within 30 ft. It makes a Wisdom save or is charmed by you for 8 hours, believing you know its darkest secret. Once per long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "shadow-lore",
+       "name": "Shadow Lore",
+       "max": 1,
+       "recharge": "long",
+       "color": "gold"
+      },
+      {
+       "type": "action",
+       "id": "use-shadow-lore",
+       "name": "Shadow Lore",
+       "econ": "action",
+       "cost": {
+        "resource": "shadow-lore",
+        "amount": 1
+       },
+       "save": {
+        "ability": "wis",
+        "dc": "spellDC"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "college-of-creation",
+   "name": "College of Creation",
+   "class": "bard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "college-of-eloquence",
+   "name": "College of Eloquence",
+   "class": "bard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "knowledge-domain",
+   "name": "Knowledge Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "life-domain",
+   "name": "Life Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "light-domain",
+   "name": "Light Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "nature-domain",
+   "name": "Nature Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "tempest-domain",
+   "name": "Tempest Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "trickery-domain",
+   "name": "Trickery Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "war-domain",
+   "name": "War Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "forge-domain",
+   "name": "Forge Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "grave-domain",
+   "name": "Grave Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "order-domain",
+   "name": "Order Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "peace-domain",
+   "name": "Peace Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "twilight-domain",
+   "name": "Twilight Domain",
+   "class": "cleric",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "circle-of-the-land",
+   "name": "Circle of the Land",
+   "class": "druid",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "circle-of-the-moon",
+   "name": "Circle of the Moon",
+   "class": "druid",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "circle-of-dreams",
+   "name": "Circle of Dreams",
+   "class": "druid",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "circle-of-the-shepherd",
+   "name": "Circle of the Shepherd",
+   "class": "druid",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "circle-of-spores",
+   "name": "Circle of Spores",
+   "class": "druid",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "circle-of-stars",
+   "name": "Circle of Stars",
+   "class": "druid",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "circle-of-wildfire",
+   "name": "Circle of Wildfire",
+   "class": "druid",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "champion",
+   "name": "Champion",
+   "class": "fighter",
+   "features": [
+    {
+     "id": "improved-critical",
+     "name": "Improved Critical",
+     "level": 3,
+     "text": "Your weapon attacks score a critical hit on a roll of 19 or 20 (18-20 at 15th level).",
+     "effects": [
+      {
+       "type": "set",
+       "target": "critRange",
+       "value": {
+        "3": 19,
+        "15": 18
+       },
+       "mode": "min"
+      }
+     ]
+    },
+    {
+     "id": "remarkable-athlete",
+     "name": "Remarkable Athlete",
+     "level": 7,
+     "text": "Add half your proficiency bonus (rounded up) to Strength, Dexterity and Constitution checks you aren't proficient in.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "check",
+       "values": [
+        "str",
+        "dex",
+        "con"
+       ],
+       "level": "halfUp",
+       "onlyIfNotProficient": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "battle-master",
+   "name": "Battle Master",
+   "class": "fighter",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "eldritch-knight",
+   "name": "Eldritch Knight",
+   "class": "fighter",
+   "features": [
+    {
+     "id": "ek-spellcasting",
+     "name": "Spellcasting",
+     "level": 3,
+     "text": "Learn wizard spells, mostly abjuration and evocation. Intelligence is your spellcasting ability.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "int",
+       "progression": "third",
+       "list": "wizard",
+       "cantrips": {
+        "3": 2,
+        "10": 3
+       },
+       "known": {
+        "3": 3,
+        "4": 4,
+        "7": 5,
+        "8": 6,
+        "10": 7,
+        "11": 8,
+        "13": 9,
+        "14": 10,
+        "16": 11,
+        "19": 12,
+        "20": 13
+       },
+       "ritual": "none"
+      }
+     ]
+    },
+    {
+     "id": "weapon-bond",
+     "name": "Weapon Bond",
+     "level": 3,
+     "text": "Bond with up to two weapons; you can't be disarmed of them and can summon one to your hand as a bonus action."
+    },
+    {
+     "id": "war-magic",
+     "name": "War Magic",
+     "level": 7,
+     "text": "After casting a cantrip as an action, make one weapon attack as a bonus action.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "war-magic",
+       "name": "War Magic attack",
+       "econ": "bonus"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arcane-archer",
+   "name": "Arcane Archer",
+   "class": "fighter",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "cavalier",
+   "name": "Cavalier",
+   "class": "fighter",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "samurai",
+   "name": "Samurai",
+   "class": "fighter",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "psi-warrior",
+   "name": "Psi Warrior",
+   "class": "fighter",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "rune-knight",
+   "name": "Rune Knight",
+   "class": "fighter",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "echo-knight",
+   "name": "Echo Knight",
+   "class": "fighter",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "way-of-the-open-hand",
+   "name": "Way of the Open Hand",
+   "class": "monk",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "way-of-shadow",
+   "name": "Way of Shadow",
+   "class": "monk",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "way-of-the-four-elements",
+   "name": "Way of the Four Elements",
+   "class": "monk",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "way-of-the-drunken-master",
+   "name": "Way of the Drunken Master",
+   "class": "monk",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "way-of-the-kensei",
+   "name": "Way of the Kensei",
+   "class": "monk",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "way-of-the-sun-soul",
+   "name": "Way of the Sun Soul",
+   "class": "monk",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "way-of-mercy",
+   "name": "Way of Mercy",
+   "class": "monk",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "way-of-the-astral-self",
+   "name": "Way of the Astral Self",
+   "class": "monk",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "oath-of-devotion",
+   "name": "Oath of Devotion",
+   "class": "paladin",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "oath-of-the-ancients",
+   "name": "Oath of the Ancients",
+   "class": "paladin",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "oath-of-vengeance",
+   "name": "Oath of Vengeance",
+   "class": "paladin",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "oath-of-conquest",
+   "name": "Oath of Conquest",
+   "class": "paladin",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "oath-of-redemption",
+   "name": "Oath of Redemption",
+   "class": "paladin",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "oath-of-glory",
+   "name": "Oath of Glory",
+   "class": "paladin",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "oath-of-the-watchers",
+   "name": "Oath of the Watchers",
+   "class": "paladin",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "oathbreaker",
+   "name": "Oathbreaker",
+   "class": "paladin",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "hunter",
+   "name": "Hunter",
+   "class": "ranger",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "beast-master",
+   "name": "Beast Master",
+   "class": "ranger",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "gloom-stalker",
+   "name": "Gloom Stalker",
+   "class": "ranger",
+   "features": [
+    {
+     "id": "gloom-stalker-magic",
+     "name": "Gloom Stalker Magic",
+     "level": 3,
+     "text": "Always-known bonus spells that don't count against spells known: Disguise Self (3), Rope Trick (5), Fear (9), Greater Invisibility (13), Seeming (17).",
+     "effects": [
+      {
+       "type": "grantSpells",
+       "class": "ranger",
+       "alwaysPrepared": true,
+       "countsAgainst": false,
+       "spells": [
+        {
+         "id": "disguise-self",
+         "minLevel": 3
+        },
+        {
+         "id": "rope-trick",
+         "minLevel": 5
+        },
+        {
+         "id": "fear",
+         "minLevel": 9
+        },
+        {
+         "id": "greater-invisibility",
+         "minLevel": 13
+        },
+        {
+         "id": "seeming",
+         "minLevel": 17
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "dread-ambusher",
+     "name": "Dread Ambusher",
+     "level": 3,
+     "text": "Add Wisdom to initiative. On your first turn of each combat: +10 ft walking speed, and if you take the Attack action you get one extra weapon attack that deals +1d8 damage on a hit.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "initiative",
+       "value": "mod.wis"
+      },
+      {
+       "type": "bonus",
+       "target": "speed",
+       "value": 10,
+       "when": "firstRound"
+      },
+      {
+       "type": "bonus",
+       "target": "attacksPerAction",
+       "value": 1,
+       "when": "firstRound"
+      },
+      {
+       "type": "attackRider",
+       "id": "dread-ambusher",
+       "name": "Dread Ambusher",
+       "damage": "1d8",
+       "oncePer": "round",
+       "when": "firstRound",
+       "requires": [
+        "weapon",
+        "hit"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "umbral-sight",
+     "name": "Umbral Sight",
+     "level": 3,
+     "text": "Darkvision 60 ft (or +30 ft if you already have it). While you're in darkness, creatures relying on darkvision can't see you.",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "darkvision",
+       "range": 90,
+       "note": "60 ft, or your darkvision +30"
+      }
+     ]
+    },
+    {
+     "id": "iron-mind",
+     "name": "Iron Mind",
+     "level": 7,
+     "text": "Proficiency in Wisdom saving throws (or Intelligence or Charisma if you already have Wisdom).",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "save",
+       "values": [
+        "wis"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "stalkers-flurry",
+     "name": "Stalker's Flurry",
+     "level": 11,
+     "text": "Once per turn, when you miss with a weapon attack, make another weapon attack."
+    },
+    {
+     "id": "shadowy-dodge",
+     "name": "Shadowy Dodge",
+     "level": 15,
+     "text": "Reaction when attacked without advantage: impose disadvantage on that attack.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "shadowy-dodge",
+       "name": "Shadowy Dodge",
+       "econ": "reaction"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "horizon-walker",
+   "name": "Horizon Walker",
+   "class": "ranger",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "monster-slayer",
+   "name": "Monster Slayer",
+   "class": "ranger",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "fey-wanderer",
+   "name": "Fey Wanderer",
+   "class": "ranger",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "swarmkeeper",
+   "name": "Swarmkeeper",
+   "class": "ranger",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "drakewarden",
+   "name": "Drakewarden",
+   "class": "ranger",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "thief",
+   "name": "Thief",
+   "class": "rogue",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "assassin",
+   "name": "Assassin",
+   "class": "rogue",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "arcane-trickster",
+   "name": "Arcane Trickster",
+   "class": "rogue",
+   "features": [
+    {
+     "id": "at-spellcasting",
+     "name": "Spellcasting",
+     "level": 3,
+     "text": "Learn wizard spells, mostly enchantment and illusion. Intelligence is your spellcasting ability. You know mage hand.",
+     "effects": [
+      {
+       "type": "spellcasting",
+       "ability": "int",
+       "progression": "third",
+       "list": "wizard",
+       "cantrips": {
+        "3": 3,
+        "10": 4
+       },
+       "known": {
+        "3": 3,
+        "4": 4,
+        "7": 5,
+        "8": 6,
+        "10": 7,
+        "11": 8,
+        "13": 9,
+        "14": 10,
+        "16": 11,
+        "19": 12,
+        "20": 13
+       },
+       "ritual": "none"
+      }
+     ]
+    },
+    {
+     "id": "mage-hand-legerdemain",
+     "name": "Mage Hand Legerdemain",
+     "level": 3,
+     "text": "Your mage hand is invisible and can stow, retrieve, pick locks and disarm traps."
+    }
+   ]
+  },
+  {
+   "id": "inquisitive",
+   "name": "Inquisitive",
+   "class": "rogue",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "mastermind",
+   "name": "Mastermind",
+   "class": "rogue",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "scout",
+   "name": "Scout",
+   "class": "rogue",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "swashbuckler",
+   "name": "Swashbuckler",
+   "class": "rogue",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "phantom",
+   "name": "Phantom",
+   "class": "rogue",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "soulknife",
+   "name": "Soulknife",
+   "class": "rogue",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "draconic-bloodline",
+   "name": "Draconic Bloodline",
+   "class": "sorcerer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "wild-magic",
+   "name": "Wild Magic",
+   "class": "sorcerer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "divine-soul",
+   "name": "Divine Soul",
+   "class": "sorcerer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "shadow-magic",
+   "name": "Shadow Magic",
+   "class": "sorcerer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "storm-sorcery",
+   "name": "Storm Sorcery",
+   "class": "sorcerer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "aberrant-mind",
+   "name": "Aberrant Mind",
+   "class": "sorcerer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "clockwork-soul",
+   "name": "Clockwork Soul",
+   "class": "sorcerer",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "the-archfey",
+   "name": "The Archfey",
+   "class": "warlock",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "the-fiend",
+   "name": "The Fiend",
+   "class": "warlock",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "the-great-old-one",
+   "name": "The Great Old One",
+   "class": "warlock",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "the-celestial",
+   "name": "The Celestial",
+   "class": "warlock",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "the-hexblade",
+   "name": "The Hexblade",
+   "class": "warlock",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "the-fathomless",
+   "name": "The Fathomless",
+   "class": "warlock",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "the-genie",
+   "name": "The Genie",
+   "class": "warlock",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "the-undead",
+   "name": "The Undead",
+   "class": "warlock",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "school-of-abjuration",
+   "name": "School of Abjuration",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "school-of-conjuration",
+   "name": "School of Conjuration",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "school-of-divination",
+   "name": "School of Divination",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "school-of-enchantment",
+   "name": "School of Enchantment",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "school-of-evocation",
+   "name": "School of Evocation",
+   "class": "wizard",
+   "features": [
+    {
+     "id": "evocation-savant",
+     "name": "Evocation Savant",
+     "level": 2,
+     "text": "Copying evocation spells into your spellbook takes half the gold and time."
+    },
+    {
+     "id": "sculpt-spells",
+     "name": "Sculpt Spells",
+     "level": 2,
+     "text": "When you cast an evocation spell that affects others you can see, choose 1 + the spell's level of them to succeed on their saves and take no damage.",
+     "effects": [
+      {
+       "type": "reminder",
+       "on": "cast",
+       "text": "Sculpt Spells: protect 1 + spell level creatures from your evocation spells."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "school-of-illusion",
+   "name": "School of Illusion",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "school-of-necromancy",
+   "name": "School of Necromancy",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "school-of-transmutation",
+   "name": "School of Transmutation",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "bladesinging",
+   "name": "Bladesinging",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "war-magic",
+   "name": "War Magic",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  },
+  {
+   "id": "order-of-scribes",
+   "name": "Order of Scribes",
+   "class": "wizard",
+   "features": [],
+   "text": "Name only. Add its features from your books with a content pack."
+  }
+ ],
+ "races": [
+  {
+   "id": "dwarf",
+   "name": "Dwarf",
+   "size": "Medium",
+   "speed": 25,
+   "features": [
+    {
+     "id": "dwarf-asi",
+     "name": "Ability Score Increase",
+     "text": "+2 Constitution.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "con",
+       "add": 2
+      }
+     ]
+    },
+    {
+     "id": "dwarf-speed",
+     "name": "Speed",
+     "text": "25 ft, not reduced by heavy armor.",
+     "effects": [
+      {
+       "type": "speed",
+       "mode": "walk",
+       "value": 25
+      }
+     ]
+    },
+    {
+     "id": "darkvision",
+     "name": "Darkvision",
+     "text": "See in dim light within 60 ft as if bright, and in darkness as dim.",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "darkvision",
+       "range": 60
+      }
+     ]
+    },
+    {
+     "id": "dwarven-resilience",
+     "name": "Dwarven Resilience",
+     "text": "Advantage on saves against poison, and resistance to poison damage.",
+     "effects": [
+      {
+       "type": "resistance",
+       "damage": [
+        "poison"
+       ]
+      },
+      {
+       "type": "advantage",
+       "on": "Saves against poison"
+      }
+     ]
+    },
+    {
+     "id": "dwarven-combat-training",
+     "name": "Dwarven Combat Training",
+     "text": "Proficiency with battleaxe, handaxe, light hammer and warhammer.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "weapon",
+       "values": [
+        "Battleaxes",
+        "Handaxes",
+        "Light hammers",
+        "Warhammers"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "dwarf-tool",
+     "name": "Tool Proficiency",
+     "text": "One of smith's tools, brewer's supplies or mason's tools.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "tool",
+       "name": "Tool proficiency",
+       "kind": "tool",
+       "choose": 1,
+       "from": {
+        "list": [
+         "Smith's tools",
+         "Brewer's supplies",
+         "Mason's tools"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "id": "stonecunning",
+     "name": "Stonecunning",
+     "text": "Double proficiency on History checks about stonework."
+    },
+    {
+     "id": "languages",
+     "name": "Languages",
+     "text": "Common, Dwarvish.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common",
+        "Dwarvish"
+       ]
+      }
+     ]
+    }
+   ],
+   "subraces": [
+    {
+     "id": "hill-dwarf",
+     "name": "Hill Dwarf",
+     "features": [
+      {
+       "id": "hill-dwarf-asi",
+       "name": "Ability Score Increase",
+       "text": "+1 Wisdom.",
+       "effects": [
+        {
+         "type": "abilityScore",
+         "ability": "wis",
+         "add": 1
+        }
+       ]
+      },
+      {
+       "id": "dwarven-toughness",
+       "name": "Dwarven Toughness",
+       "text": "+1 max HP per level.",
+       "effects": [
+        {
+         "type": "bonus",
+         "target": "hp.perLevel",
+         "value": 1
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "elf",
+   "name": "Elf",
+   "size": "Medium",
+   "speed": 30,
+   "features": [
+    {
+     "id": "elf-asi",
+     "name": "Ability Score Increase",
+     "text": "+2 Dexterity.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "dex",
+       "add": 2
+      }
+     ]
+    },
+    {
+     "id": "darkvision",
+     "name": "Darkvision",
+     "text": "See in dim light within 60 ft as if bright, and in darkness as dim.",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "darkvision",
+       "range": 60
+      }
+     ]
+    },
+    {
+     "id": "keen-senses",
+     "name": "Keen Senses",
+     "text": "Proficiency in Perception.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "skill",
+       "values": [
+        "perception"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "fey-ancestry",
+     "name": "Fey Ancestry",
+     "text": "Advantage on saves against being charmed; magic can't put you to sleep.",
+     "effects": [
+      {
+       "type": "advantage",
+       "on": "Saves against being charmed"
+      }
+     ]
+    },
+    {
+     "id": "trance",
+     "name": "Trance",
+     "text": "Meditate 4 hours instead of sleeping 8."
+    },
+    {
+     "id": "languages",
+     "name": "Languages",
+     "text": "Common, Elvish.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common",
+        "Elvish"
+       ]
+      }
+     ]
+    }
+   ],
+   "subraces": [
+    {
+     "id": "high-elf",
+     "name": "High Elf",
+     "features": [
+      {
+       "id": "high-elf-asi",
+       "name": "Ability Score Increase",
+       "text": "+1 Intelligence.",
+       "effects": [
+        {
+         "type": "abilityScore",
+         "ability": "int",
+         "add": 1
+        }
+       ]
+      },
+      {
+       "id": "elf-weapon-training",
+       "name": "Elf Weapon Training",
+       "text": "Proficiency with longsword, shortsword, shortbow and longbow.",
+       "effects": [
+        {
+         "type": "proficiency",
+         "kind": "weapon",
+         "values": [
+          "Longswords",
+          "Shortswords",
+          "Shortbows",
+          "Longbows"
+         ]
+        }
+       ]
+      },
+      {
+       "id": "high-elf-cantrip",
+       "name": "Cantrip",
+       "text": "One wizard cantrip, cast with Intelligence.",
+       "effects": [
+        {
+         "type": "choice",
+         "id": "cantrip",
+         "name": "High elf cantrip",
+         "kind": "spell",
+         "choose": 1,
+         "from": {
+          "spells": {
+           "list": "wizard",
+           "level": 0
+          }
+         },
+         "grants": {
+          "class": "wizard"
+         }
+        }
+       ]
+      },
+      {
+       "id": "high-elf-language",
+       "name": "Extra Language",
+       "text": "One extra language.",
+       "effects": [
+        {
+         "type": "choice",
+         "id": "language",
+         "name": "Extra language",
+         "kind": "language",
+         "choose": 1,
+         "from": {
+          "list": [
+           "any"
+          ]
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "halfling",
+   "name": "Halfling",
+   "size": "Small",
+   "speed": 25,
+   "features": [
+    {
+     "id": "halfling-asi",
+     "name": "Ability Score Increase",
+     "text": "+2 Dexterity.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "dex",
+       "add": 2
+      }
+     ]
+    },
+    {
+     "id": "lucky",
+     "name": "Lucky",
+     "text": "Reroll a 1 on an attack roll, ability check or saving throw."
+    },
+    {
+     "id": "brave",
+     "name": "Brave",
+     "text": "Advantage on saves against being frightened.",
+     "effects": [
+      {
+       "type": "advantage",
+       "on": "Saves against being frightened"
+      }
+     ]
+    },
+    {
+     "id": "halfling-nimbleness",
+     "name": "Halfling Nimbleness",
+     "text": "Move through the space of a larger creature."
+    },
+    {
+     "id": "languages",
+     "name": "Languages",
+     "text": "Common, Halfling.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common",
+        "Halfling"
+       ]
+      }
+     ]
+    }
+   ],
+   "subraces": [
+    {
+     "id": "lightfoot",
+     "name": "Lightfoot",
+     "features": [
+      {
+       "id": "lightfoot-asi",
+       "name": "Ability Score Increase",
+       "text": "+1 Charisma.",
+       "effects": [
+        {
+         "type": "abilityScore",
+         "ability": "cha",
+         "add": 1
+        }
+       ]
+      },
+      {
+       "id": "naturally-stealthy",
+       "name": "Naturally Stealthy",
+       "text": "Hide when obscured only by a creature at least one size larger."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "human",
+   "name": "Human",
+   "size": "Medium",
+   "speed": 30,
+   "features": [
+    {
+     "id": "human-asi",
+     "name": "Ability Score Increase",
+     "text": "+1 to every ability score.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "str",
+       "add": 1
+      },
+      {
+       "type": "abilityScore",
+       "ability": "dex",
+       "add": 1
+      },
+      {
+       "type": "abilityScore",
+       "ability": "con",
+       "add": 1
+      },
+      {
+       "type": "abilityScore",
+       "ability": "int",
+       "add": 1
+      },
+      {
+       "type": "abilityScore",
+       "ability": "wis",
+       "add": 1
+      },
+      {
+       "type": "abilityScore",
+       "ability": "cha",
+       "add": 1
+      }
+     ]
+    },
+    {
+     "id": "human-languages",
+     "name": "Languages",
+     "text": "Common and one extra language.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common"
+       ]
+      },
+      {
+       "type": "choice",
+       "id": "language",
+       "name": "Extra language",
+       "kind": "language",
+       "choose": 1,
+       "from": {
+        "list": [
+         "any"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dragonborn",
+   "name": "Dragonborn",
+   "size": "Medium",
+   "speed": 30,
+   "features": [
+    {
+     "id": "dragonborn-asi",
+     "name": "Ability Score Increase",
+     "text": "+2 Strength, +1 Charisma.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "str",
+       "add": 2
+      },
+      {
+       "type": "abilityScore",
+       "ability": "cha",
+       "add": 1
+      }
+     ]
+    },
+    {
+     "id": "draconic-ancestry",
+     "name": "Draconic Ancestry",
+     "text": "Choose a dragon type; it sets your breath weapon and damage resistance.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "ancestry",
+       "name": "Draconic ancestry",
+       "kind": "text",
+       "choose": 1
+      }
+     ]
+    },
+    {
+     "id": "breath-weapon",
+     "name": "Breath Weapon",
+     "text": "Action: exhale destructive energy (2d6, 3d6 at 6th, 4d6 at 11th, 5d6 at 16th). DC 8 + Con modifier + proficiency. Once per short rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "breath-weapon",
+       "name": "Breath Weapon",
+       "max": 1,
+       "recharge": "short"
+      },
+      {
+       "type": "action",
+       "id": "use-breath-weapon",
+       "name": "Breath Weapon",
+       "econ": "action",
+       "cost": {
+        "resource": "breath-weapon",
+        "amount": 1
+       },
+       "roll": {
+        "1": "2d6",
+        "6": "3d6",
+        "11": "4d6",
+        "16": "5d6",
+        "by": "level"
+       },
+       "save": {
+        "ability": "dex",
+        "dc": "8 + mod.con + prof"
+       }
+      }
+     ]
+    },
+    {
+     "id": "damage-resistance",
+     "name": "Damage Resistance",
+     "text": "Resistance to your ancestry's damage type."
+    },
+    {
+     "id": "languages",
+     "name": "Languages",
+     "text": "Common, Draconic.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common",
+        "Draconic"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "gnome",
+   "name": "Gnome",
+   "size": "Small",
+   "speed": 25,
+   "features": [
+    {
+     "id": "gnome-asi",
+     "name": "Ability Score Increase",
+     "text": "+2 Intelligence.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "int",
+       "add": 2
+      }
+     ]
+    },
+    {
+     "id": "darkvision",
+     "name": "Darkvision",
+     "text": "See in dim light within 60 ft as if bright, and in darkness as dim.",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "darkvision",
+       "range": 60
+      }
+     ]
+    },
+    {
+     "id": "gnome-cunning",
+     "name": "Gnome Cunning",
+     "text": "Advantage on Int, Wis and Cha saves against magic.",
+     "effects": [
+      {
+       "type": "advantage",
+       "on": "Int, Wis and Cha saves against magic"
+      }
+     ]
+    },
+    {
+     "id": "languages",
+     "name": "Languages",
+     "text": "Common, Gnomish.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common",
+        "Gnomish"
+       ]
+      }
+     ]
+    }
+   ],
+   "subraces": [
+    {
+     "id": "rock-gnome",
+     "name": "Rock Gnome",
+     "features": [
+      {
+       "id": "rock-gnome-asi",
+       "name": "Ability Score Increase",
+       "text": "+1 Constitution.",
+       "effects": [
+        {
+         "type": "abilityScore",
+         "ability": "con",
+         "add": 1
+        }
+       ]
+      },
+      {
+       "id": "artificers-lore",
+       "name": "Artificer's Lore",
+       "text": "Double proficiency on History checks about magic items, alchemical objects or technology."
+      },
+      {
+       "id": "tinker",
+       "name": "Tinker",
+       "text": "Proficiency with tinker's tools; build tiny clockwork devices.",
+       "effects": [
+        {
+         "type": "proficiency",
+         "kind": "tool",
+         "values": [
+          "Tinker's tools"
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "half-elf",
+   "name": "Half-Elf",
+   "size": "Medium",
+   "speed": 30,
+   "features": [
+    {
+     "id": "half-elf-asi",
+     "name": "Ability Score Increase",
+     "text": "+2 Charisma, and +1 to two other scores.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "cha",
+       "add": 2
+      },
+      {
+       "type": "choice",
+       "id": "abilities",
+       "name": "Two +1 increases",
+       "kind": "ability",
+       "choose": 2,
+       "from": {
+        "abilities": [
+         "str",
+         "dex",
+         "con",
+         "int",
+         "wis"
+        ],
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "darkvision",
+     "name": "Darkvision",
+     "text": "See in dim light within 60 ft as if bright, and in darkness as dim.",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "darkvision",
+       "range": 60
+      }
+     ]
+    },
+    {
+     "id": "half-elf-fey-ancestry",
+     "name": "Fey Ancestry",
+     "text": "Advantage on saves against being charmed; magic can't put you to sleep.",
+     "effects": [
+      {
+       "type": "advantage",
+       "on": "Saves against being charmed"
+      }
+     ]
+    },
+    {
+     "id": "skill-versatility",
+     "name": "Skill Versatility",
+     "text": "Proficiency in two skills of your choice.",
+     "effects": [
+      {
+       "type": "choice",
+       "id": "skills",
+       "name": "Skill Versatility",
+       "kind": "skill",
+       "choose": 2,
+       "from": {
+        "skills": "any"
+       }
+      }
+     ]
+    },
+    {
+     "id": "half-elf-languages",
+     "name": "Languages",
+     "text": "Common, Elvish and one more.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common",
+        "Elvish"
+       ]
+      },
+      {
+       "type": "choice",
+       "id": "language",
+       "name": "Extra language",
+       "kind": "language",
+       "choose": 1,
+       "from": {
+        "list": [
+         "any"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "half-orc",
+   "name": "Half-Orc",
+   "size": "Medium",
+   "speed": 30,
+   "features": [
+    {
+     "id": "half-orc-asi",
+     "name": "Ability Score Increase",
+     "text": "+2 Strength, +1 Constitution.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "str",
+       "add": 2
+      },
+      {
+       "type": "abilityScore",
+       "ability": "con",
+       "add": 1
+      }
+     ]
+    },
+    {
+     "id": "darkvision",
+     "name": "Darkvision",
+     "text": "See in dim light within 60 ft as if bright, and in darkness as dim.",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "darkvision",
+       "range": 60
+      }
+     ]
+    },
+    {
+     "id": "menacing",
+     "name": "Menacing",
+     "text": "Proficiency in Intimidation.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "skill",
+       "values": [
+        "intimidation"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "relentless-endurance",
+     "name": "Relentless Endurance",
+     "text": "Drop to 1 HP instead of 0, once per long rest.",
+     "effects": [
+      {
+       "type": "resource",
+       "id": "relentless-endurance",
+       "name": "Relentless Endurance",
+       "max": 1,
+       "recharge": "long"
+      }
+     ]
+    },
+    {
+     "id": "savage-attacks",
+     "name": "Savage Attacks",
+     "text": "Roll one extra weapon damage die on a melee critical hit."
+    },
+    {
+     "id": "languages",
+     "name": "Languages",
+     "text": "Common, Orc.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common",
+        "Orc"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tiefling",
+   "name": "Tiefling",
+   "size": "Medium",
+   "speed": 30,
+   "features": [
+    {
+     "id": "tiefling-asi",
+     "name": "Ability Score Increase",
+     "text": "+2 Charisma, +1 Intelligence.",
+     "effects": [
+      {
+       "type": "abilityScore",
+       "ability": "cha",
+       "add": 2
+      },
+      {
+       "type": "abilityScore",
+       "ability": "int",
+       "add": 1
+      }
+     ]
+    },
+    {
+     "id": "darkvision",
+     "name": "Darkvision",
+     "text": "See in dim light within 60 ft as if bright, and in darkness as dim.",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "darkvision",
+       "range": 60
+      }
+     ]
+    },
+    {
+     "id": "hellish-resistance",
+     "name": "Hellish Resistance",
+     "text": "Resistance to fire damage.",
+     "effects": [
+      {
+       "type": "resistance",
+       "damage": [
+        "fire"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "infernal-legacy",
+     "name": "Infernal Legacy",
+     "text": "You know thaumaturgy. At 3rd level cast hellish rebuke as a 2nd-level spell, and at 5th darkness, each once per long rest. Charisma is the ability.",
+     "effects": [
+      {
+       "type": "grantSpells",
+       "ability": "cha",
+       "spells": [
+        {
+         "id": "thaumaturgy"
+        },
+        {
+         "id": "hellish-rebuke",
+         "minLevel": 3,
+         "uses": 1,
+         "recharge": "long",
+         "noSlot": true
+        },
+        {
+         "id": "darkness",
+         "minLevel": 5,
+         "uses": 1,
+         "recharge": "long",
+         "noSlot": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "languages",
+     "name": "Languages",
+     "text": "Common, Infernal.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "language",
+       "values": [
+        "Common",
+        "Infernal"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "genasi",
+   "name": "Genasi",
+   "size": "Medium",
+   "speed": 30,
+   "text": "Elemental-touched folk. Only the earth genasi is built in, as the original ledger had it.",
+   "features": [
+    {
+     "id": "genasi-darkvision",
+     "name": "Darkvision",
+     "text": "See in dim light within 60 ft as if bright, and darkness as dim (no color).",
+     "effects": [
+      {
+       "type": "sense",
+       "sense": "darkvision",
+       "range": 60
+      }
+     ]
+    }
+   ],
+   "subraces": [
+    {
+     "id": "earth-genasi",
+     "name": "Earth Genasi",
+     "features": [
+      {
+       "id": "earth-walk",
+       "name": "Earth Walk",
+       "text": "Ignore difficult terrain made of earth or stone when you use your walking speed."
+      },
+      {
+       "id": "merge-with-stone",
+       "name": "Merge with Stone",
+       "text": "You know blade ward and can cast it as a bonus action a number of times equal to your proficiency bonus per long rest. At character level 5 you can cast pass without trace once per long rest without a material component (or with any 2nd-level+ slot). Charisma is the casting ability.",
+       "effects": [
+        {
+         "type": "grantSpells",
+         "ability": "cha",
+         "spells": [
+          {
+           "id": "blade-ward"
+          },
+          {
+           "id": "blade-ward",
+           "uses": "prof",
+           "recharge": "long",
+           "noSlot": true,
+           "econ": "bonus"
+          },
+          {
+           "id": "pass-without-trace",
+           "minLevel": 5,
+           "uses": 1,
+           "recharge": "long",
+           "noSlot": true
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "backgrounds": [
+  {
+   "id": "acolyte",
+   "name": "Acolyte",
+   "features": [
+    {
+     "id": "acolyte-proficiencies",
+     "name": "Proficiencies",
+     "text": "Insight and Religion, plus two languages.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "skill",
+       "values": [
+        "insight",
+        "religion"
+       ]
+      },
+      {
+       "type": "choice",
+       "id": "languages",
+       "name": "Two languages",
+       "kind": "language",
+       "choose": 2,
+       "from": {
+        "list": [
+         "any"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "id": "shelter-of-the-faithful",
+     "name": "Shelter of the Faithful",
+     "text": "You and your companions can get free healing and care at temples of your faith."
+    }
+   ],
+   "equipment": "Holy symbol, prayer book, 5 sticks of incense, vestments, common clothes, 15 gp"
+  }
+ ],
+ "feats": [
+  {
+   "id": "grappler",
+   "name": "Grappler",
+   "prerequisite": {
+    "formula": "score.str >= 13",
+    "text": "Strength 13 or higher"
+   },
+   "text": "Advantage on attacks against a creature you're grappling, and you can try to pin it.",
+   "effects": [
+    {
+     "type": "advantage",
+     "on": "Attacks against a creature you're grappling"
+    }
+   ]
+  }
+ ],
+ "optionSets": [
+  {
+   "id": "fighting-styles",
+   "name": "Fighting Styles",
+   "options": [
+    {
+     "id": "archery",
+     "name": "Archery",
+     "text": "+2 to attack rolls with ranged weapons.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "attack.ranged",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "id": "defense",
+     "name": "Defense",
+     "text": "+1 AC while wearing armor.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "ac",
+       "value": 1,
+       "when": "wearingArmor"
+      }
+     ]
+    },
+    {
+     "id": "dueling",
+     "name": "Dueling",
+     "text": "+2 damage with a melee weapon held in one hand and no other weapons.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "damage.melee",
+       "value": 2,
+       "note": "One-handed weapon, no other weapons"
+      }
+     ]
+    },
+    {
+     "id": "great-weapon-fighting",
+     "name": "Great Weapon Fighting",
+     "text": "Reroll 1s and 2s on damage dice of two-handed or versatile melee weapons used two-handed."
+    },
+    {
+     "id": "protection",
+     "name": "Protection",
+     "text": "Reaction while holding a shield: impose disadvantage on an attack against a creature within 5 ft of you.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "protection",
+       "name": "Protection",
+       "econ": "reaction"
+      }
+     ]
+    },
+    {
+     "id": "two-weapon-fighting",
+     "name": "Two-Weapon Fighting",
+     "text": "Add your ability modifier to the damage of your off-hand attack."
+    }
+   ]
+  },
+  {
+   "id": "ranger-fighting-styles",
+   "name": "Ranger Fighting Styles",
+   "options": [
+    {
+     "id": "archery",
+     "name": "Archery",
+     "text": "+2 to attack rolls with ranged weapons.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "attack.ranged",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "id": "defense",
+     "name": "Defense",
+     "text": "+1 AC while wearing armor.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "ac",
+       "value": 1,
+       "when": "wearingArmor"
+      }
+     ]
+    },
+    {
+     "id": "dueling",
+     "name": "Dueling",
+     "text": "+2 damage with a melee weapon held in one hand and no other weapons.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "damage.melee",
+       "value": 2,
+       "note": "One-handed weapon, no other weapons"
+      }
+     ]
+    },
+    {
+     "id": "two-weapon-fighting",
+     "name": "Two-Weapon Fighting",
+     "text": "Add your ability modifier to the damage of your off-hand attack."
+    }
+   ]
+  },
+  {
+   "id": "paladin-fighting-styles",
+   "name": "Paladin Fighting Styles",
+   "options": [
+    {
+     "id": "defense",
+     "name": "Defense",
+     "text": "+1 AC while wearing armor.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "ac",
+       "value": 1,
+       "when": "wearingArmor"
+      }
+     ]
+    },
+    {
+     "id": "dueling",
+     "name": "Dueling",
+     "text": "+2 damage with a melee weapon held in one hand and no other weapons.",
+     "effects": [
+      {
+       "type": "bonus",
+       "target": "damage.melee",
+       "value": 2,
+       "note": "One-handed weapon, no other weapons"
+      }
+     ]
+    },
+    {
+     "id": "great-weapon-fighting",
+     "name": "Great Weapon Fighting",
+     "text": "Reroll 1s and 2s on damage dice of two-handed or versatile melee weapons used two-handed."
+    },
+    {
+     "id": "protection",
+     "name": "Protection",
+     "text": "Reaction while holding a shield: impose disadvantage on an attack against a creature within 5 ft of you.",
+     "effects": [
+      {
+       "type": "action",
+       "id": "protection",
+       "name": "Protection",
+       "econ": "reaction"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "metamagic",
+   "name": "Metamagic",
+   "options": [
+    {
+     "id": "careful-spell",
+     "name": "Careful Spell",
+     "text": "1 sorcery point: up to Cha modifier creatures automatically succeed on the spell's save."
+    },
+    {
+     "id": "distant-spell",
+     "name": "Distant Spell",
+     "text": "1 sorcery point: double the range, or make a touch spell 30 ft."
+    },
+    {
+     "id": "empowered-spell",
+     "name": "Empowered Spell",
+     "text": "1 sorcery point: reroll up to Cha modifier damage dice. Combines with other metamagic."
+    },
+    {
+     "id": "extended-spell",
+     "name": "Extended Spell",
+     "text": "1 sorcery point: double a duration of 1 minute or longer, up to 24 hours."
+    },
+    {
+     "id": "heightened-spell",
+     "name": "Heightened Spell",
+     "text": "3 sorcery points: one target has disadvantage on its first save against the spell."
+    },
+    {
+     "id": "quickened-spell",
+     "name": "Quickened Spell",
+     "text": "2 sorcery points: cast a 1-action spell as a bonus action."
+    },
+    {
+     "id": "subtle-spell",
+     "name": "Subtle Spell",
+     "text": "1 sorcery point: cast without verbal or somatic components."
+    },
+    {
+     "id": "twinned-spell",
+     "name": "Twinned Spell",
+     "text": "Sorcery points equal to the spell's level (1 for a cantrip): target a second creature with a single-target spell."
+    }
+   ]
+  },
+  {
+   "id": "eldritch-invocations",
+   "name": "Eldritch Invocations",
+   "options": [
+    {
+     "id": "agonizing-blast",
+     "name": "Agonizing Blast",
+     "text": "Add your Cha modifier to eldritch blast damage."
+    },
+    {
+     "id": "armor-of-shadows",
+     "name": "Armor of Shadows",
+     "text": "Cast mage armor on yourself at will without a slot.",
+     "effects": [
+      {
+       "type": "grantSpells",
+       "class": "warlock",
+       "spells": [
+        {
+         "id": "mage-armor",
+         "noSlot": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "beast-speech",
+     "name": "Beast Speech",
+     "text": "Cast speak with animals at will without a slot."
+    },
+    {
+     "id": "beguiling-influence",
+     "name": "Beguiling Influence",
+     "text": "Proficiency in Deception and Persuasion.",
+     "effects": [
+      {
+       "type": "proficiency",
+       "kind": "skill",
+       "values": [
+        "deception",
+        "persuasion"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "book-of-ancient-secrets",
+     "name": "Book of Ancient Secrets",
+     "text": "Pact of the Tome: inscribe and cast rituals in your Book of Shadows."
+    },
+    {
+     "id": "devils-sight",
+     "name": "Devil's Sight",
+     "text": "See normally in darkness, magical or not, to 120 ft."
+    },
+    {
+     "id": "eldritch-sight",
+     "name": "Eldritch Sight",
+     "text": "Cast detect magic at will without a slot."
+    },
+    {
+     "id": "eldritch-spear",
+     "name": "Eldritch Spear",
+     "text": "Eldritch blast range becomes 300 ft."
+    },
+    {
+     "id": "eyes-of-the-rune-keeper",
+     "name": "Eyes of the Rune Keeper",
+     "text": "Read all writing."
+    },
+    {
+     "id": "fiendish-vigor",
+     "name": "Fiendish Vigor",
+     "text": "Cast false life on yourself at will as a 1st-level spell without a slot."
+    },
+    {
+     "id": "gaze-of-two-minds",
+     "name": "Gaze of Two Minds",
+     "text": "Action: perceive through a willing humanoid's senses until your next turn."
+    },
+    {
+     "id": "mask-of-many-faces",
+     "name": "Mask of Many Faces",
+     "text": "Cast disguise self at will without a slot."
+    },
+    {
+     "id": "misty-visions",
+     "name": "Misty Visions",
+     "text": "Cast silent image at will without a slot."
+    },
+    {
+     "id": "repelling-blast",
+     "name": "Repelling Blast",
+     "text": "Eldritch blast pushes a creature it hits up to 10 ft away."
+    },
+    {
+     "id": "thief-of-five-fates",
+     "name": "Thief of Five Fates",
+     "text": "Cast bane once using a warlock slot; once per long rest."
+    },
+    {
+     "id": "voice-of-the-chain-master",
+     "name": "Voice of the Chain Master",
+     "text": "Pact of the Chain: talk through and perceive through your familiar at any distance on the same plane."
+    }
+   ]
+  },
+  {
+   "id": "pact-boons",
+   "name": "Pact Boons",
+   "options": [
+    {
+     "id": "pact-of-the-chain",
+     "name": "Pact of the Chain",
+     "text": "Learn find familiar; your familiar can be an imp, pseudodragon, quasit or sprite, and can attack with its reaction."
+    },
+    {
+     "id": "pact-of-the-blade",
+     "name": "Pact of the Blade",
+     "text": "Action: create a pact weapon in your hand. You're proficient with it and it counts as magical."
+    },
+    {
+     "id": "pact-of-the-tome",
+     "name": "Pact of the Tome",
+     "text": "A Book of Shadows with three cantrips from any class list."
+    }
+   ]
+  }
+ ],
+ "spells": [
+  {
+   "id": "vicious-mockery",
+   "name": "Vicious Mockery",
+   "lvl": 0,
+   "school": "Enchantment",
+   "time": "action",
+   "range": "60 ft",
+   "comp": "V",
+   "dur": "Instantaneous",
+   "sum": "Insult a creature that can hear you. On a failed Wisdom save it takes 1d4 psychic damage and has disadvantage on its next attack roll before the end of its next turn.",
+   "scale": "2d4 at character level 5, 3d4 at 11, 4d4 at 17.",
+   "save": "Wis",
+   "classes": [
+    "bard"
+   ]
+  },
+  {
+   "id": "minor-illusion",
+   "name": "Minor Illusion",
+   "lvl": 0,
+   "school": "Illusion",
+   "time": "action",
+   "range": "30 ft",
+   "comp": "S, M",
+   "dur": "1 minute",
+   "sum": "Create a sound or the image of an object no bigger than a 5-ft cube. A creature that studies it can make an Investigation check against your spell DC; touching the image shows it's fake.",
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ]
+  },
+  {
+   "id": "blade-ward",
+   "name": "Blade Ward",
+   "lvl": 0,
+   "school": "Abjuration",
+   "time": "action",
+   "range": "Self",
+   "comp": "V, S",
+   "dur": "1 round",
+   "sum": "Until the end of your next turn you resist bludgeoning, piercing and slashing damage from weapon attacks.",
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ]
+  },
+  {
+   "id": "dissonant-whispers",
+   "name": "Dissonant Whispers",
+   "lvl": 1,
+   "school": "Enchantment",
+   "time": "action",
+   "range": "60 ft",
+   "comp": "V",
+   "dur": "Instantaneous",
+   "sum": "Whisper a discordant melody only one creature hears. On a failed Wisdom save it takes 3d6 psychic damage and must use its reaction, if it has one, to move as far away from you as it can. On a success it takes half and doesn't move. Deafened creatures succeed automatically.",
+   "up": "+1d6 per slot level above 1st.",
+   "save": "Wis",
+   "classes": [
+    "bard"
+   ]
+  },
+  {
+   "id": "healing-word",
+   "name": "Healing Word",
+   "lvl": 1,
+   "school": "Evocation",
+   "time": "bonus",
+   "range": "60 ft",
+   "comp": "V",
+   "dur": "Instantaneous",
+   "sum": "A creature you can see regains 1d4 + your spellcasting modifier HP. No effect on undead or constructs.",
+   "up": "+1d4 per slot level above 1st.",
+   "heal": "1d4 + spellMod",
+   "perSlot": "1d4",
+   "classes": [
+    "bard",
+    "cleric",
+    "druid"
+   ]
+  },
+  {
+   "id": "faerie-fire",
+   "name": "Faerie Fire",
+   "lvl": 1,
+   "school": "Evocation",
+   "time": "action",
+   "range": "60 ft",
+   "comp": "V",
+   "dur": "Up to 1 minute",
+   "conc": true,
+   "sum": "Every creature in a 20-ft cube makes a Dexterity save or is outlined in light. Attack rolls against outlined creatures have advantage, and they can't benefit from being invisible.",
+   "save": "Dex",
+   "classes": [
+    "bard",
+    "druid"
+   ]
+  },
+  {
+   "id": "suggestion",
+   "name": "Suggestion",
+   "lvl": 2,
+   "school": "Enchantment",
+   "time": "action",
+   "range": "30 ft",
+   "comp": "V, M",
+   "dur": "Up to 8 hours",
+   "conc": true,
+   "sum": "Suggest a reasonable-sounding course of action in a sentence or two to a creature that can hear and understand you. On a failed Wisdom save it follows it. Ends early if you or your allies damage it.",
+   "save": "Wis",
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ]
+  },
+  {
+   "id": "invisibility",
+   "name": "Invisibility",
+   "lvl": 2,
+   "school": "Illusion",
+   "time": "action",
+   "range": "Touch",
+   "comp": "V, S, M",
+   "dur": "Up to 1 hour",
+   "conc": true,
+   "sum": "A creature you touch, and what it wears and carries, turns invisible until the spell ends or the target attacks or casts a spell.",
+   "up": "One extra target per slot level above 2nd.",
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ]
+  },
+  {
+   "id": "detect-thoughts",
+   "name": "Detect Thoughts",
+   "lvl": 2,
+   "school": "Divination",
+   "time": "action",
+   "range": "Self (30 ft)",
+   "comp": "V, S, M",
+   "dur": "Up to 1 minute",
+   "conc": true,
+   "sum": "Read the surface thoughts of a creature within 30 ft. As an action you can probe deeper: on a failed Wisdom save you learn its reasoning, emotions and something on its mind.",
+   "save": "Wis",
+   "classes": [
+    "bard",
+    "sorcerer",
+    "wizard"
+   ]
+  },
+  {
+   "id": "pass-without-trace",
+   "name": "Pass without Trace",
+   "lvl": 2,
+   "school": "Abjuration",
+   "time": "action",
+   "range": "Self (30 ft)",
+   "comp": "V, S, M",
+   "dur": "Up to 1 hour",
+   "conc": true,
+   "sum": "You and chosen creatures within 30 ft get +10 to Stealth checks and can't be tracked except by magic.",
+   "classes": [
+    "druid",
+    "ranger"
+   ]
+  },
+  {
+   "id": "hunters-mark",
+   "name": "Hunter's Mark",
+   "lvl": 1,
+   "school": "Divination",
+   "time": "bonus",
+   "range": "90 ft",
+   "comp": "V",
+   "dur": "Up to 1 hour",
+   "conc": true,
+   "sum": "Mark a creature. Your weapon hits on it deal an extra 1d6 damage, and you have advantage on Perception and Survival checks to find it. If it drops to 0 HP, use a bonus action on a later turn to move the mark.",
+   "up": "3rd–4th level slot: 8 hours. 5th+: 24 hours.",
+   "classes": [
+    "ranger"
+   ]
+  },
+  {
+   "id": "disguise-self",
+   "name": "Disguise Self",
+   "lvl": 1,
+   "school": "Illusion",
+   "time": "action",
+   "range": "Self",
+   "comp": "V, S",
+   "dur": "1 hour",
+   "sum": "Change how you look, including clothes and gear. You can seem up to 1 ft shorter or taller. An Investigation check against your spell DC sees through it.",
+   "classes": [
+    "bard",
+    "sorcerer",
+    "wizard"
+   ]
+  },
+  {
+   "id": "rope-trick",
+   "name": "Rope Trick",
+   "lvl": 2,
+   "school": "Transmutation",
+   "time": "action",
+   "range": "Touch",
+   "comp": "V, S, M",
+   "dur": "1 hour",
+   "sum": "A rope up to 60 ft long rises and its top opens into a hidden extradimensional space that holds up to eight Medium or smaller creatures.",
+   "classes": [
+    "wizard"
+   ]
+  },
+  {
+   "id": "cure-wounds",
+   "name": "Cure Wounds",
+   "lvl": 1,
+   "school": "Evocation",
+   "time": "action",
+   "range": "Touch",
+   "comp": "V, S",
+   "dur": "Instantaneous",
+   "sum": "A creature you touch regains 1d8 + your spellcasting modifier HP.",
+   "up": "+1d8 per slot level above 1st.",
+   "heal": "1d8 + spellMod",
+   "perSlot": "1d8",
+   "classes": [
+    "bard",
+    "cleric",
+    "druid",
+    "paladin",
+    "ranger"
+   ]
+  },
+  {
+   "id": "absorb-elements",
+   "name": "Absorb Elements",
+   "lvl": 1,
+   "school": "Abjuration",
+   "time": "reaction",
+   "range": "Self",
+   "comp": "S",
+   "dur": "1 round",
+   "sum": "When you take acid, cold, fire, lightning or thunder damage, resist that damage type until your next turn starts, and your first melee hit on your next turn adds 1d6 of that type.",
+   "up": "+1d6 per slot level above 1st.",
+   "classes": [
+    "druid",
+    "ranger",
+    "sorcerer",
+    "wizard"
+   ]
+  },
+  {
+   "id": "fear",
+   "name": "Fear",
+   "lvl": 3,
+   "school": "Illusion",
+   "time": "action",
+   "range": "Self (30-ft cone)",
+   "comp": "V, S, M",
+   "dur": "Up to 1 minute",
+   "conc": true,
+   "sum": "Creatures in a 30-ft cone make a Wisdom save or drop what they hold and become frightened, dashing away from you.",
+   "save": "Wis",
+   "classes": [
+    "bard",
+    "sorcerer",
+    "warlock",
+    "wizard"
+   ]
+  }
+ ],
+ "spellEffects": {
+  "mage-armor": [
+   {
+    "type": "acFormula",
+    "formula": "13 + mod.dex",
+    "when": "unarmored",
+    "allowShield": true
+   }
+  ],
+  "shield": [
+   {
+    "type": "bonus",
+    "target": "ac",
+    "value": 5
+   }
+  ],
+  "shield-of-faith": [
+   {
+    "type": "bonus",
+    "target": "ac",
+    "value": 2
+   }
+  ],
+  "barkskin": [
+   {
+    "type": "set",
+    "target": "ac",
+    "value": 16,
+    "mode": "max"
+   }
+  ],
+  "longstrider": [
+   {
+    "type": "bonus",
+    "target": "speed",
+    "value": 10
+   }
+  ],
+  "bless": [
+   {
+    "type": "reminder",
+    "on": "attack",
+    "text": "Bless: add 1d4 to attack rolls and saving throws."
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "club",
+   "name": "Club",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d4",
+    "damageType": "bludgeoning",
+    "props": [
+     "Light"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "dagger",
+   "name": "Dagger",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d4",
+    "damageType": "piercing",
+    "props": [
+     "Finesse",
+     "Light",
+     "Thrown"
+    ],
+    "range": "20/60"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "greatclub",
+   "name": "Greatclub",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d8",
+    "damageType": "bludgeoning",
+    "props": [
+     "Two-handed"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "handaxe",
+   "name": "Handaxe",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d6",
+    "damageType": "slashing",
+    "props": [
+     "Light",
+     "Thrown"
+    ],
+    "range": "20/60"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "javelin",
+   "name": "Javelin",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d6",
+    "damageType": "piercing",
+    "props": [
+     "Thrown"
+    ],
+    "range": "30/120"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "light-hammer",
+   "name": "Light hammer",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d4",
+    "damageType": "bludgeoning",
+    "props": [
+     "Light",
+     "Thrown"
+    ],
+    "range": "20/60"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "mace",
+   "name": "Mace",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d6",
+    "damageType": "bludgeoning",
+    "props": []
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "quarterstaff",
+   "name": "Quarterstaff",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d6",
+    "damageType": "bludgeoning",
+    "props": [
+     "Versatile"
+    ],
+    "versatile": "1d8"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "sickle",
+   "name": "Sickle",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d4",
+    "damageType": "slashing",
+    "props": [
+     "Light"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "spear",
+   "name": "Spear",
+   "kind": "weapon",
+   "type": "Simple melee weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": false,
+    "dmg": "1d6",
+    "damageType": "piercing",
+    "props": [
+     "Thrown",
+     "Versatile"
+    ],
+    "range": "20/60",
+    "versatile": "1d8"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "light-crossbow",
+   "name": "Light crossbow",
+   "kind": "weapon",
+   "type": "Simple ranged weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": true,
+    "dmg": "1d8",
+    "damageType": "piercing",
+    "props": [
+     "Ammunition",
+     "Loading",
+     "Two-handed"
+    ],
+    "range": "80/320",
+    "ammo": "Crossbow bolts"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "dart",
+   "name": "Dart",
+   "kind": "weapon",
+   "type": "Simple ranged weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": true,
+    "dmg": "1d4",
+    "damageType": "piercing",
+    "props": [
+     "Finesse",
+     "Thrown"
+    ],
+    "range": "20/60"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "shortbow",
+   "name": "Shortbow",
+   "kind": "weapon",
+   "type": "Simple ranged weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": true,
+    "dmg": "1d6",
+    "damageType": "piercing",
+    "props": [
+     "Ammunition",
+     "Two-handed"
+    ],
+    "range": "80/320",
+    "ammo": "Arrows"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "sling",
+   "name": "Sling",
+   "kind": "weapon",
+   "type": "Simple ranged weapon",
+   "weapon": {
+    "category": "simple",
+    "ranged": true,
+    "dmg": "1d4",
+    "damageType": "bludgeoning",
+    "props": [
+     "Ammunition"
+    ],
+    "range": "30/120",
+    "ammo": "Sling bullets"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "battleaxe",
+   "name": "Battleaxe",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d8",
+    "damageType": "slashing",
+    "props": [
+     "Versatile"
+    ],
+    "versatile": "1d10"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "flail",
+   "name": "Flail",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d8",
+    "damageType": "bludgeoning",
+    "props": []
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "glaive",
+   "name": "Glaive",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d10",
+    "damageType": "slashing",
+    "props": [
+     "Heavy",
+     "Reach",
+     "Two-handed"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "greataxe",
+   "name": "Greataxe",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d12",
+    "damageType": "slashing",
+    "props": [
+     "Heavy",
+     "Two-handed"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "greatsword",
+   "name": "Greatsword",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "2d6",
+    "damageType": "slashing",
+    "props": [
+     "Heavy",
+     "Two-handed"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "halberd",
+   "name": "Halberd",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d10",
+    "damageType": "slashing",
+    "props": [
+     "Heavy",
+     "Reach",
+     "Two-handed"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "lance",
+   "name": "Lance",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d12",
+    "damageType": "piercing",
+    "props": [
+     "Reach",
+     "Special"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "longsword",
+   "name": "Longsword",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d8",
+    "damageType": "slashing",
+    "props": [
+     "Versatile"
+    ],
+    "versatile": "1d10"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "maul",
+   "name": "Maul",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "2d6",
+    "damageType": "bludgeoning",
+    "props": [
+     "Heavy",
+     "Two-handed"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "morningstar",
+   "name": "Morningstar",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d8",
+    "damageType": "piercing",
+    "props": []
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "pike",
+   "name": "Pike",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d10",
+    "damageType": "piercing",
+    "props": [
+     "Heavy",
+     "Reach",
+     "Two-handed"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "rapier",
+   "name": "Rapier",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d8",
+    "damageType": "piercing",
+    "props": [
+     "Finesse"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "scimitar",
+   "name": "Scimitar",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d6",
+    "damageType": "slashing",
+    "props": [
+     "Finesse",
+     "Light"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "shortsword",
+   "name": "Shortsword",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d6",
+    "damageType": "piercing",
+    "props": [
+     "Finesse",
+     "Light"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "trident",
+   "name": "Trident",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d6",
+    "damageType": "piercing",
+    "props": [
+     "Thrown",
+     "Versatile"
+    ],
+    "range": "20/60",
+    "versatile": "1d8"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "war-pick",
+   "name": "War pick",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d8",
+    "damageType": "piercing",
+    "props": []
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "warhammer",
+   "name": "Warhammer",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d8",
+    "damageType": "bludgeoning",
+    "props": [
+     "Versatile"
+    ],
+    "versatile": "1d10"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "whip",
+   "name": "Whip",
+   "kind": "weapon",
+   "type": "Martial melee weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": false,
+    "dmg": "1d4",
+    "damageType": "slashing",
+    "props": [
+     "Finesse",
+     "Reach"
+    ]
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "blowgun",
+   "name": "Blowgun",
+   "kind": "weapon",
+   "type": "Martial ranged weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": true,
+    "dmg": "1",
+    "damageType": "piercing",
+    "props": [
+     "Ammunition",
+     "Loading"
+    ],
+    "range": "25/100",
+    "ammo": "Blowgun needles"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "hand-crossbow",
+   "name": "Hand crossbow",
+   "kind": "weapon",
+   "type": "Martial ranged weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": true,
+    "dmg": "1d6",
+    "damageType": "piercing",
+    "props": [
+     "Ammunition",
+     "Light",
+     "Loading"
+    ],
+    "range": "30/120",
+    "ammo": "Crossbow bolts"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "heavy-crossbow",
+   "name": "Heavy crossbow",
+   "kind": "weapon",
+   "type": "Martial ranged weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": true,
+    "dmg": "1d10",
+    "damageType": "piercing",
+    "props": [
+     "Ammunition",
+     "Heavy",
+     "Loading",
+     "Two-handed"
+    ],
+    "range": "100/400",
+    "ammo": "Crossbow bolts"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "longbow",
+   "name": "Longbow",
+   "kind": "weapon",
+   "type": "Martial ranged weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": true,
+    "dmg": "1d8",
+    "damageType": "piercing",
+    "props": [
+     "Ammunition",
+     "Heavy",
+     "Two-handed"
+    ],
+    "range": "150/600",
+    "ammo": "Arrows"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "net",
+   "name": "Net",
+   "kind": "weapon",
+   "type": "Martial ranged weapon",
+   "weapon": {
+    "category": "martial",
+    "ranged": true,
+    "dmg": "0",
+    "damageType": "none",
+    "props": [
+     "Special",
+     "Thrown"
+    ],
+    "range": "5/15"
+   },
+   "cost": "",
+   "weight": 0
+  },
+  {
+   "id": "padded-armor",
+   "name": "Padded armor",
+   "kind": "armor",
+   "type": "Light armor",
+   "armor": {
+    "category": "light",
+    "base": 11,
+    "dexCap": null,
+    "stealthDisadvantage": true
+   }
+  },
+  {
+   "id": "leather-armor",
+   "name": "Leather armor",
+   "kind": "armor",
+   "type": "Light armor",
+   "armor": {
+    "category": "light",
+    "base": 11,
+    "dexCap": null,
+    "stealthDisadvantage": false
+   }
+  },
+  {
+   "id": "studded-leather-armor",
+   "name": "Studded leather armor",
+   "kind": "armor",
+   "type": "Light armor",
+   "armor": {
+    "category": "light",
+    "base": 12,
+    "dexCap": null,
+    "stealthDisadvantage": false
+   }
+  },
+  {
+   "id": "hide-armor",
+   "name": "Hide armor",
+   "kind": "armor",
+   "type": "Medium armor",
+   "armor": {
+    "category": "medium",
+    "base": 12,
+    "dexCap": 2,
+    "stealthDisadvantage": false
+   }
+  },
+  {
+   "id": "chain-shirt",
+   "name": "Chain shirt",
+   "kind": "armor",
+   "type": "Medium armor",
+   "armor": {
+    "category": "medium",
+    "base": 13,
+    "dexCap": 2,
+    "stealthDisadvantage": false
+   }
+  },
+  {
+   "id": "scale-mail",
+   "name": "Scale mail",
+   "kind": "armor",
+   "type": "Medium armor",
+   "armor": {
+    "category": "medium",
+    "base": 14,
+    "dexCap": 2,
+    "stealthDisadvantage": true
+   }
+  },
+  {
+   "id": "breastplate",
+   "name": "Breastplate",
+   "kind": "armor",
+   "type": "Medium armor",
+   "armor": {
+    "category": "medium",
+    "base": 14,
+    "dexCap": 2,
+    "stealthDisadvantage": false
+   }
+  },
+  {
+   "id": "half-plate",
+   "name": "Half plate",
+   "kind": "armor",
+   "type": "Medium armor",
+   "armor": {
+    "category": "medium",
+    "base": 15,
+    "dexCap": 2,
+    "stealthDisadvantage": true
+   }
+  },
+  {
+   "id": "ring-mail",
+   "name": "Ring mail",
+   "kind": "armor",
+   "type": "Heavy armor",
+   "armor": {
+    "category": "heavy",
+    "base": 14,
+    "dexCap": 0,
+    "stealthDisadvantage": true
+   }
+  },
+  {
+   "id": "chain-mail",
+   "name": "Chain mail",
+   "kind": "armor",
+   "type": "Heavy armor",
+   "armor": {
+    "category": "heavy",
+    "base": 16,
+    "dexCap": 0,
+    "stealthDisadvantage": true,
+    "strength": 13
+   }
+  },
+  {
+   "id": "splint-armor",
+   "name": "Splint armor",
+   "kind": "armor",
+   "type": "Heavy armor",
+   "armor": {
+    "category": "heavy",
+    "base": 17,
+    "dexCap": 0,
+    "stealthDisadvantage": true,
+    "strength": 15
+   }
+  },
+  {
+   "id": "plate-armor",
+   "name": "Plate armor",
+   "kind": "armor",
+   "type": "Heavy armor",
+   "armor": {
+    "category": "heavy",
+    "base": 18,
+    "dexCap": 0,
+    "stealthDisadvantage": true,
+    "strength": 15
+   }
+  },
+  {
+   "id": "shield",
+   "name": "Shield",
+   "kind": "shield",
+   "type": "Shield",
+   "armor": {
+    "base": 2
+   }
+  },
+  {
+   "id": "pearl-of-power",
+   "name": "Pearl of Power",
+   "kind": "wondrous",
+   "rarity": "Uncommon",
+   "type": "Wondrous item",
+   "attune": "by a spellcaster",
+   "text": "While attuned, use an action to regain one spent spell slot of up to 3rd level. Once per dawn.",
+   "effects": [
+    {
+     "type": "resource",
+     "id": "pearl-of-power",
+     "name": "Pearl of Power",
+     "max": 1,
+     "recharge": "dawn",
+     "when": "attuned"
+    },
+    {
+     "type": "action",
+     "id": "use-pearl-of-power",
+     "name": "Pearl of Power",
+     "econ": "action",
+     "cost": {
+      "resource": "pearl-of-power",
+      "amount": 1
+     },
+     "gain": {
+      "slots": {
+       "total": 3,
+       "maxLevel": 3,
+       "count": 1
+      }
+     },
+     "when": "attuned",
+     "text": "Regain one spent slot of 3rd level or lower."
+    }
+   ]
+  },
+  {
+   "id": "rhythm-makers-drum-1",
+   "name": "Rhythm-Maker's Drum, +1",
+   "kind": "wondrous",
+   "rarity": "Uncommon",
+   "type": "Wondrous item",
+   "attune": "by a bard",
+   "text": "While holding it: +1 to bard spell save DC and spell attacks. Action: play it to regain one spent Bardic Inspiration; once per dawn.",
+   "effects": [
+    {
+     "type": "bonus",
+     "target": "spell.dc.bard",
+     "value": 1,
+     "when": "equipped"
+    },
+    {
+     "type": "bonus",
+     "target": "spell.attack.bard",
+     "value": 1,
+     "when": "equipped"
+    },
+    {
+     "type": "resource",
+     "id": "rhythm-makers-drum",
+     "name": "Rhythm-Maker's Drum",
+     "max": 1,
+     "recharge": "dawn",
+     "color": "gold",
+     "when": "attuned"
+    },
+    {
+     "type": "action",
+     "id": "play-the-drum",
+     "name": "Play the drum",
+     "econ": "action",
+     "cost": {
+      "resource": "rhythm-makers-drum",
+      "amount": 1
+     },
+     "gain": {
+      "resource": "bardic-inspiration",
+      "amount": 1
+     },
+     "when": "attuned"
+    }
+   ]
+  },
+  {
+   "id": "rhythm-makers-drum-2",
+   "name": "Rhythm-Maker's Drum, +2",
+   "kind": "wondrous",
+   "rarity": "Rare",
+   "type": "Wondrous item",
+   "attune": "by a bard",
+   "text": "While holding it: +2 to bard spell save DC and spell attacks. Action: play it to regain one spent Bardic Inspiration; once per dawn.",
+   "effects": [
+    {
+     "type": "bonus",
+     "target": "spell.dc.bard",
+     "value": 2,
+     "when": "equipped"
+    },
+    {
+     "type": "bonus",
+     "target": "spell.attack.bard",
+     "value": 2,
+     "when": "equipped"
+    },
+    {
+     "type": "resource",
+     "id": "rhythm-makers-drum",
+     "name": "Rhythm-Maker's Drum",
+     "max": 1,
+     "recharge": "dawn",
+     "color": "gold",
+     "when": "attuned"
+    },
+    {
+     "type": "action",
+     "id": "play-the-drum",
+     "name": "Play the drum",
+     "econ": "action",
+     "cost": {
+      "resource": "rhythm-makers-drum",
+      "amount": 1
+     },
+     "gain": {
+      "resource": "bardic-inspiration",
+      "amount": 1
+     },
+     "when": "attuned"
+    }
+   ]
+  },
+  {
+   "id": "rhythm-makers-drum-3",
+   "name": "Rhythm-Maker's Drum, +3",
+   "kind": "wondrous",
+   "rarity": "Very rare",
+   "type": "Wondrous item",
+   "attune": "by a bard",
+   "text": "While holding it: +3 to bard spell save DC and spell attacks. Action: play it to regain one spent Bardic Inspiration; once per dawn.",
+   "effects": [
+    {
+     "type": "bonus",
+     "target": "spell.dc.bard",
+     "value": 3,
+     "when": "equipped"
+    },
+    {
+     "type": "bonus",
+     "target": "spell.attack.bard",
+     "value": 3,
+     "when": "equipped"
+    },
+    {
+     "type": "resource",
+     "id": "rhythm-makers-drum",
+     "name": "Rhythm-Maker's Drum",
+     "max": 1,
+     "recharge": "dawn",
+     "color": "gold",
+     "when": "attuned"
+    },
+    {
+     "type": "action",
+     "id": "play-the-drum",
+     "name": "Play the drum",
+     "econ": "action",
+     "cost": {
+      "resource": "rhythm-makers-drum",
+      "amount": 1
+     },
+     "gain": {
+      "resource": "bardic-inspiration",
+      "amount": 1
+     },
+     "when": "attuned"
+    }
+   ]
+  }
+ ],
+ "creatures": [
+  {
+   "id": "owl",
+   "name": "Owl",
+   "size": "Tiny",
+   "type": "Beast",
+   "alignment": "Unaligned",
+   "ac": 11,
+   "hp": {
+    "average": 1,
+    "dice": "1d4 - 1"
+   },
+   "speed": "5 ft, fly 60 ft",
+   "abilities": {
+    "str": 3,
+    "dex": 13,
+    "con": 8,
+    "int": 2,
+    "wis": 12,
+    "cha": 7
+   },
+   "skills": "Perception +3, Stealth +3",
+   "senses": "Darkvision 120 ft, passive Perception 13",
+   "cr": "0",
+   "traits": [
+    {
+     "name": "Flyby",
+     "text": "Doesn't provoke opportunity attacks when it flies out of reach."
+    },
+    {
+     "name": "Keen Hearing and Sight",
+     "text": "Advantage on Perception checks that rely on hearing or sight."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Talons",
+     "text": "Melee weapon attack: +3 to hit, reach 5 ft. Hit: 1 slashing."
+    }
+   ]
+  },
+  {
+   "id": "skeleton",
+   "name": "Skeleton",
+   "size": "Medium",
+   "type": "Undead",
+   "alignment": "Lawful evil",
+   "ac": 13,
+   "hp": {
+    "average": 13,
+    "dice": "2d8 + 4"
+   },
+   "speed": "30 ft",
+   "abilities": {
+    "str": 10,
+    "dex": 14,
+    "con": 15,
+    "int": 6,
+    "wis": 8,
+    "cha": 5
+   },
+   "senses": "Darkvision 60 ft, passive Perception 9",
+   "languages": "Understands languages it knew in life but can't speak",
+   "cr": "1/4",
+   "traits": [
+    {
+     "name": "Vulnerabilities and immunities",
+     "text": "Vulnerable to bludgeoning. Immune to poison, exhaustion and being poisoned."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Shortsword",
+     "text": "Melee weapon attack: +4 to hit, reach 5 ft. Hit: 5 (1d6 + 2) piercing."
+    },
+    {
+     "name": "Shortbow",
+     "text": "Ranged weapon attack: +4 to hit, range 80/320 ft. Hit: 5 (1d6 + 2) piercing."
+    }
+   ]
+  },
+  {
+   "id": "zombie",
+   "name": "Zombie",
+   "size": "Medium",
+   "type": "Undead",
+   "alignment": "Neutral evil",
+   "ac": 8,
+   "hp": {
+    "average": 22,
+    "dice": "3d8 + 9"
+   },
+   "speed": "20 ft",
+   "abilities": {
+    "str": 13,
+    "dex": 6,
+    "con": 16,
+    "int": 3,
+    "wis": 6,
+    "cha": 5
+   },
+   "saves": "Wis +0",
+   "senses": "Darkvision 60 ft, passive Perception 8",
+   "languages": "Understands languages it knew in life but can't speak",
+   "cr": "1/4",
+   "traits": [
+    {
+     "name": "Undead Fortitude",
+     "text": "When damage drops it to 0 HP, Con save DC 5 + damage taken (not radiant or a crit) to drop to 1 instead."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Slam",
+     "text": "Melee weapon attack: +3 to hit, reach 5 ft. Hit: 4 (1d6 + 1) bludgeoning."
+    }
+   ]
+  }
+ ]
+}

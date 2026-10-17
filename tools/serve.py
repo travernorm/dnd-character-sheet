@@ -5,6 +5,8 @@ Serves the repo folder at http://localhost:8790 and adds one endpoint the page u
 when a session is closed: POST /api/backup writes backups/<date>-session-<n>.json,
 commits it and pushes to GitHub with this computer's git login.
 
+GET /api/packs lists the .json files in packs/ (content packs from your own books).
+
 Usage: python3 tools/serve.py [--port 8790]
 """
 import http.server, json, os, re, subprocess, sys, functools
@@ -74,6 +76,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith("/api/ping"):
             return self._json(200, {"ok": True, "app": "dnd-ledger"})
+        if self.path.startswith("/api/packs"):  # content packs in the git-ignored packs/ folder
+            d = os.path.join(ROOT, "packs")
+            files = sorted(f for f in os.listdir(d) if f.endswith(".json")) if os.path.isdir(d) else []
+            return self._json(200, {"ok": True, "files": files})
         return super().do_GET()
 
     def do_POST(self):
