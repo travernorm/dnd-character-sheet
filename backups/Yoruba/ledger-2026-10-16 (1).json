@@ -1,0 +1,946 @@
+{
+ "format": "dnd-ledger",
+ "version": 2,
+ "exportedAt": "2026-10-17T01:09:01.584Z",
+ "character": {
+  "schema": 2,
+  "edition": "2014",
+  "packs": [],
+  "name": "Yoruba Stoutfoot",
+  "player": "Traver",
+  "alias": "Brawn, The Burden",
+  "race": "genasi",
+  "subrace": "earth-genasi",
+  "background": "Custom (borrowed Charlatan feature)",
+  "size": "Small",
+  "alignment": "Chaotic Neutral",
+  "age": "35",
+  "look": "Dark brown sandstone skin, golden eyes, shifting mossy brown beard",
+  "backstory": "Keeps a ledger of everyone tied to the raid on Buckskin Flat, and a list of enemies.",
+  "cover": "",
+  "campaign": {
+   "name": "Veil of Veloris",
+   "dm": "Alec",
+   "start": "2026-10-14",
+   "notes": "Alec allowed one uncommon magic item: Hat of Disguise."
+  },
+  "abilityMode": "final",
+  "abilities": {
+   "str": 8,
+   "dex": 16,
+   "con": 12,
+   "int": 8,
+   "wis": 13,
+   "cha": 17
+  },
+  "classes": [
+   {
+    "class": "bard",
+    "subclass": "college-of-whispers",
+    "level": 3
+   }
+  ],
+  "levelHistory": [
+   "bard",
+   "bard",
+   "bard"
+  ],
+  "hp": {
+   "rolls": [
+    8,
+    5,
+    5
+   ],
+   "max": null
+  },
+  "choices": {
+   "bard/expertise-3": {
+    "skipped": true
+   },
+   "bard/skills": {
+    "skipped": true
+   }
+  },
+  "proficiencies": {
+   "saves": [],
+   "skills": [
+    "persuasion",
+    "deception",
+    "stealth",
+    "sleightOfHand",
+    "perception"
+   ],
+   "expertise": [
+    "deception",
+    "persuasion"
+   ],
+   "tools": [
+    "Drum",
+    "flute (class)",
+    "thieves' tools",
+    "disguise kit (background)"
+   ],
+   "armor": [
+    "Light armor"
+   ],
+   "weapons": [
+    "Simple weapons",
+    "hand crossbows",
+    "longswords",
+    "rapiers",
+    "shortswords"
+   ],
+   "languages": [
+    "Common",
+    "Halfling"
+   ]
+  },
+  "spells": {
+   "bard": {
+    "cantrips": [
+     "vicious-mockery",
+     "minor-illusion",
+     "blade-ward"
+    ],
+    "known": [
+     "dissonant-whispers",
+     "healing-word",
+     "faerie-fire",
+     "suggestion",
+     "invisibility",
+     "detect-thoughts",
+     "disguise-self"
+    ]
+   }
+  },
+  "customSpells": [],
+  "inventory": [
+   {
+    "id": "imvbp4v9hq774z",
+    "item": "leather-armor",
+    "qty": 1,
+    "equipped": true
+   },
+   {
+    "id": "i-bolts",
+    "name": "Crossbow bolts",
+    "qty": 19,
+    "note": ""
+   },
+   {
+    "id": "i-drum",
+    "name": "Drum",
+    "qty": 1,
+    "note": "Instrument"
+   },
+   {
+    "id": "i-flute",
+    "name": "Flute",
+    "qty": 1,
+    "note": "Instrument"
+   },
+   {
+    "id": "i-thieves",
+    "name": "Thieves' tools",
+    "qty": 1,
+    "note": ""
+   },
+   {
+    "id": "i-disg",
+    "name": "Disguise kit",
+    "qty": 1,
+    "note": "From the entertainer's pack"
+   },
+   {
+    "id": "i-leather",
+    "name": "Leather armor",
+    "qty": 1,
+    "note": "Worn"
+   },
+   {
+    "id": "i-costume",
+    "name": "Costumes",
+    "qty": 2,
+    "note": ""
+   },
+   {
+    "id": "i-candle",
+    "name": "Candles",
+    "qty": 5,
+    "note": ""
+   },
+   {
+    "id": "i-rations",
+    "name": "Rations (days)",
+    "qty": 5,
+    "note": ""
+   },
+   {
+    "id": "i-pack",
+    "name": "Backpack, bedroll, waterskin",
+    "qty": 1,
+    "note": ""
+   },
+   {
+    "id": "i-clothes",
+    "name": "Dark common clothes with hood",
+    "qty": 1,
+    "note": ""
+   },
+   {
+    "id": "i-ledger",
+    "name": "Ledger and list of enemies",
+    "qty": 1,
+    "note": "Everyone tied to the raid on Buckskin Flat"
+   },
+   {
+    "id": "imvbp4v9hvv934",
+    "item": "hat-of-disguise",
+    "qty": 1,
+    "attuned": true,
+    "equipped": true,
+    "note": "While wearing it, cast Disguise Self at will, as often as you like. The spell ends if the hat is removed. Alec approved one uncommon item."
+   }
+  ],
+  "attacks": [
+   {
+    "id": "a-xbow",
+    "name": "Light crossbow",
+    "ability": "dex",
+    "ranged": true,
+    "prof": true,
+    "dmg": "1d8",
+    "type": "piercing",
+    "range": "80/320 ft",
+    "props": "Two-handed, loading",
+    "ammo": "Crossbow bolts",
+    "magic": 0
+   },
+   {
+    "id": "a-dagger",
+    "name": "Dagger",
+    "ability": "dex",
+    "ranged": false,
+    "prof": true,
+    "dmg": "1d4",
+    "type": "piercing",
+    "range": "Melee, thrown 20/60 ft",
+    "props": "Finesse, light, thrown",
+    "ammo": "",
+    "magic": 0
+   }
+  ],
+  "gold": {
+   "gp": 14,
+   "sp": 0,
+   "cp": 0
+  },
+  "companions": [],
+  "custom": {
+   "features": [
+    {
+     "id": "f-false-identity",
+     "name": "False Identity",
+     "source": "Background",
+     "text": "A second identity with documents, acquaintances and disguises. You can forge documents if you've seen an example."
+    }
+   ],
+   "resources": []
+  },
+  "overrides": {},
+  "levelPlan": [
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Ranger",
+   "Ranger",
+   "Ranger",
+   "Ranger",
+   "Ranger",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard",
+   "Bard"
+  ],
+  "xp": 1200
+ },
+ "state": {
+  "schema": 2,
+  "hp": 21,
+  "temp": 0,
+  "used": {
+   "bardic-inspiration": 1
+  },
+  "slotsUsed": {},
+  "hdUsed": {},
+  "conc": null,
+  "conditions": [],
+  "death": {
+   "s": 0,
+   "f": 0
+  },
+  "combat": null,
+  "session": null,
+  "inspiration": false,
+  "toggles": [],
+  "spellFx": [],
+  "undo": [
+   {
+    "ev": "mva4ivnjmiu94",
+    "before": {
+     "schema": 1,
+     "hp": 21,
+     "temp": 0,
+     "used": {},
+     "slotsUsed": {},
+     "hdUsed": {},
+     "conc": null,
+     "conditions": [],
+     "death": {
+      "s": 0,
+      "f": 0
+     },
+     "combat": null,
+     "session": "smva4ik109a9qr",
+     "drumHeld": true,
+     "inspiration": false
+    }
+   },
+   {
+    "ev": "mva4jdjzkc6nn",
+    "before": {
+     "schema": 1,
+     "hp": 21,
+     "temp": 0,
+     "used": {
+      "bi": 0
+     },
+     "slotsUsed": {},
+     "hdUsed": {},
+     "conc": null,
+     "conditions": [],
+     "death": {
+      "s": 0,
+      "f": 0
+     },
+     "combat": null,
+     "session": "smva4ik109a9qr",
+     "drumHeld": true,
+     "inspiration": false
+    }
+   },
+   {
+    "ev": "mva4jnnv3g9vk",
+    "before": {
+     "schema": 1,
+     "hp": 21,
+     "temp": 0,
+     "used": {
+      "bi": 1
+     },
+     "slotsUsed": {},
+     "hdUsed": {},
+     "conc": null,
+     "conditions": [],
+     "death": {
+      "s": 0,
+      "f": 0
+     },
+     "combat": null,
+     "session": "smva4ik109a9qr",
+     "drumHeld": true,
+     "inspiration": false
+    }
+   }
+  ]
+ },
+ "sessions": [
+  {
+   "id": "smva4ik109a9qr",
+   "number": 1,
+   "date": "2026-10-14",
+   "gameDate": "",
+   "title": "Session 0",
+   "location": "An unknown Dungeon",
+   "summary": "Entry session - vibes are high. LFG!",
+   "started": "2026-10-15T22:41:48.516Z",
+   "notes": "Two Doors to East and West. \n\nEastern door (?) opened and defeated wraith, two lights appeared. \n\nDefeated Wraith - Jimmy inspected ectoplasm and saw it was some dark magic. \n\nYoruba knocked on western door, something knocked back. ",
+   "gameDateEnd": "",
+   "ended": "2026-10-15T22:44:13.165Z",
+   "entry": "smva4ik109a9qr"
+  }
+ ],
+ "notes": [],
+ "events": [
+  {
+   "id": "mva4ik12lylnw",
+   "t": "2026-10-15T22:41:48.518Z",
+   "s": "smva4ik109a9qr",
+   "k": "session",
+   "title": "Session 1 opened",
+   "detail": "Wed, Oct 14, 2026 · An unkown Dungeon"
+  },
+  {
+   "id": "mva4ivnjmiu94",
+   "t": "2026-10-15T22:42:03.583Z",
+   "s": "smva4ik109a9qr",
+   "k": "attack",
+   "title": "Light crossbow → Wraith",
+   "detail": "Hit, 8 damage · 1 crossbow bolt used (19 left)",
+   "dmg": 8,
+   "hit": true,
+   "ammo": true
+  },
+  {
+   "id": "mva4ix4epvusk",
+   "t": "2026-10-15T22:42:05.486Z",
+   "s": "smva4ik109a9qr",
+   "k": "feature",
+   "title": "Spent Bardic Inspiration",
+   "detail": "2 of 3 left",
+   "undone": true,
+   "edits": [
+    {
+     "t": "2026-10-15T22:42:18.803Z",
+     "was": {
+      "undone": null
+     }
+    }
+   ]
+  },
+  {
+   "id": "mva4jdjzkc6nn",
+   "t": "2026-10-15T22:42:26.783Z",
+   "s": "smva4ik109a9qr",
+   "k": "feature",
+   "title": "Bardic Inspiration → Throg",
+   "detail": "d6 die"
+  },
+  {
+   "id": "mva4jnnv3g9vk",
+   "t": "2026-10-15T22:42:39.883Z",
+   "s": "smva4ik109a9qr",
+   "k": "spell",
+   "title": "Vicious Mockery → Wraith Targeted, Hit",
+   "detail": "Cantrip",
+   "spell": "vicious-mockery",
+   "slot": 0
+  },
+  {
+   "id": "mva4jv3ldmv5v",
+   "t": "2026-10-15T22:42:49.521Z",
+   "s": "smva4ik109a9qr",
+   "k": "level",
+   "title": "Gained 300 XP: Defeating Wraith",
+   "detail": "Now 1,200 XP",
+   "xp": 300,
+   "xpNote": "Defeating Wraith"
+  },
+  {
+   "id": "mva4lnn2fiplr",
+   "t": "2026-10-15T22:44:13.166Z",
+   "s": "smva4ik109a9qr",
+   "k": "session",
+   "title": "Session 1 closed",
+   "detail": "5 entries filed in the Session Entry · HP 21/21 · 14 gp"
+  }
+ ],
+ "sessionEntries": [
+  {
+   "id": "smva4ik109a9qr",
+   "sessionId": "smva4ik109a9qr",
+   "number": 1,
+   "title": "Session 0",
+   "date": "2026-10-14",
+   "gameDate": "",
+   "gameDateEnd": "",
+   "location": "An unknown Dungeon",
+   "started": "2026-10-15T22:41:48.516Z",
+   "closed": "2026-10-15T22:44:13.170Z",
+   "recap": "Entry session - vibes are high. LFG!",
+   "notes": "Two Doors to East and West. \n\nEastern door (?) opened and defeated wraith, two lights appeared. \n\nDefeated Wraith - Jimmy inspected ectoplasm and saw it was some dark magic. \n\nYoruba knocked on western door, something knocked back. ",
+   "stats": {
+    "entries": 6,
+    "attacks": 1,
+    "hits": 1,
+    "damageDealt": 8,
+    "spells": 1,
+    "slotsSpent": 0,
+    "inspiration": 1,
+    "damageTaken": 0,
+    "healed": 0,
+    "combats": 0,
+    "rests": []
+   },
+   "endOfSession": {
+    "name": "Yoruba Stoutfoot",
+    "classLine": "Bard 3 (Whispers)",
+    "level": 3,
+    "hp": 21,
+    "maxHP": 21,
+    "temp": 0,
+    "ac": 14,
+    "gold": {
+     "gp": 14,
+     "sp": 0,
+     "cp": 0
+    },
+    "inventory": [
+     {
+      "id": "i-bolts",
+      "name": "Crossbow bolts",
+      "qty": 19,
+      "note": ""
+     },
+     {
+      "id": "i-drum",
+      "name": "Drum",
+      "qty": 1,
+      "note": "Instrument"
+     },
+     {
+      "id": "i-flute",
+      "name": "Flute",
+      "qty": 1,
+      "note": "Instrument"
+     },
+     {
+      "id": "i-thieves",
+      "name": "Thieves' tools",
+      "qty": 1,
+      "note": ""
+     },
+     {
+      "id": "i-disg",
+      "name": "Disguise kit",
+      "qty": 1,
+      "note": "From the entertainer's pack"
+     },
+     {
+      "id": "i-leather",
+      "name": "Leather armor",
+      "qty": 1,
+      "note": "Worn"
+     },
+     {
+      "id": "i-costume",
+      "name": "Costumes",
+      "qty": 2,
+      "note": ""
+     },
+     {
+      "id": "i-candle",
+      "name": "Candles",
+      "qty": 5,
+      "note": ""
+     },
+     {
+      "id": "i-rations",
+      "name": "Rations (days)",
+      "qty": 5,
+      "note": ""
+     },
+     {
+      "id": "i-pack",
+      "name": "Backpack, bedroll, waterskin",
+      "qty": 1,
+      "note": ""
+     },
+     {
+      "id": "i-clothes",
+      "name": "Dark common clothes with hood",
+      "qty": 1,
+      "note": ""
+     },
+     {
+      "id": "i-ledger",
+      "name": "Ledger and list of enemies",
+      "qty": 1,
+      "note": "Everyone tied to the raid on Buckskin Flat"
+     }
+    ],
+    "conditions": [],
+    "slotsLeft": [
+     "4/4",
+     "2/2"
+    ],
+    "resources": [
+     {
+      "name": "Bardic Inspiration",
+      "left": 2,
+      "max": 3
+     },
+     {
+      "name": "Blade Ward as a bonus action",
+      "left": 2,
+      "max": 2
+     },
+     {
+      "name": "Words of Terror",
+      "left": 1,
+      "max": 1
+     }
+    ],
+    "hitDice": "3/3d8",
+    "character": {
+     "schema": 1,
+     "name": "Yoruba Stoutfoot",
+     "alias": "Brawn, The Burden",
+     "player": "Traver",
+     "race": "Earth Genasi (Halfling - Small)",
+     "size": "Small",
+     "alignment": "Chaotic Neutral",
+     "age": "35",
+     "background": "Custom (borrowed Charlatan feature)",
+     "look": "Dark brown sandstone skin, golden eyes, shifting mossy brown beard",
+     "backstory": "Keeps a ledger of everyone tied to the raid on Buckskin Flat, and a list of enemies.",
+     "campaign": {
+      "name": "Veil of Veloris",
+      "dm": "Alec",
+      "start": "2026-10-14",
+      "notes": "Alec allowed one uncommon magic item: Hat of Disguise."
+     },
+     "abilities": {
+      "str": 8,
+      "dex": 16,
+      "con": 12,
+      "int": 8,
+      "wis": 13,
+      "cha": 17
+     },
+     "classes": [
+      {
+       "cls": "Bard",
+       "sub": "College of Whispers",
+       "level": 3
+      }
+     ],
+     "hpRolls": [
+      8,
+      5,
+      5
+     ],
+     "hpBonus": 0,
+     "armor": {
+      "name": "Leather armor",
+      "base": 11,
+      "dexCap": null,
+      "shield": false,
+      "bonus": 0
+     },
+     "speed": 30,
+     "saveProfs": [
+      "dex",
+      "cha"
+     ],
+     "skillProfs": [
+      "persuasion",
+      "deception",
+      "stealth",
+      "sleightOfHand",
+      "perception"
+     ],
+     "expertise": [
+      "deception",
+      "persuasion"
+     ],
+     "armorProf": "Light armor",
+     "weapons": "Simple weapons, hand crossbows, longswords, rapiers, shortswords",
+     "tools": "Drum, flute (class); thieves' tools, disguise kit (background)",
+     "languages": "Common, Halfling",
+     "drum": {
+      "owned": false
+     },
+     "spells": [
+      {
+       "ref": "vicious-mockery"
+      },
+      {
+       "ref": "minor-illusion"
+      },
+      {
+       "ref": "blade-ward",
+       "racial": true,
+       "bonus": "Merge with Stone"
+      },
+      {
+       "ref": "dissonant-whispers"
+      },
+      {
+       "ref": "healing-word"
+      },
+      {
+       "ref": "faerie-fire"
+      },
+      {
+       "ref": "suggestion"
+      },
+      {
+       "ref": "invisibility"
+      },
+      {
+       "ref": "detect-thoughts"
+      },
+      {
+       "ref": "disguise-self",
+       "atWill": true,
+       "bonus": "Hat of Disguise"
+      }
+     ],
+     "attacks": [
+      {
+       "id": "a-xbow",
+       "name": "Light crossbow",
+       "ability": "dex",
+       "ranged": true,
+       "prof": true,
+       "dmg": "1d8",
+       "type": "piercing",
+       "range": "80/320 ft",
+       "props": "Two-handed, loading",
+       "ammo": "Crossbow bolts",
+       "magic": 0
+      },
+      {
+       "id": "a-dagger",
+       "name": "Dagger",
+       "ability": "dex",
+       "ranged": false,
+       "prof": true,
+       "dmg": "1d4",
+       "type": "piercing",
+       "range": "Melee, thrown 20/60 ft",
+       "props": "Finesse, light, thrown",
+       "ammo": "",
+       "magic": 0
+      }
+     ],
+     "inventory": [
+      {
+       "id": "i-bolts",
+       "name": "Crossbow bolts",
+       "qty": 19,
+       "note": ""
+      },
+      {
+       "id": "i-drum",
+       "name": "Drum",
+       "qty": 1,
+       "note": "Instrument"
+      },
+      {
+       "id": "i-flute",
+       "name": "Flute",
+       "qty": 1,
+       "note": "Instrument"
+      },
+      {
+       "id": "i-thieves",
+       "name": "Thieves' tools",
+       "qty": 1,
+       "note": ""
+      },
+      {
+       "id": "i-disg",
+       "name": "Disguise kit",
+       "qty": 1,
+       "note": "From the entertainer's pack"
+      },
+      {
+       "id": "i-leather",
+       "name": "Leather armor",
+       "qty": 1,
+       "note": "Worn"
+      },
+      {
+       "id": "i-costume",
+       "name": "Costumes",
+       "qty": 2,
+       "note": ""
+      },
+      {
+       "id": "i-candle",
+       "name": "Candles",
+       "qty": 5,
+       "note": ""
+      },
+      {
+       "id": "i-rations",
+       "name": "Rations (days)",
+       "qty": 5,
+       "note": ""
+      },
+      {
+       "id": "i-pack",
+       "name": "Backpack, bedroll, waterskin",
+       "qty": 1,
+       "note": ""
+      },
+      {
+       "id": "i-clothes",
+       "name": "Dark common clothes with hood",
+       "qty": 1,
+       "note": ""
+      },
+      {
+       "id": "i-ledger",
+       "name": "Ledger and list of enemies",
+       "qty": 1,
+       "note": "Everyone tied to the raid on Buckskin Flat"
+      }
+     ],
+     "gold": {
+      "gp": 14,
+      "sp": 0,
+      "cp": 0
+     },
+     "customFeatures": [
+      {
+       "name": "False Identity",
+       "source": "Background",
+       "text": "A second identity with documents, acquaintances and disguises. You can forge documents if you've seen an example."
+      }
+     ],
+     "customResources": [],
+     "fightingStyle": null,
+     "favoredEnemy": "",
+     "favoredTerrain": "",
+     "levelPlan": [
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Ranger",
+      "Ranger",
+      "Ranger",
+      "Ranger",
+      "Ranger",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard",
+      "Bard"
+     ],
+     "magicItems": [
+      {
+       "name": "Hat of Disguise",
+       "rarity": "Uncommon",
+       "status": "Requires attunement",
+       "note": "While wearing it, cast Disguise Self at will, as often as you like. The spell ends if the hat is removed. Alec approved one uncommon item."
+      }
+     ],
+     "xp": 1200
+    },
+    "state": {
+     "schema": 1,
+     "hp": 21,
+     "temp": 0,
+     "used": {
+      "bi": 1
+     },
+     "slotsUsed": {},
+     "hdUsed": {},
+     "conc": null,
+     "conditions": [],
+     "death": {
+      "s": 0,
+      "f": 0
+     },
+     "combat": null,
+     "session": "smva4ik109a9qr",
+     "drumHeld": true,
+     "inspiration": false
+    }
+   },
+   "log": [
+    {
+     "id": "mva4ik12lylnw",
+     "t": "2026-10-15T22:41:48.518Z",
+     "s": "smva4ik109a9qr",
+     "k": "session",
+     "title": "Session 1 opened",
+     "detail": "Wed, Oct 14, 2026 · An unkown Dungeon"
+    },
+    {
+     "id": "mva4ivnjmiu94",
+     "t": "2026-10-15T22:42:03.583Z",
+     "s": "smva4ik109a9qr",
+     "k": "attack",
+     "title": "Light crossbow → Wraith",
+     "detail": "Hit, 8 damage · 1 crossbow bolt used (19 left)",
+     "dmg": 8,
+     "hit": true,
+     "ammo": true
+    },
+    {
+     "id": "mva4ix4epvusk",
+     "t": "2026-10-15T22:42:05.486Z",
+     "s": "smva4ik109a9qr",
+     "k": "feature",
+     "title": "Spent Bardic Inspiration",
+     "detail": "2 of 3 left",
+     "undone": true,
+     "edits": [
+      {
+       "t": "2026-10-15T22:42:18.803Z",
+       "was": {
+        "undone": null
+       }
+      }
+     ]
+    },
+    {
+     "id": "mva4jdjzkc6nn",
+     "t": "2026-10-15T22:42:26.783Z",
+     "s": "smva4ik109a9qr",
+     "k": "feature",
+     "title": "Bardic Inspiration → Throg",
+     "detail": "d6 die"
+    },
+    {
+     "id": "mva4jnnv3g9vk",
+     "t": "2026-10-15T22:42:39.883Z",
+     "s": "smva4ik109a9qr",
+     "k": "spell",
+     "title": "Vicious Mockery → Wraith Targeted, Hit",
+     "detail": "Cantrip",
+     "spell": "vicious-mockery",
+     "slot": 0
+    },
+    {
+     "id": "mva4jv3ldmv5v",
+     "t": "2026-10-15T22:42:49.521Z",
+     "s": "smva4ik109a9qr",
+     "k": "level",
+     "title": "Gained 300 XP: Defeating Wraith",
+     "detail": "Now 1,200 XP",
+     "xp": 300,
+     "xpNote": "Defeating Wraith"
+    },
+    {
+     "id": "mva4lnn2fiplr",
+     "t": "2026-10-15T22:44:13.166Z",
+     "s": "smva4ik109a9qr",
+     "k": "session",
+     "title": "Session 1 closed",
+     "detail": "5 entries filed in the Session Entry · HP 21/21 · 14 gp"
+    }
+   ],
+   "logTrimmed": false
+  }
+ ]
+}
