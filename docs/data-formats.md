@@ -318,6 +318,7 @@ Only `name`, `abilities` and `classes` are required.
 ### Fields
 
 - **`packs`**: the pack ids this character needs. The app warns if one isn't loaded. It doesn't refuse to load.
+- **`cover`**: the cover image shown above the sheet, as an image URL or a `data:image/...` URL. The Sheet tab's Upload button stores the image here as a JPEG data URL under about 500 KB, so character files and backups carry it.
 - **`race`, `subrace`, `background`**: ids from packs. Text that matches no id still shows on the sheet, without rules.
 - **`abilityMode`**:
   - `final` (the default): `abilities` are the scores on your sheet, with racial bonuses and ASIs already in. The app won't add them again. A level-up ASI changes the stored scores.

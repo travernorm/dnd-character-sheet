@@ -17,13 +17,15 @@ What's in it:
 3. Start it one of these ways:
    - **Mac app:** open the `mac` folder and double-click **D&D Ledger**. The first time, right-click it and pick **Open**, because the app isn't signed. To put it in your Dock or Applications, drag it there while holding Option and Command, which makes an alias.
    - **Any computer with Python 3:** in a terminal, from the repo folder, run `python3 tools/serve.py` and open http://localhost:8790.
-4. On the start screen, create your character or load a file (see below).
+4. On the start page, import a character file, or copy the instructions for Claude and have Claude turn your character sheet into one (see below).
 
 Your data is saved in the browser that opens the ledger. The Mac app uses its own Chrome window, so its data is separate from your normal browser. Use **Export backup** on the *Backup & level up* tab to keep a copy or move it to another computer.
 
+To add cover art, use **Upload** next to *Cover image* on the Sheet tab. The image is saved with the character, so exported character files and backups bring it back. To load a different character, use **Switch character** under *Start over* on the *Backup & level up* tab.
+
 ## Loading a character from a file
 
-Choose a character file with **Or load a file** on the start screen. Only `name`, `abilities` and `classes` are required. The file can also be a backup exported from the ledger.
+Choose a character file with **Import a character sheet (JSON)** on the start page. Option 2, **Have Claude make your JSON**, copies instructions you paste into Claude along with your sheet (PDF, photo or text); they list the ids from the packs you have loaded, so Claude's file matches them. Only `name`, `abilities` and `classes` are required. The file can also be a backup exported from the ledger.
 
 Character files use version 2 of the format: they name your class, subclass, race, feats, spells and gear by id and record your choices, and the ledger works out the rest from the loaded packs. `data/examples/fighter-rogue-v2.json` is an example, and [docs/data-formats.md](docs/data-formats.md#character-file) lists every field. To check a file before loading it:
 
@@ -31,7 +33,7 @@ Character files use version 2 of the format: they name your class, subclass, rac
 python3 tools/validate.py data/base-pack.json packs/*.json my-character.json
 ```
 
-Older files still load and are converted when opened; the original is kept. `data/character-template.json` and `data/example-character.json` are in the older format, and the start screen can load the example (a finished level 1 Fighter).
+Older files still load and are converted when opened; the original is kept. `data/character-template.json` and `data/example-character.json` are in the older format (a finished level 1 Fighter).
 
 ## Backups to GitHub
 
