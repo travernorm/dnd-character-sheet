@@ -48,6 +48,7 @@ h3{font-size:1rem}
 .hpbar.low{background:var(--danger)}
 @media (max-width:600px){.top{position:static}.vital{min-width:48px;padding:3px 6px}.vital.hp{min-width:90px}}
 .toprow2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.start .step{display:inline-grid;place-items:center;width:1.5em;height:1.5em;margin-right:8px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.8em;vertical-align:.1em}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:.82rem}
 .pill.live{border-color:var(--accent);color:var(--accent);font-weight:700}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
@@ -1727,6 +1728,8 @@ function viewSheet(){
    <section class="card"><div class="card-h"><h2>Who they are</h2><button class="btn small" id="sh-id">Edit</button></div>
     <div class="kv" style="grid-template-columns:auto minmax(0,1fr)"><span class="muted">Player</span><span>${esc(c.player)}</span><span class="muted">Race</span><span>${esc(raceName())}</span><span class="muted">Background</span><span>${esc(bgName())}</span><span class="muted">Alignment</span><span>${esc(c.alignment)}</span><span class="muted">Age</span><span>${esc(c.age)}</span><span class="muted">Alias</span><span>${esc(c.alias||"")}</span><span class="muted">Look</span><span>${esc(c.look||"")}</span></div>
     ${c.backstory?`<p style="margin:0;font-size:.88rem;white-space:pre-wrap">${esc(c.backstory)}</p>`:""}
+    <div class="res"><span class="nm">Cover image <span class="muted" style="font-weight:400;font-size:.8rem">${c.cover?"saved with the character and in every backup":"shown above the sheet"}</span></span>
+     <span class="row" style="gap:4px"><label class="btn small">${c.cover?"Change":"Upload"}<input type="file" id="sh-cover" accept="image/*" hidden></label>${c.cover?`<button class="btn small ghost" id="sh-cover-rm">Remove</button>`:""}</span></div>
    </section>
   </div></div>`;
 }
@@ -1820,6 +1823,9 @@ function coinApply(gold,dir,a,d){
 }
 function bindSheet(v){
   const on=(s,f)=>{const e=v.querySelector(s);if(e)e.onclick=f};
+  const cv=v.querySelector("#sh-cover");if(cv)cv.onchange=async e=>{const f=e.target.files[0];if(!f)return;
+    try{C.cover=await coverDataURL(f);saveChar();applyCover();render();toast("Cover image saved. It's included in your backups.")}catch(err){toast("Couldn't use that image ("+(err&&err.message||err)+").",true)}};
+  on("#sh-cover-rm",()=>{C.cover="";saveChar();applyCover();render()});
   on("#sh-add",()=>coinMove(1));on("#sh-spend",()=>coinMove(-1));on("#sh-coinlog",()=>{histFilter.kind="item";histFilter.q="";TAB="history";render()});
   on("#sh-edit",()=>openModal(`<h2>Ability scores</h2>
      <div class="field"><span class="label">These scores are</span>${segHTML("ab-mode",[["final","Final (as on my sheet)"],["base","Base (before race and ASIs)"]],C.abilityMode==="base"?"base":"final")}</div>
@@ -1980,6 +1986,9 @@ function viewData(){
     <p style="margin:0;font-size:.9rem">Choose a backup file. You'll see what's in it before anything is replaced.</p>
     <input type="file" id="d-imp" accept=".json,application/json">
     <div id="d-prev"></div>
+   </section>
+   <section class="card"><div class="card-h"><h2>Start over</h2><button class="btn danger" id="d-new">Switch character</button></div>
+    <p style="margin:0;font-size:.9rem">Clears ${esc(C.name)} from this ledger and goes back to the start page, where you can import another character.</p>
    </section></div><div class="col">
    ${d.warnings.length?`<section class="card"><div class="card-h"><h2>Missing from your packs</h2></div>
     <p class="muted" style="margin:0;font-size:.85rem">${esc(C.name)} uses things no loaded pack defines. They show as text but don't change any numbers. Load the pack that has them below.</p>
@@ -2019,15 +2028,15 @@ function historyMarkdown(){
   if(NOTES.length){md+="\n## Notes\n\n";NOTES.forEach(n=>{md+="### "+n.title+" ("+n.tag+")\n\n"+(n.body||"")+"\n\n"})}
   return md;
 }
-async function offerFile(name,text){
-  const out=$("#d-out");
+async function offerFile(name,text,outEl){
+  const out=outEl||$("#d-out");
   if(!window.claude){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:name.endsWith(".json")?"application/json":"text/markdown"}));a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Saved "+name);return}
   try{const dl=await window.claude.use("downloads");if(dl){await dl.save({filename:name,data:text});toast("Saved "+name);return}}catch(e){if(e&&e.code==="declined")return}
   out.innerHTML=`<div class="field"><span class="label">Copy this text into a file named ${esc(name)}</span><textarea readonly style="min-height:160px" id="d-txt"></textarea><button class="btn small" id="d-copy">Copy</button></div>`;
   $("#d-txt").value=text;$("#d-copy").onclick=()=>{navigator.clipboard.writeText(text).then(()=>toast("Copied"),()=>{$("#d-txt").select();toast("Press Ctrl/Cmd+C to copy")})};
 }
 function bindData(v){
-  v.querySelector("#d-lvl").onclick=levelUp;
+  v.querySelector("#d-lvl").onclick=levelUp;v.querySelector("#d-new").onclick=newCharacterModal;
   const stamp=today();
   v.querySelector("#d-exp").onclick=()=>offerFile("ledger-"+stamp+".json",JSON.stringify(exportObj(),null,1));
   v.querySelector("#d-md").onclick=()=>offerFile("history-"+stamp+".md",historyMarkdown());
@@ -2045,7 +2054,7 @@ function bindData(v){
     $("#d-prev").innerHTML=`<div class="warn">This backup from ${esc(new Date(o.exportedAt).toLocaleString())} has ${esc(o.character.name)} (${esc(classLine(o.character))}), ${o.events.length} log entries, ${(o.sessions||[]).length} sessions and ${(o.notes||[]).length} notes. Restoring replaces everything on this page.</div><button class="btn danger" id="d-do">Replace with this backup</button>`;
     $("#d-do").onclick=async()=>{$("#d-do").disabled=true;$("#d-do").textContent="Restoring…";try{await restore(o);toast("Backup restored.");render()}catch(err){toast("Restore failed: "+(err&&err.code||err),true)}}};rd.readAsText(f)};
 }
-async function restore(o){
+async function restore(o){coverDone=false;
   for(const s of SESS)await Store.del("sessions/"+s.id);for(const n of NOTES)await Store.del("notes/"+n.id);for(const c of CHUNKS)await Store.del("log/"+c.id);for(const e of ENTRIES)await Store.del("entries/"+e.id);
   ENTRIES=o.sessionEntries||[];
   const v1=!(o.character&&o.character.schema===2);
@@ -2078,57 +2087,156 @@ function ledgerFromFile(o){
   if(c.xp==null&&ch.xp==null)ch.xp=XP_TABLE[Math.min(19,ch.levelHistory.length-1)];
   return{format:"dnd-ledger",version:2,character:ch,state:null,sessions:[],notes:[],events:[],migrated:v1};
 }
+// Clears the character and everything logged for them. Content packs and app settings stay.
+function newCharacterModal(){
+  const s=currentSession();
+  openModal(`<h2>Switch character?</h2>
+   <p>This clears ${esc(C.name)} from this ledger: the sheet, play history, sessions, notes and Session Entries. Content packs you added stay.</p>
+   ${s?`<div class="warn">Session ${s.number} is still open. Close it first if you want its Session Entry.</div>`:""}
+   <p class="muted" style="font-size:.86rem">Export a backup first if you might want ${esc(C.name)} back. You can restore it from the Backup &amp; level up tab.</p>
+   <div id="nc-out"></div>
+   <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" data-close>Cancel</button><button class="btn" id="nc-exp">Export backup</button><button class="btn danger" id="nc-clear">Clear and switch</button></div>`,m=>{
+    m.querySelector("#nc-exp").onclick=()=>offerFile("ledger-"+today()+".json",JSON.stringify(exportObj(),null,1),m.querySelector("#nc-out"));
+    const b=m.querySelector("#nc-clear");b.onclick=()=>{b.textContent="Tap again to clear "+C.name;b.onclick=async()=>{b.disabled=true;b.textContent="Clearing…";
+      try{await clearCharacter()}catch(e){b.disabled=false;b.textContent="Clear and switch";toast("Couldn't clear ("+(e&&e.code||e&&e.message||e)+").",true);return}
+      closeModal();toast("Cleared. Import your next character.")}};
+  });
+}
+async function clearCharacter(){
+  for(const s of SESS)await Store.del("sessions/"+s.id);for(const n of NOTES)await Store.del("notes/"+n.id);for(const c of CHUNKS)await Store.del("log/"+c.id);for(const e of ENTRIES)await Store.del("entries/"+e.id);
+  await Store.del("app/state");await Store.del("app/character-v1");await Store.del("app/character");
+  C=null;ST=null;SESS=[];NOTES=[];CHUNKS=[];EVENTS=[];ENTRIES=[];DCACHE={sig:"",d:null};
+  coverDone=false;jrFlush=null;TAB="play";$("#cover").hidden=true;$("#tabs").innerHTML="";$("#jr-root").innerHTML="";document.title="D&D Ledger";window.scrollTo(0,0);
+  renderEmpty();
+}
 async function startLedger(o,how){SESS=[];NOTES=[];CHUNKS=[];ENTRIES=[];await restore(o);if(how)log("level",how,classLine(C)+" · "+maxHP(C)+" HP",null);else render()}
 function renderEmpty(){
   $("#topbar").innerHTML=`<div class="ident"><h1>D&amp;D Ledger</h1><span class="sub">Character sheet and play log</span></div>`;
-  const cl=Object.values(R.classes).sort((a,b)=>a.name.localeCompare(b.name));
-  const races=Object.values(R.races).sort((a,b)=>a.name.localeCompare(b.name));const bgs=Object.values(R.backgrounds).sort((a,b)=>a.name.localeCompare(b.name));
-  // Only armor with its own AC; magic "any armor" items (Armor of Resistance) are added on top of a base armor later.
-  const armors=Object.values(R.items).filter(i=>i.kind==="armor"&&i.armor&&i.armor.base).sort((a,b)=>(a.armor.base-b.armor.base)||a.name.localeCompare(b.name));
-  const ab=[["str","Str",15],["dex","Dex",14],["con","Con",13],["int","Int",12],["wis","Wis",10],["cha","Cha",8]];
-  $("#view").innerHTML=`<div class="grid"><div class="col">
-   <section class="card"><div class="card-h"><h2>Create your character</h2></div>
-    <p class="muted" style="margin:0;font-size:.86rem">Fill in what's on your sheet. Choices like skills, fighting styles and spells can be made afterwards on the Sheet and Spells tabs.</p>
-    <div class="fgrid"><div class="field"><span class="label">Character name</span><input id="nc-name" autocomplete="off"></div><div class="field"><span class="label">Player</span><input id="nc-player" autocomplete="off"></div></div>
-    <div class="fgrid"><div class="field"><span class="label">Race</span><select id="nc-race"><option value="">Other (type it)</option>${races.flatMap(r=>[[r.id+"|",r.name]].concat((r.subraces||[]).map(s=>[r.id+"|"+(s.id||slug(s.name)),r.name+": "+s.name]))).map(([v,n])=>`<option value="${esc(v)}">${esc(n)}</option>`).join("")}</select><input id="nc-racet" autocomplete="off" placeholder="Race name"></div>
-     <div class="field"><span class="label">Background</span><select id="nc-bg"><option value="">Other (type it)</option>${bgs.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("")}</select><input id="nc-bgt" autocomplete="off" placeholder="Background name"></div></div>
-    <div class="fgrid"><div class="field"><span class="label">Class</span><select id="nc-cls">${cl.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("")}</select></div><div class="field"><span class="label">Subclass (if you have one)</span><select id="nc-sub"></select></div></div>
-    <div class="fgrid"><div class="field"><span class="label">Level</span><input id="nc-lvl" class="num" inputmode="numeric" value="1"></div><div class="field"><span class="label">Max HP (blank = average)</span><input id="nc-hp" class="num" inputmode="numeric" placeholder="auto"></div></div>
-    <div class="field"><span class="label">Ability scores (as on your sheet, racial bonuses included)</span><div class="row" style="gap:6px;flex-wrap:wrap">${ab.map(([k,l,v])=>`<label style="display:flex;flex-direction:column;font-size:.75rem;font-weight:700;width:64px">${l}<input id="nc-${k}" class="num" inputmode="numeric" value="${v}" style="padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg)"></label>`).join("")}</div></div>
-    <div class="fgrid"><div class="field"><span class="label">Armor</span><select id="nc-armor"><option value="">None</option>${armors.map(a=>`<option value="${esc(a.id)}">${esc(a.name)} (AC ${a.armor.base}${a.armor.dexCap===0?"":a.armor.dexCap?" + Dex max "+a.armor.dexCap:" + Dex"})</option>`).join("")}</select></div></div>
-    <label class="check"><input type="checkbox" id="nc-shield"> Shield (+2 AC)</label>
-    <div class="field"><span class="label">Skill proficiencies</span><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:2px 10px">${SKILLS.map(sk=>`<label class="check" style="font-size:.85rem"><input type="checkbox" data-ncskill="${sk[0]}"> ${sk[1]}</label>`).join("")}</div></div>
-    <div id="nc-w"></div>
-    <div class="row"><button class="btn primary" id="nc-ok">Create character</button></div>
-   </section></div><div class="col">
-   <section class="card"><div class="card-h"><h2>Or load a file</h2></div>
-    <p class="muted" style="margin:0;font-size:.86rem">A ledger backup restores everything (sheet, sessions, notes, full log). You can also load a character file: version 2 (<a href="docs/data-formats.md" target="_blank" rel="noopener">format</a>, <a href="data/examples/fighter-rogue-v2.json" target="_blank" rel="noopener">example</a>) or the older <a href="data/character-template.json" target="_blank" rel="noopener">template</a>.</p>
+  $("#view").innerHTML=`<div class="grid start"><div class="col">
+   <section class="card"><div class="card-h"><h2><span class="step">1</span>Import a character sheet (JSON)</h2></div>
+    <p style="margin:0;font-size:.9rem">Choose a character file or a ledger backup. A backup brings back everything: the sheet, cover image, sessions, notes and the full log.</p>
     <input type="file" id="e-imp" accept=".json,application/json"><div id="d-prev"></div>
-    <div id="nc-example" class="stack"></div>
+    <p class="muted" style="margin:0;font-size:.82rem">No file yet? Use option 2, or look at the <a href="data/examples/fighter-rogue-v2.json" target="_blank" rel="noopener">example file</a>.</p>
+   </section></div><div class="col">
+   <section class="card"><div class="card-h"><h2><span class="step">2</span>Have Claude make your JSON</h2></div>
+    <ol style="margin:0;padding-left:20px;font-size:.9rem;display:grid;gap:4px">
+     <li>Copy the instructions below.</li>
+     <li>Paste them into a chat with Claude, and attach your character sheet (a PDF, a photo, or just type it out).</li>
+     <li>Save Claude's answer as a <code>.json</code> file, then import it with option 1.</li></ol>
+    <div class="row"><button class="btn primary" id="e-copy">Copy instructions for Claude</button></div>
+    <details><summary class="muted" style="cursor:pointer;font-size:.85rem">See the instructions</summary><textarea readonly id="e-prompt" style="width:100%;min-height:220px;margin-top:6px;font-size:.78rem"></textarea></details>
    </section></div></div>`;
-  const subs=()=>{const c=$("#nc-cls").value;$("#nc-sub").innerHTML='<option value="">None yet</option>'+Object.values(R.subclasses).filter(s=>s.class===c).sort((a,b)=>a.name.localeCompare(b.name)).map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("")};
-  $("#nc-cls").onchange=subs;subs();
-  const sync=()=>{$("#nc-racet").hidden=!!$("#nc-race").value;$("#nc-bgt").hidden=!!$("#nc-bg").value};$("#nc-race").onchange=sync;$("#nc-bg").onchange=sync;sync();
-  [["data/example-character.json","example character"],["data/examples/fighter-rogue-v2.json","version 2 example"]].forEach(([u,l])=>fetch(u).then(r=>r.ok?r.json():null).then(o=>{if(!o)return;const b=document.createElement("button");b.className="btn";b.textContent="Try the "+l+" ("+((o.character||o).name||"example")+")";b.onclick=async()=>{try{await startLedger(ledgerFromFile(o),"Loaded the "+l)}catch(err){toast(String(err),true)}};$("#nc-example").append(b)}).catch(()=>{}));
+  const prompt=claudePrompt();$("#e-prompt").value=prompt;
+  $("#e-copy").onclick=()=>{const done=()=>toast("Copied. Paste it into Claude with your character sheet.");
+    const manual=()=>{const t=$("#e-prompt");t.closest("details").open=true;t.focus();t.select();try{if(document.execCommand("copy")){done();return}}catch(e){}toast("Press Ctrl/Cmd+C to copy the selected text")};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(prompt).then(done,manual);else manual()};
   $("#e-imp").onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=async()=>{try{const o=ledgerFromFile(JSON.parse(rd.result));await startLedger(o,o.events&&o.events.length?null:"Character loaded from "+f.name)}catch(err){$("#d-prev").innerHTML='<div class="warn bad">Couldn\'t load that file: '+esc(err)+'</div>'}};rd.readAsText(f)};
-  $("#nc-ok").onclick=async()=>{const v=id=>$("#"+id).value.trim();const w=$("#nc-w");
-    const name=v("nc-name");if(!name){w.innerHTML='<div class="warn">Give your character a name.</div>';$("#nc-name").focus();return}
-    const level=Math.max(1,Math.min(20,parseInt(v("nc-lvl"))||1)),cls=v("nc-cls");
-    const c=blankCharacter();Object.assign(c,{name:name,player:v("nc-player"),background:v("nc-bg")||v("nc-bgt")});
-    const rv=v("nc-race");if(rv){const[r,s]=rv.split("|");c.race=r;c.subrace=s||""}else c.race=v("nc-racet");
-    ab.forEach(([k])=>{const n=parseInt(v("nc-"+k));c.abilities[k]=n>=1&&n<=30?n:10});
-    c.classes=[{class:cls,subclass:v("nc-sub"),level:level}];c.levelHistory=Array(level).fill(cls);
-    const hp=parseInt(v("nc-hp"));if(hp>0)c.hp.max=hp;
-    if(v("nc-armor"))c.inventory.push({id:"i"+uid(),item:v("nc-armor"),qty:1,equipped:true});if($("#nc-shield").checked)c.inventory.push({id:"i"+uid(),item:"shield",qty:1,equipped:true});
-    c.proficiencies.skills=[...document.querySelectorAll("[data-ncskill]:checked")].map(x=>x.dataset.ncskill);
-    if(c.proficiencies.skills.length)c.choices[cls+"/skills"]={skipped:true};
-    c.xp=XP_TABLE[level-1];
-    await startLedger({format:"dnd-ledger",version:2,character:normalizeChar(c),state:null,sessions:[],notes:[],events:[]},"Created "+name);
-  };
 }
-// Optional cover art: put an image at assets/cover.jpg, or set "cover" (an image URL) on the character.
+// The instructions option 2 copies. Ids come from the packs loaded right now, so a pack you've added shows up here too.
+function claudePrompt(){
+  const by=o=>Object.values(o).sort((a,b)=>a.name.localeCompare(b.name));
+  const choiceLines=(owner,feats)=>{const fs=(feats||[]).slice().sort((x,y)=>(x.level||0)-(y.level||0));
+    const asi=fs.flatMap(f=>(f.effects||[]).filter(e=>e.type==="asi").map(e=>owner+"/"+e.id));
+    return fs.flatMap(f=>(f.effects||[]).filter(e=>e.type==="choice").map(e=>`${owner}/${e.id}${f.level?" (level "+f.level+")":""}: ${e.name||f.name}, ${e.kind}${e.from&&e.from.optionSet?" from option list "+e.from.optionSet:""}`))
+      .concat(asi.length?["Ability Score Improvements: "+asi.join(", ")]:[])};
+  const classes=by(R.classes).map(c=>{const subs=by(R.subclasses).filter(s=>s.class===c.id);
+    return `- ${c.id} (${c.name}). Subclasses: ${subs.map(s=>s.id).join(", ")||"none"}\n`+choiceLines(c.id,c.features).concat(subs.flatMap(s=>choiceLines(s.id,s.features))).map(l=>"    "+l).join("\n")}).join("\n");
+  const races=by(R.races).map(r=>`- ${r.id}${(r.subraces||[]).length?" (subraces: "+r.subraces.map(s=>s.id||slug(s.name)).join(", ")+")":""}`+[].concat(choiceLines(r.id,r.features),...(r.subraces||[]).map(s=>choiceLines(s.id||slug(s.name),s.features))).map(l=>"\n    "+l).join("")).join("\n");
+  const ids=o=>by(o).map(x=>x.id).join(", ");
+  const opts=by(R.optionSets).map(o=>`- ${o.id}: ${(o.options||[]).map(x=>x.id||slug(x.name)).join(", ")}`).join("\n");
+  const spells=[0,1,2,3,4,5,6,7,8,9].map(l=>{const ss=by(R.spells).filter(s=>(+s.lvl||0)===l);return ss.length?`- ${l?"Level "+l:"Cantrips"}: ${ss.map(s=>s.id).join(", ")}`:""}).filter(Boolean).join("\n");
+  const gear=by(R.items).filter(i=>i.kind==="weapon"||i.kind==="armor"&&i.armor&&i.armor.base||i.id==="shield").map(i=>i.id).join(", ");
+  const magic=by(R.items).filter(i=>i.rarity).map(i=>i.id).join(", ");
+  return `Please turn my D&D character sheet into a character file for D&D Ledger, a character sheet app that uses the 2014 fifth edition rules. My character sheet is attached or pasted below these instructions.
+
+Reply with one JSON object in a single code block and nothing else inside the block, so I can save it as a .json file. After the code block, list anything you weren't sure about or couldn't fit, so I can check it.
+
+THE FORMAT
+{
+  "format": "dnd-character",
+  "character": {
+    "format": "dnd-character", "schema": 2, "edition": "2014",
+    "name": "", "player": "", "alias": "",
+    "race": "<race id>", "subrace": "<subrace id or empty>", "background": "<background id, or its name if it isn't in the list>",
+    "size": "Medium", "alignment": "", "age": "", "look": "", "backstory": "",
+    "cover": "",
+    "campaign": {"name": "", "dm": "", "start": "", "notes": ""},
+    "abilityMode": "final",
+    "abilities": {"str": 10, "dex": 10, "con": 10, "int": 10, "wis": 10, "cha": 10},
+    "classes": [{"class": "<class id>", "subclass": "<subclass id or empty>", "level": 1}],
+    "levelHistory": ["<class id taken at character level 1>", "<at level 2>"],
+    "hp": {"max": 0},
+    "xp": 0,
+    "choices": {},
+    "proficiencies": {"skills": [], "expertise": [], "tools": [], "languages": [], "armor": [], "weapons": [], "saves": []},
+    "spells": {},
+    "customSpells": [],
+    "inventory": [],
+    "attacks": [],
+    "gold": {"pp": 0, "gp": 0, "ep": 0, "sp": 0, "cp": 0},
+    "custom": {"features": [], "resources": []},
+    "overrides": {},
+    "levelPlan": []
+  }
+}
+
+RULES
+1. Ids are lowercase words joined by hyphens, and they must come from the lists at the end. Never invent an id. If something isn't in the lists (a race, subclass, feat, spell or item from a book the app doesn't have), use the fallback for that field below.
+2. abilities: copy the final scores from the sheet, with racial bonuses and ability score improvements already included. Keep "abilityMode": "final".
+3. classes: one entry per class, starting class first. levelHistory lists the class taken at each character level, in order, so its length is the total level. If the sheet doesn't say the multiclass order, assume the starting class first.
+4. hp.max: the sheet's maximum hit points. Leave hp as {} if the sheet doesn't give them, and the app will use averages.
+5. xp: the sheet's experience points. If it has none, use the minimum for the level (level 1: 0, 2: 300, 3: 900, 4: 2700, 5: 6500, 6: 14000, 7: 23000, 8: 34000, 9: 48000, 10: 64000, 11: 85000, 12: 100000, 13: 120000, 14: 140000, 15: 165000, 16: 195000, 17: 225000, 18: 265000, 19: 305000, 20: 355000).
+6. proficiencies.skills: every skill the character is proficient in, whatever gave it. proficiencies.expertise: skills with expertise. Skill ids: ${SKILLS.map(x=>x[0]).join(", ")}. Put tools, languages, and armor or weapon proficiencies from the sheet in their lists as plain text. Ability ids are str, dex, con, int, wis, cha.
+7. choices: one answer for every choice listed under the character's class, subclass and race below, up to their level. The key is exactly as listed (for example "fighter/fighting-style"). Answers:
+   - An option or skill choice: a list of ids, e.g. ["defense"] or ["deception", "persuasion"].
+   - Ability Score Improvement: {"abilities": {"dex": 2}}, or {"feat": "<feat id>"} for a feat in the feat list. For a feat that isn't in the list, use {"skipped": true} and add the feat to custom.features.
+   - Also add "<starting class id>/skills": {"skipped": true}, because the skills are already in proficiencies.skills.
+   - Anything the sheet doesn't answer: {"skipped": true}. The player can fill it in later.
+8. spells: keyed by class id, using spell ids from the list:
+   {"bard": {"cantrips": ["vicious-mockery"], "known": ["healing-word"]}}
+   Prepared casters (cleric, druid, paladin, artificer) use "prepared". Wizards use "spellbook" for every spell in the book and "prepared" for today's. Leave out spells a feature grants automatically (domain spells, racial spells). For a spell not in the list, add a full entry to customSpells, {"id": "toll-the-dead", "name": "Toll the Dead", "lvl": 0, "school": "Necromancy", "time": "action", "range": "60 feet", "comp": "V, S", "dur": "Instantaneous", "sum": "<a one or two sentence summary in your own words>", "classes": ["Cleric", "Warlock", "Wizard"]}, and use its id in the spell list.
+9. inventory: every item, one entry each. Use "item" with an id from the item lists when there is one: {"item": "light-crossbow", "qty": 1, "equipped": true}. Armor, a shield and weapons the character uses should be "equipped": true (that sets AC and attacks). A +1 weapon or armor adds "magic": 1. A magic item that needs attunement and is attuned adds "attuned": true. Anything else: {"name": "Crossbow bolts", "qty": 20}. Ammunition must be its own entry, named like "Crossbow bolts" or "Arrows".
+10. custom.features: anything with no id in the lists that matters in play (a feat, racial trait, subclass feature or homebrew boon), as {"id": "<new id>", "name": "", "source": "<book or DM>", "text": "<a short summary in your own words>"}. If it has limited uses, also add a tracker to custom.resources: {"id": "", "name": "", "max": 1, "recharge": "long"} (recharge is short, long or never).
+11. overrides: only if a number on the sheet can't come from the rules above (for example a DM-granted AC bonus). Keys: ac, maxHP, initiative, speed, save.<ability id>, skill.<skill id>.
+12. levelPlan: if the sheet mentions planned future levels, list the class id for each future character level in order. Otherwise [].
+13. Leave "cover" empty. The player adds a cover image in the app.
+14. Summarize; don't copy rules text from the books word for word.
+
+LISTS OF IDS (from the content loaded in the player's app)
+
+Classes, their subclasses, and the choices each one asks for:
+${classes}
+
+Races (and their choices):
+${races}
+
+Backgrounds: ${ids(R.backgrounds)}
+Feats: ${ids(R.feats)||"none"}
+
+Option lists (fighting styles, invocations, metamagic and so on):
+${opts}
+
+Spells:
+${spells}
+
+Weapons and armor: ${gear}
+
+Magic items: ${magic}
+`;
+}
+// Optional cover art: upload one on the Sheet tab (stored on the character as a data URL, so backups carry it),
+// set "cover" to an image URL, or put an image at assets/cover.jpg.
 function applyCover(){const el=$("#cover");if(!el||!C)return;const src=C.cover||"assets/cover.jpg";const im=new Image();
   im.onload=()=>{el.style.setProperty("--cover-img",'url("'+src.replace(/"/g,"")+'")');$("#cover-name").textContent=C.name;el.hidden=false};im.onerror=()=>{el.hidden=true};im.src=src}
+
+// Shrinks an uploaded image to a JPEG data URL small enough to store with the character (under about 500 KB).
+function coverDataURL(file){return new Promise((ok,fail)=>{const url=URL.createObjectURL(file);const im=new Image();
+  im.onerror=()=>{URL.revokeObjectURL(url);fail(new Error("not an image this browser can read"))};
+  im.onload=()=>{URL.revokeObjectURL(url);let w=Math.min(1600,im.naturalWidth),q=.85,out="";
+    for(let i=0;i<6;i++){const h=Math.round(im.naturalHeight*w/im.naturalWidth);const cv=document.createElement("canvas");cv.width=w;cv.height=h;
+      const g=cv.getContext("2d");g.fillStyle="#1d1b2e";g.fillRect(0,0,w,h);g.drawImage(im,0,0,w,h);out=cv.toDataURL("image/jpeg",q);
+      if(out.length<=680000)break;w=Math.round(w*.8);q=Math.max(.6,q-.07)}
+    ok(out)};im.src=url})}
 
 /* ================= BOOT ================= */
 function normalize(){
