@@ -29,7 +29,7 @@ Characters without `"schema": 2` are converted by `migrateCharacter` and `migrat
 3. Choices (fighting style, expertise, ASIs, invocations, cantrips…) go in `choices` under `ownerId/choiceId`. The choice ids are the `choice` effects in the owning class, subclass, race, background or feat.
 4. Anything homebrew or missing from the packs goes in `custom.features` with effects, not in code.
 5. Check the file against the packs: `python3 tools/validate.py data/base-pack.json packs/*.json <character>.json`. A warning that a choice key matches nothing usually means a typo or a missing pack.
-6. Load it in the app (start screen → **Or load a file**) and compare the sheet with the book by hand.
+6. Load it in the app (start page → **Import a character sheet (JSON)**) and compare the sheet with the book by hand.
 
 ## Running and checking
 
