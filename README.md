@@ -7,6 +7,7 @@ What's in it:
 - All 12 classes from the 2014 rules plus the Artificer, with slots, resources and multiclassing worked out from your class levels.
 - The free D&D rules (SRD 5.1): about 320 spells and 240 magic items, searchable when you add a spell or item.
 - Rules loaded from data, not code: classes, subclasses, races, feats, spells, items and creatures come from content packs, and their features (resources, actions, AC formulas, bonus damage, spell grants, choices) are worked out on the sheet. Build packs from books you own with `tools/extract/` (see below).
+- Spells: compact rows with damage and DCs worked out, filters, pinned quick-casts, upcast damage and dice rolls when you cast, concentration saves and spell durations in combat, saved prepared lists, and spellbook copying costs.
 - Sessions: open a session, log what happens, close it to get a session entry with totals. Any logged action can be edited or crossed out, and the trackers follow.
 - Backups: export everything to one file, restore it later, and (when you run it with the local server) a dated backup is committed to your repo each time you close a session.
 

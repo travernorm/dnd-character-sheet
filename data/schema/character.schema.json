@@ -319,6 +319,16 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "sets": {
+                "type": "object",
+                "description": "Saved prepared-spell lists, by name, loaded from the Prepare spells dialog.",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
               }
             },
             "additionalProperties": false
@@ -552,6 +562,13 @@
               "null"
             ]
           }
+        },
+        "pinnedSpells": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Spell ids pinned to the Play tab's quick buttons."
         }
       },
       "additionalProperties": false,
