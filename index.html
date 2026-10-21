@@ -115,6 +115,16 @@ main .wrap{padding-block:16px 96px}
 .chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .chip.spent{background:var(--sunk);color:var(--muted);text-decoration:line-through}
 .chip.psy.on{background:var(--psy);border-color:var(--psy)}
+/* turn builder */
+.turn{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.turn button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:7px 8px;text-align:left;display:flex;flex-direction:column;gap:1px;min-width:0}
+.turn button b{font-size:.84rem}.turn button span{font-size:.72rem;color:var(--ok,var(--muted))}
+.turn button.spent span{color:var(--muted);text-decoration:line-through}
+.turn button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+@media (max-width:560px){.turn{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tb-g{display:flex;flex-direction:column;gap:6px}.tb-n{margin:0;font-size:.8rem}
+.tb-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:.86rem}
+.mbar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}.mbar i{display:block;height:100%;background:var(--accent)}
 
 /* resource pips */
 .res{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
@@ -813,18 +823,20 @@ function undoLast(){
   const u=(ST.undo||[]).pop();if(!u){toast("Nothing left to undo.");return}
   const ev=EVENTS.find(e=>e.id===u.ev);const keep=ST.undo;
   ST=Object.assign(u.before,{undo:keep});
+  if(ev&&!ev.undone){const inv=(ev.fx||{}).inv||{};Object.entries(inv).forEach(([n,k])=>invAdjust(n,-k,((ev.fx||{}).invItems||{})[n]));
+    if(ev.ammo){const it=(C.inventory||[]).find(i=>itemName(i)===ev.ammoName);if(it)it.qty=(it.qty||0)+1}
+    if(Object.keys(inv).length||ev.ammo)saveChar()}
   if(ev){ev.undone=true;const ch=CHUNKS.find(c=>c.events.includes(ev));if(ch)saveChunk(ch)}
   saveState();render();toast("Undid: "+(ev?ev.title:"last change")+". It stays in history, crossed out.");
 }
 
 /* ================= ACTION ECONOMY ================= */
 function econUse(kind){ // returns warning text or ""
-  const cb=ST.combat;if(!cb||!["action","bonus","reaction"].includes(kind))return "";
-  const names={action:"action",bonus:"bonus action",reaction:"reaction"};
-  const w=cb.used[kind]?"You already used your "+names[kind]+" this round.":"";
+  const cb=ST.combat;if(!cb||!["action","bonus","reaction","object"].includes(kind))return "";
+  const w=cb.used[kind]?"You already used your "+ECON_NAME[kind]+" this round.":"";
   cb.used[kind]=true;return w;
 }
-function econWarn(kind){const cb=ST.combat;if(!cb||!kind||!cb.used[kind])return "";return "You already used your "+({action:"action",bonus:"bonus action",reaction:"reaction"}[kind])+" this round. You can still log it."}
+function econWarn(kind){const cb=ST.combat;if(!cb||!ECON_NAME[kind]||!cb.used[kind])return "";return "You already used your "+ECON_NAME[kind]+" this round. You can still log it."}
 function attacksAllowed(){return D().attacksPerAction}
 function remindersFor(on){return D().reminders.filter(r=>r.on===on)}
 function remindersHTML(on){return remindersFor(on).map(r=>`<div class="warn">${esc(r.text)}</div>`).join("")}
@@ -856,17 +868,23 @@ function ridersFor(a){const d=D();const cb=ST.combat;
     if(r.cost&&r.cost.slot&&!slots().some((n,i)=>i+1>=r.cost.slot&&slotLeft(i+1)>0))why="no spell slots left";
     if(r.oncePer&&cb&&(cb.riders||{})[r.id])why="already used this "+(r.oncePer==="combat"?"combat":r.oncePer);
     return Object.assign({},r,{res:res,why:why})})}
-function actAttack(aid){
+function actAttack(aid,mode){
   const a=allAttacks().find(x=>x.id===aid);if(!a)return;
   const cb=ST.combat;const ammo=ammoItem(a);
   const made=cb?(cb.attacks||0):0;const allowed=attacksAllowed();
-  let warn="";if(cb&&made>=allowed)warn="You've made "+made+" attack"+(made>1?"s":"")+" this round (you get "+allowed+" with the Attack action).";
+  // mode: "offhand" (two-weapon fighting, bonus action) or "opportunity" (reaction). A thrown melee weapon can be thrown.
+  const canThrow=isThrown(a)&&!a.ranged&&mode!=="opportunity";const tItem=canThrow?thrownItem(a):null;
+  const offMod=mode==="offhand"?Math.max(0,atkAbilityMod(a)):0;
+  let warn="";if(cb&&!mode&&made>=allowed)warn="You've made "+made+" attack"+(made>1?"s":"")+" this round (you get "+allowed+" with the Attack action).";
+  const ew=mode==="offhand"?econWarn("bonus"):mode==="opportunity"?econWarn("reaction"):"";if(ew)warn+=(warn?" ":"")+ew;
+  if(mode==="offhand")warn+=(warn?" ":"")+"Off-hand attacks don't add your ability modifier to damage unless it's negative (or you have the Two-Weapon Fighting style).";
   if(ammo&&ammo.qty<=0)warn+=(warn?" ":"")+"No "+itemName(ammo).toLowerCase()+" left.";
   const rs=ridersFor(a);const crit=D().critRange;
   const slotOpts=r=>slots().map((n,i)=>i+1).filter(l=>l>=(r.cost.slot||1)&&slotLeft(l)>0);
-  openModal(`<h2>${esc(a.name)}</h2>
+  openModal(`<h2>${mode==="offhand"?"Off-hand: ":mode==="opportunity"?"Opportunity attack: ":""}${esc(a.name)}</h2>
    <div class="row"><span class="pill num">To hit ${sg(attackBonus(a))}</span><span class="pill num">${esc(attackDmg(a))}</span>${a.range?`<span class="pill">${esc(a.range)}</span>`:""}${ammo?`<span class="pill num">${esc(itemName(ammo))}: ${ammo.qty}</span>`:""}${crit<20?`<span class="pill num">Crit on ${crit}-20</span>`:""}</div>
    ${warn?`<div class="warn">${esc(warn)}</div>`:""}${remindersHTML("attack")}
+   ${canThrow?`<div class="field"><span class="label">How</span>${segHTML("how",[["melee","Melee"],["throw","Thrown ("+esc((a.range||"").replace(/^.*thrown\s*/i,"")||"20/60 ft")+")"]],"melee")}</div><p class="muted" id="atk-tn" style="margin:0;font-size:.82rem" hidden>${tItem?"Takes 1 "+esc(itemName(tItem))+" out of your gear ("+tItem.qty+" now). Pick it up later under Free & object, or when combat ends.":"It lands near the target. Pick it up later under Free & object, or when combat ends."}${cb&&(cb.thrown||[]).some(t=>t.name===a.name)&&!tItem?" You already threw one this fight.":""}</p>`:""}
    <div class="field"><span class="label">Target</span><input id="atk-target" placeholder="Who are you attacking?" autocomplete="off"></div>
    <div class="field"><span class="label">Result</span>${segHTML("res",[["hit","Hit"],["miss","Miss"],["crit","Critical hit"]],"hit")}</div>
    ${rs.map(r=>`<label class="check"><input type="checkbox" data-rider="${esc(r.id)}" ${r.why?"disabled":""}> ${esc(r.name)}${r.damage?": +"+esc(r.damage)+(r.damageType?" "+esc(r.damageType):""):""}${r.res?" · spend 1 "+esc(r.res.name)+" ("+resLeft(r.res)+" left)":""}${r.cost&&r.cost.slot?` · spend a slot <select data-rslot="${esc(r.id)}" style="padding:2px">${slotOpts(r).map(l=>`<option value="${l}">${ord(l)}</option>`).join("")}</select>`:""}${r.why?` <span class="muted">(${esc(r.why)})</span>`:""}${(r.requires||[]).includes("advantageOrAlly")?' <span class="muted">· needs advantage or an ally next to the target</span>':""}</label>`).join("")}
@@ -877,10 +895,11 @@ function actAttack(aid){
     const riderDice=r=>{if(!r.cost||!r.cost.slot||!r.perSlotLevel)return r.damage;const l=+(m.querySelector('[data-rslot="'+r.id+'"]')||{}).value||r.cost.slot;
       const base=parseInt(r.damage)||0,per=parseInt(r.perSlotLevel)||1,f=String(r.damage).split("d")[1];const n=Math.min(r.maxDice||99,base+per*(l-r.cost.slot));return n+"d"+f};
     bindSeg(m,"res",v=>{if(v==="miss")m.querySelectorAll("[data-rider]").forEach(b=>b.checked=false)});
+    bindSeg(m,"how",v=>{const n=m.querySelector("#atk-tn");if(n)n.hidden=v!=="throw"});
     m.querySelector("#atk-roll").onclick=()=>{
       const res=segVal(m,"res");if(res==="miss"){m.querySelector("#atk-dmg").value="0";return}
       const crit=res==="crit";const w=rollExpr(a.dmg,crit);let tot=w.total;const parts=[a.name+" "+w.text];
-      const b=attackDmgBonus(a);tot+=b;
+      const b=attackDmgBonus(a)-offMod;tot+=b;
       picked().forEach(r=>{const dice=riderDice(r);if(dice){const x=rollExpr(String(dice),crit);tot+=x.total;parts.push(r.name+" "+x.text)}});
       tot=Math.max(0,tot);m.querySelector("#atk-dmg").value=tot;toast("Rolled "+parts.join(", ")+(b?" "+sg(b):"")+" = "+tot);
     };
@@ -893,10 +912,14 @@ function actAttack(aid){
         if(r.cost&&r.cost.slot){const l=+(m.querySelector('[data-rslot="'+r.id+'"]')||{}).value||r.cost.slot;ST.slotsUsed[l]=(ST.slotsUsed[l]||0)+1;fx.slots[l]=(fx.slots[l]||0)+1;lbl+=", "+ord(l)+"-level slot"}
         if(r.oncePer&&ST.combat){ST.combat.riders=ST.combat.riders||{};ST.combat.riders[r.id]=true}used.push(lbl)});
       if(ammo&&ammo.qty>0){ammo.qty-=1;saveChar()}
-      if(ST.combat){if(!(ST.combat.attacks))econUse("action");ST.combat.attacks=(ST.combat.attacks||0)+1}
+      const threw=canThrow&&segVal(m,"how")==="throw";let thrownTxt="";
+      if(threw){if(tItem&&tItem.qty>0){fxInv(fx,tItem,-1);tItem.qty-=1;saveChar();thrownTxt="Thrown · "+tItem.qty+" "+itemName(tItem).toLowerCase()+" left on you"}else thrownTxt="Thrown, it's on the ground";
+        if(ST.combat)ST.combat.thrown=(ST.combat.thrown||[]).concat([{name:a.name,item:tItem?itemName(tItem):null}])}
+      if(ST.combat){if(mode==="offhand")econUse("bonus");else if(mode==="opportunity")econUse("reaction");else{if(!(ST.combat.attacks))econUse("action");ST.combat.attacks=(ST.combat.attacks||0)+1}}
       const resTxt={hit:"Hit",miss:"Miss",crit:"Critical hit"}[res];
-      const det=[resTxt+(isNaN(dmg)?"":", "+dmg+" damage")].concat(used,ammo?["1 "+itemName(ammo).toLowerCase().replace(/s$/,"")+" used ("+ammo.qty+" left)"]:[],note?[note]:[]).join(" · ");
-      closeModal();log("attack",a.name+(target?" → "+target:""),det,before,{dmg:isNaN(dmg)?0:dmg,hit:res!=="miss",ammo:!!ammo,ammoName:ammo?itemName(ammo):undefined,fx:fx});
+      const det=[resTxt+(isNaN(dmg)?"":", "+dmg+" damage")].concat(used,ammo?["1 "+itemName(ammo).toLowerCase().replace(/s$/,"")+" used ("+ammo.qty+" left)"]:[],thrownTxt?[thrownTxt]:[],note?[note]:[]).join(" · ");
+      const pre=mode==="offhand"?"Off-hand: ":mode==="opportunity"?"Opportunity attack: ":"";
+      closeModal();log("attack",pre+a.name+(target?" → "+target:""),det,before,{dmg:isNaN(dmg)?0:dmg,hit:res!=="miss",ammo:!!ammo,ammoName:ammo?itemName(ammo):undefined,fx:fx,thrown:threw||undefined});
     };
   });
 }
@@ -1026,6 +1049,208 @@ function actFree(){
       closeModal();log(kind,pre+t,m.querySelector("#fr-d").value.trim(),before)};
   });
 }
+/* ================= TURN BUILDER ================= */
+// In combat, pick what you're spending (action, bonus action, movement, reaction, free object interaction)
+// and the Play tab shows only what fits it. Everything still goes through the same log, slots and uses.
+let TURN_PICK="action";
+const TURN_KINDS=[["action","Action"],["bonus","Bonus action"],["move","Movement"],["reaction","Reaction"],["free","Free & object"]];
+// The standard actions every character has in combat (SRD 5.1, Actions in Combat).
+const STD_ACTIONS=[
+  {id:"dash",short:"Double your movement",name:"Dash",sum:"Gain extra movement equal to your speed for this turn."},
+  {id:"disengage",short:"Move without opportunity attacks",name:"Disengage",sum:"Your movement doesn't provoke opportunity attacks for the rest of the turn."},
+  {id:"dodge",short:"Attacks against you have disadvantage",name:"Dodge",sum:"Until your next turn, attacks against you have disadvantage if you can see the attacker, and you make Dexterity saves with advantage."},
+  {id:"help",short:"Give an ally advantage",name:"Help",sum:"An ally gets advantage on their next ability check for a task you help with, or on their next attack against a creature within 5 feet of you."},
+  {id:"hide",short:"Stealth check",name:"Hide",sum:"Make a Dexterity (Stealth) check to hide.",checks:[["stealth","Stealth"]]},
+  {id:"ready",short:"Act later with your reaction",name:"Ready",sum:"Pick a trigger and what you'll do. When it happens, use your reaction to do it. A readied spell holds your concentration."},
+  {id:"search",short:"Perception or Investigation",name:"Search",sum:"Look for something: a Wisdom (Perception) or Intelligence (Investigation) check.",checks:[["perception","Perception"],["investigation","Investigation"]]},
+  {id:"grapple",short:"Replaces one attack",name:"Grapple",attack:true,sum:"Replaces one attack. Strength (Athletics) against the target's Athletics or Acrobatics. The target can be at most one size larger than you.",checks:[["athletics","Athletics"]]},
+  {id:"shove",short:"Prone or push 5 ft",name:"Shove",attack:true,sum:"Replaces one attack. Strength (Athletics) against the target's Athletics or Acrobatics to knock it prone or push it 5 feet away.",checks:[["athletics","Athletics"]]}];
+const OBJ_PRESETS=["Draw or stow a weapon","Pick up an item","Open or close a door","Hand an item to someone","Pull a lever or a rope"];
+const HEAL_POTIONS={"potion of healing":"2d4+2","potion of greater healing":"4d4+4","potion of superior healing":"8d4+8","potion of supreme healing":"10d4+20"};
+const ECON_NAME={action:"action",bonus:"bonus action",reaction:"reaction",object:"free object interaction"};
+
+// Gear: find, add to and take from inventory by name. fx.inv records it so undo and edits can put it back.
+function invAdjust(name,delta,proto,drop){let it=(C.inventory||[]).find(i=>itemName(i)===name);
+  if(!it){if(delta<=0)return null;it=Object.assign({},proto||{name:name,note:""},{id:"i"+uid(),qty:0});C.inventory.push(it)}
+  it.qty=Math.max(0,(it.qty||0)+delta);if(drop&&it.qty<=0&&!it.equipped)C.inventory=C.inventory.filter(x=>x!==it);return it}
+function fxInv(fx,it,delta){fx.inv=fx.inv||{};const n=itemName(it);fx.inv[n]=(fx.inv[n]||0)+delta;if(delta<0){fx.invItems=fx.invItems||{};fx.invItems[n]=Object.assign({},it,{qty:0})}}
+function usableItems(){return (C.inventory||[]).filter(i=>(i.qty||0)>0&&!((ref("items",i.item)||{}).kind==="armor"&&i.equipped))}
+function itemText(i){return (ref("items",i.item)||ref("items",itemName(i))||{}).text||i.note||""}
+// The gear a thrown weapon comes out of: the inventory entry it came from, or one with the same name.
+function thrownItem(a){if(a.id&&a.id.startsWith("inv:"))return (C.inventory||[]).find(i=>"inv:"+i.id===a.id)||null;
+  const n=a.name.replace(/ \+\d+$/,"").toLowerCase();return (C.inventory||[]).find(i=>itemName(i).toLowerCase()===n)||null}
+const isThrown=a=>/thrown/i.test(a.props||"")||/thrown/i.test(a.range||"");
+function atkAbilityMod(a){const d=D();if(a.ability==="spell")return 0;const ab=a.ability==="finesse"?(d.M("dex")>=d.M("str")?"dex":"str"):(a.ability||"dex");return d.M(ab)}
+function moveInfo(){const d=D();const cb=ST.combat||{};const budget=d.speed*(1+(cb.dash||0));const moved=cb.moved||0;return{speed:d.speed,budget:budget,moved:moved,left:Math.max(0,budget-moved)}}
+function econState(k){const cb=ST.combat;if(!cb)return "";if(k==="move"){const m=moveInfo();return m.moved?m.left+"/"+m.budget+" ft":m.budget+" ft"}
+  if(k==="free")return cb.used.object?"Object used":"Ready";return cb.used[k]?"Used":"Ready"}
+function econSpent(k){const cb=ST.combat;if(!cb)return false;if(k==="move")return moveInfo().left<=0;if(k==="free")return !!cb.used.object;return !!cb.used[k]}
+
+function atkBtnHTML(a,mode,dis){const am=ammoItem(a);const ti=isThrown(a)&&!a.ranged?thrownItem(a):null;
+  const sub=mode==="offhand"?"Off-hand · no ability bonus to damage":mode==="opportunity"?"Opportunity attack":"";
+  const dmgTxt=mode==="offhand"?a.dmg+" "+(a.type||""):attackDmg(a);
+  return `<button class="qa ${mode==="opportunity"?"info":mode==="offhand"?"psy":""}" data-atk="${esc(a.id)}" ${mode?`data-mode="${mode}"`:""} ${dis?"disabled":""}><b>${esc(a.name)}</b><span class="num">${sg(attackBonus(a))} · ${esc(dmgTxt)}${am?" · "+am.qty+" left":ti?" · "+ti.qty+" on you":""}</span>${sub?`<span>${esc(sub)}</span>`:""}</button>`}
+function actBtnHTML(a){const r=a.cost&&a.cost.resource?getRes(a.cost.resource):null;return `<button class="qa ${QA_COLOR[a.econ]||"info"}" data-act="${esc(a.id)}"><b>${esc(a.name)}</b><span>${esc(ECON_LABEL[a.econ]||a.econ)}${a.save?" · DC "+a.save.dc:""}${r?" · "+resLeft(r)+"/"+r.max+(r.die?" "+esc(r.die):""):""}</span></button>`}
+function spellBtnHTML(s,cls){const r=spellMath(s,s.lvl);const dt=dmgText(r);const left=s.lvl?(castableNow(s)?"":" · no slots left"):"";
+  return `<button class="qa ${cls||"psy"}" data-cast="${esc(s.key)}"><b>${esc(s.name)}</b><span>${s.lvl?ord(s.lvl):"Cantrip"} · ${esc(TIME_LABEL[s.time]||s.castTime||s.time)}${dt?" · "+esc(dt):""}${r.save?" · DC "+spellDCFor(s):""}${left}</span></button>`}
+const stdBtnHTML=(x,note)=>`<button class="qa gold" data-std="${x.id}"><b>${esc(x.name)}</b><span>${esc(note||x.short||x.sum)}</span></button>`;
+const tbGroup=(title,html,note)=>html?`<div class="tb-g"><div class="label">${esc(title)}</div>${note?`<p class="muted tb-n">${note}</p>`:""}<div class="quick">${html}</div></div>`:"";
+
+// What fits the picked part of your turn.
+function turnPanel(kind){
+  const d=D();const cb=ST.combat;const ks=knownSpells().filter(s=>s.castable);const atks=allAttacks();
+  const spellsFor=t=>ks.filter(s=>s.time===t||s.grants.some(g=>g.econ===t&&g.noSlot)).map(s=>spellBtnHTML(s,t==="reaction"?"info":"psy")).join("");
+  const feats=t=>d.actions.filter(a=>t==="free"?!["action","bonus","reaction"].includes(a.econ)&&a.econ!=="minute":a.econ===t).map(actBtnHTML).join("");
+  const spentBtn=k=>`<button class="btn small ghost" data-econmark="${k}">${cb.used[k]?"Not used yet":"Mark as used"}</button>`;
+  const head=(txt,k)=>`<div class="tb-h"><span class="muted">${txt}</span>${k?spentBtn(k):""}</div>`;
+  if(kind==="action"){
+    const n=cb.attacks||0,per=attacksAllowed();
+    const atkNote=n?`Attack action: ${n} of ${per} attack${per>1?"s":""} made this turn.`:per>1?`The Attack action gives you ${per} attacks.`:"";
+    const thrownNote=atks.some(a=>isThrown(a)&&!a.ranged)?" Tap a thrown weapon and pick Thrown to throw it.":"";
+    return head(cb.used.action?"You've used your action this round. You can still log one.":"Your action is ready.","action")
+      +tbGroup("Attack",atks.map(a=>atkBtnHTML(a)).join(""),esc(atkNote+thrownNote))
+      +tbGroup("Cast a spell",spellsFor("action"),cb.baSpell?"You cast a bonus-action spell this turn, so this can only be a cantrip.":"")
+      +tbGroup("Features",feats("action"))
+      +tbGroup("Items",`<button class="qa gold" data-std="use"><b>Use an item</b><span>Drink a potion, read a scroll, light a torch…</span></button><button class="qa gold" data-std="throw"><b>Throw an item</b><span>A flask, a rock, anything in your gear</span></button>`)
+      +tbGroup("Standard actions",STD_ACTIONS.map(x=>stdBtnHTML(x)).join(""));
+  }
+  if(kind==="bonus"){
+    const light=atks.filter(a=>!a.ranged&&/light/i.test(a.props||""));const can=(cb.attacks||0)>0;
+    const html=feats("bonus")+spellsFor("bonus");
+    return head(cb.used.bonus?"You've used your bonus action this round.":"Your bonus action is ready.","bonus")
+      +tbGroup("Features and spells",html)
+      +tbGroup("Two-weapon fighting",light.map(a=>atkBtnHTML(a,"offhand",!can)).join(""),can?"Attack with a light melee weapon in your other hand.":"Take the Attack action with a light melee weapon first, then attack with a light weapon in your other hand.")
+      +(html||light.length?"":`<p class="muted tb-n">Nothing you have uses a bonus action yet. Features and spells that do (Bardic Inspiration, Healing Word, Cunning Action…) show up here.</p>`);
+  }
+  if(kind==="reaction"){
+    const melee=atks.filter(a=>!a.ranged);
+    const rs=ks.filter(s=>s.time==="reaction");const trig=rs.filter(s=>s.trigger).map(s=>"<b>"+esc(s.name)+"</b> "+esc(s.trigger)).join(" · ");
+    return head(cb.used.reaction?"You've used your reaction. It comes back at the start of your next turn.":"Your reaction is ready. It lasts until your next turn.","reaction")
+      +(cb.readied?tbGroup("Readied",`<button class="qa info" data-std="release"><b>Take the readied action</b><span>${esc(cb.readied)}</span></button>`):"")
+      +tbGroup("Opportunity attack",melee.map(a=>atkBtnHTML(a,"opportunity")).join(""),"When a creature you can see leaves your reach.")
+      +tbGroup("Spells",spellsFor("reaction"),trig)
+      +tbGroup("Features",feats("reaction"))
+      +`<div class="row"><button class="btn small" data-obj="reaction">Log another reaction</button></div>`;
+  }
+  if(kind==="free"){
+    const th=(cb.thrown||[]);
+    return head(cb.used.object?"You've used your free object interaction. Another one takes your action (Use an Object).":"You get one free object interaction on your turn, plus talking and dropping things.","object")
+      +tbGroup("Pick back up",th.map((t,i)=>`<button class="qa" data-pickup="${i}"><b>Pick up ${esc(t.name)}</b><span>${t.item?"Back into your gear":"Back in hand"}</span></button>`).join(""))
+      +tbGroup("Object interaction",OBJ_PRESETS.map(p=>`<button class="qa" data-obj="${esc(p)}"><b>${esc(p)}</b><span>Free object interaction</span></button>`).join("")+`<button class="qa" data-obj=""><b>Something else</b><span>Type what you do</span></button>`)
+      +tbGroup("Always free",`<button class="qa" data-obj="free:Drop an item"><b>Drop an item</b><span>Doesn't use your interaction</span></button><button class="qa" data-obj="free:Speak or gesture"><b>Speak or gesture</b><span>A few words, a shout, a signal</span></button>`)
+      +tbGroup("Features",feats("free"));
+  }
+  if(kind==="move"){const m=moveInfo();const prone=ST.conditions.includes("Prone");const other=Object.entries(d.speeds).filter(([k])=>k!=="walk");
+    return `<div class="tb-h"><span><b class="num">${m.left}</b> <span class="muted">of ${m.budget} ft left${cb.dash?" (Dashed"+(cb.dash>1?" ×"+cb.dash:"")+")":""}${other.length?" · "+esc(other.map(([k,v])=>k+" "+v+" ft").join(", ")):""}</span></span>${m.moved?`<button class="btn small ghost" id="mv-reset">Reset</button>`:""}</div>
+     <div class="mbar"><i style="width:${m.budget?Math.min(100,m.moved/m.budget*100):0}%"></i></div>
+     <div class="row">${[5,10,15,20,30].map(n=>`<button class="btn small" data-mv="${n}">${n} ft</button>`).join("")}<input id="mv-n" class="num" inputmode="numeric" placeholder="ft" aria-label="Feet" style="width:70px"><button class="btn small primary" id="mv-go">Move</button></div>
+     <label class="check"><input type="checkbox" id="mv-diff"> Difficult terrain${prone?" or crawling":""} (each foot costs 2)</label>
+     ${cb.flags&&cb.flags.disengage?'<p class="muted tb-n">You Disengaged: this movement doesn\'t provoke opportunity attacks.</p>':""}
+     <div class="row">${prone?`<button class="btn small" id="mv-stand">Stand up (${Math.floor(m.speed/2)} ft)</button>`:`<button class="btn small" id="mv-prone">Drop prone (free)</button>`}<button class="btn small" data-std="dash">Dash (uses your action)</button></div>`}
+  return "";
+}
+
+function doMove(n,diff){const cb=ST.combat;if(!cb||!(n>0))return;const before=begin();const cost=diff?n*2:n;const m0=moveInfo();
+  cb.moved=(cb.moved||0)+cost;cb.used.move=true;const m=moveInfo();
+  log("combat","Moved "+n+" ft",[diff?"Difficult terrain, cost "+cost+" ft":"",m.left+" of "+m.budget+" ft left",cost>m0.left?"That's more than you had left":"",cb.flags&&cb.flags.disengage?"Disengaged":""].filter(Boolean).join(" · "),before)}
+function standUp(){const cb=ST.combat;const before=begin();const half=Math.floor(D().speed/2);ST.conditions=ST.conditions.filter(c=>c!=="Prone");
+  if(cb){cb.moved=(cb.moved||0)+half;cb.used.move=true}log("combat","Stood up","Used "+half+" ft of movement"+(cb?" · "+moveInfo().left+" ft left":""),before)}
+function dropProne(){const before=begin();if(!ST.conditions.includes("Prone"))ST.conditions=ST.conditions.concat(["Prone"]);log("note","Now prone","Dropped prone (free). Standing up costs half your speed.",before)}
+
+// Standard actions: Dash, Dodge, Hide, Grapple… Each one logs and spends your action.
+function actStd(id){
+  if(id==="use")return actUseItem();if(id==="throw")return actThrowItem();if(id==="release")return actReleaseReady();
+  const x=STD_ACTIONS.find(s=>s.id===id);if(!x)return;const cb=ST.combat;const d=D();
+  const inAttack=x.attack&&cb&&(cb.attacks||0)>0&&(cb.attacks||0)<attacksAllowed();
+  const w=inAttack?"":econWarn("action");
+  openModal(`<h2>${esc(x.name)}</h2><div class="row"><span class="tag">${inAttack?"One of your attacks":"Action"}</span></div>
+   <p style="margin:0;font-size:.9rem">${esc(x.sum)}</p>${w?`<div class="warn">${esc(w)}</div>`:""}
+   ${x.checks?`<div class="field"><span class="label">Check</span>${x.checks.length>1?segHTML("sk",x.checks.map(c=>[c[0],c[1]+" "+sg(d.skill(c[0]))]),x.checks[0][0]):""}<div class="row"><input id="sa-r" class="num" inputmode="numeric" placeholder="Total" style="width:90px"><button class="btn" id="sa-roll" type="button">Roll d20 <span id="sa-b">${sg(d.skill(x.checks[0][0]))}</span></button></div></div>`:""}
+   ${x.attack?`<div class="field"><span class="label">Result</span>${segHTML("ok",[["yes","It worked"],["no","It didn't"]],"yes")}</div>`:""}
+   ${id==="shove"?`<div class="field"><span class="label">Shove to</span>${segHTML("sv",[["prone","Knock prone"],["push","Push 5 ft away"]],"prone")}</div>`:""}
+   ${id==="ready"?`<div class="field"><span class="label">When this happens…</span><input id="sa-trig" autocomplete="off" placeholder="e.g. the ogre steps through the door"></div><div class="field"><span class="label">…I'll do this</span><input id="sa-do" autocomplete="off" placeholder="e.g. shoot it with my crossbow"></div>`:""}
+   ${id==="ready"?"":`<div class="field"><span class="label">${id==="help"?"Who you help":"Target or details (optional)"}</span><input id="sa-t" autocomplete="off"></div>`}
+   <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="sa-ok">Log ${esc(x.name)}</button></div>`,m=>{
+    const q=s=>m.querySelector(s);const sk=()=>segVal(m,"sk")||(x.checks&&x.checks[0][0]);
+    bindSeg(m,"sk",()=>{q("#sa-b").textContent=sg(d.skill(sk()))});bindSeg(m,"ok");bindSeg(m,"sv");
+    if(q("#sa-roll"))q("#sa-roll").onclick=()=>{const r=rollDice("1d20");const b=d.skill(sk());q("#sa-r").value=r.total+b;toast("d20 rolled "+r.rolls[0]+" "+sg(b)+" = "+(r.total+b))};
+    q("#sa-ok").onclick=()=>{const before=begin();const parts=[];const c=ST.combat;
+      if(id==="ready"){const tr=q("#sa-trig").value.trim(),dd=q("#sa-do").value.trim();if(!tr&&!dd){q("#sa-trig").focus();return}
+        const txt=(dd||"Act")+(tr?" when "+tr:"");if(c)c.readied=txt;parts.push(txt)}
+      const tgt=q("#sa-t")?q("#sa-t").value.trim():"";
+      if(x.checks){const v=parseInt(q("#sa-r").value);if(!isNaN(v))parts.push((x.checks.find(k=>k[0]===sk())||[0,""])[1]+" "+v)}
+      if(x.attack){const ok=segVal(m,"ok")==="yes";parts.push(ok?"Success":"Failed");if(id==="shove"&&ok)parts.push(segVal(m,"sv")==="prone"?"Knocked prone":"Pushed 5 ft")}
+      if(c){if(x.attack&&inAttack){}else econUse("action");if(x.attack)c.attacks=(c.attacks||0)+1;
+        c.flags=c.flags||{};if(id==="dash"){c.dash=(c.dash||0)+1;parts.push("Movement now "+moveInfo().budget+" ft")}
+        if(id==="dodge"){c.flags.dodge=true;parts.push("Until your next turn")}if(id==="disengage")c.flags.disengage=true}
+      closeModal();log("combat",x.name+(tgt?" → "+tgt:""),parts.join(" · "),before,{std:id})};
+  });
+}
+function actReleaseReady(){const cb=ST.combat;if(!cb||!cb.readied)return;const before=begin();const w=econUse("reaction");const t=cb.readied;cb.readied=null;
+  log("combat","Readied action: "+t,"Used your reaction"+(w?" · "+w:""),before);
+  toast("Logged. If it was an attack or a spell, log that too so damage, slots and ammo count.")}
+// A free object interaction, an always-free thing, or "another reaction".
+function actObject(preset){const isR=preset==="reaction";const free=preset.startsWith("free:");const label=free?preset.slice(5):preset;const cb=ST.combat;
+  const w=isR?econWarn("reaction"):free?"":(cb&&cb.used.object?"You already used your free object interaction this turn. A second one takes your action (Use an Object).":"");
+  openModal(`<h2>${esc(isR?"Reaction":label||"Object interaction")}</h2>${w?`<div class="warn">${esc(w)}</div>`:""}
+   ${!isR&&!free&&cb&&cb.used.object?`<label class="check"><input type="checkbox" id="ob-act" checked> Use my action for it</label>`:""}
+   <div class="field"><span class="label">What you do</span><input id="ob-t" autocomplete="off" value="${isR?"":esc(label)}" placeholder="${isR?"e.g. catch the falling rope":"e.g. draw my dagger"}"></div>
+   <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="ob-ok">Add to log</button></div>`,m=>{
+    m.querySelector("#ob-ok").onclick=()=>{const t=m.querySelector("#ob-t").value.trim();if(!t){m.querySelector("#ob-t").focus();return}const before=begin();let det="";
+      if(isR){econUse("reaction")}else if(!free&&cb){const a=m.querySelector("#ob-act");if(a&&a.checked){econUse("action");det="Used your action (Use an Object)"}else{cb.used.object=true;det="Free object interaction"}}
+      closeModal();log("combat",(isR?"Reaction: ":"")+t,det||(free?"Free":""),before)};
+  });
+}
+function pickUp(i){const cb=ST.combat;const t=cb&&(cb.thrown||[])[i];if(!t)return;const before=begin();const fx={};const usedObj=cb.used.object;
+  cb.thrown.splice(i,1);if(t.item){const it=invAdjust(t.item,1);if(it)fxInv(fx,it,1);saveChar()}if(usedObj)econUse("action");else cb.used.object=true;
+  log("item","Picked up "+t.name,usedObj?"Used your action (your free object interaction was already spent)":"Free object interaction",before,{fx:fx})}
+
+// Use an Object: drink a potion, read a scroll… optionally heals you and uses the item up.
+function actUseItem(){const items=usableItems();if(!items.length){toast("Nothing in your gear to use.");return}
+  const w=econWarn("action");
+  const healOf=i=>{const n=itemName(i).toLowerCase();const p=Object.keys(HEAL_POTIONS).find(k=>n.startsWith(k));if(p)return HEAL_POTIONS[p];
+    const m=/regain (\d+d\d+(?:\s*\+\s*\d+)?) hit points/i.exec(itemText(i));return m?m[1].replace(/\s/g,""):""};
+  const consum=i=>/potion|scroll|oil|vial|flask|antitoxin|ration|torch|candle|elixir|philter/i.test(itemName(i));
+  openModal(`<h2>Use an item</h2><div class="row"><span class="tag">Action (Use an Object)</span></div>${w?`<div class="warn">${esc(w)}</div>`:""}
+   <div class="field"><span class="label">Item</span><select id="ui-i">${items.map((i,k)=>`<option value="${k}">${esc(itemName(i))} (${i.qty})</option>`).join("")}</select></div>
+   <p class="muted" id="ui-txt" style="margin:0;font-size:.84rem"></p>
+   <div class="row" id="ui-heal"><div class="field" style="flex:1"><span class="label">HP you regain (optional)</span><input id="ui-hp" class="num" inputmode="numeric"></div><button class="btn" id="ui-roll" type="button">Roll</button></div>
+   <label class="check"><input type="checkbox" id="ui-use"> Use it up (take 1 out of your gear)</label>
+   <div class="field"><span class="label">Details (optional)</span><input id="ui-d" autocomplete="off" placeholder="e.g. poured it down Mira's throat"></div>
+   <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="ui-ok">Log it</button></div>`,m=>{
+    const q=s=>m.querySelector(s);const cur=()=>items[+q("#ui-i").value];
+    const sync=()=>{const i=cur();const h=healOf(i);const t=itemText(i);q("#ui-txt").textContent=t.length>220?t.slice(0,220)+"…":t;q("#ui-roll").textContent=h?"Roll "+h:"Roll";q("#ui-roll").disabled=!h;q("#ui-use").checked=consum(i)};
+    q("#ui-i").onchange=sync;sync();
+    q("#ui-roll").onclick=()=>{const h=healOf(cur());if(!h)return;const x=rollExpr(h);q("#ui-hp").value=x.total;toast("Rolled "+x.text+" = "+x.total)};
+    q("#ui-ok").onclick=()=>{const before=begin();const i=cur();const fx={};const parts=[];const hp=parseInt(q("#ui-hp").value);
+      if(hp>0){const was=ST.hp;ST.hp=Math.min(maxHP(C),ST.hp+hp);fx.hp=ST.hp-was;if(was===0&&ST.hp>0)ST.death={s:0,f:0};parts.push("+"+(ST.hp-was)+" HP ("+ST.hp+"/"+maxHP(C)+")")}
+      const name=itemName(i);if(q("#ui-use").checked){fxInv(fx,i,-1);invAdjust(name,-1,null,true);saveChar();const left=(C.inventory.find(x=>itemName(x)===name)||{qty:0}).qty;parts.push("Used up · "+left+" left")}
+      if(ST.combat)econUse("action");const det=q("#ui-d").value.trim();if(det)parts.push(det);
+      closeModal();log("item","Used "+name,parts.join(" · "),before,{fx:fx})};
+  });
+}
+// Throw anything in your gear as an improvised weapon (1d4, no proficiency). Thrown weapons use their own attack.
+function actThrowItem(){const items=usableItems().filter(i=>!(ref("items",i.item)||{}).weapon||!/thrown/i.test(((ref("items",i.item)||{}).weapon.props||[]).join(" ")));
+  if(!items.length){toast("Nothing in your gear to throw.");return}
+  const d=D();const bonus=d.M("str");const cb=ST.combat;
+  const inAttack=cb&&(cb.attacks||0)>0;const w=inAttack?"":econWarn("action");
+  openModal(`<h2>Throw an item</h2><div class="row"><span class="tag">${inAttack?"One of your attacks":"Attack action"}</span><span class="pill num">To hit ${sg(bonus)}</span><span class="pill">Improvised, 20/60 ft</span></div>${w?`<div class="warn">${esc(w)}</div>`:""}
+   <p class="muted" style="margin:0;font-size:.84rem">An improvised thrown weapon uses Strength and no proficiency, and deals 1d4. A flask of oil, acid or holy water uses the rules for that item instead: put its damage below.</p>
+   <div class="field"><span class="label">Item</span><select id="ti-i">${items.map((i,k)=>`<option value="${k}">${esc(itemName(i))} (${i.qty})</option>`).join("")}</select></div>
+   <div class="field"><span class="label">Target</span><input id="ti-t" autocomplete="off"></div>
+   <div class="field"><span class="label">Result</span>${segHTML("res",[["hit","Hit"],["miss","Miss"]],"hit")}</div>
+   <div class="row"><div class="field" style="flex:1"><span class="label">Damage dealt (optional)</span><input id="ti-dmg" class="num" inputmode="numeric"></div><button class="btn" id="ti-roll" type="button">Roll 1d4 ${sg(d.M("str"))}</button></div>
+   <div class="field"><span class="label">Afterwards</span>${segHTML("after",[["lands","It lands there (pick it up later)"],["gone","It's used up or breaks"]],"lands")}</div>
+   <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="ti-ok">Log throw</button></div>`,m=>{
+    const q=s=>m.querySelector(s);bindSeg(m,"res");bindSeg(m,"after");
+    q("#ti-roll").onclick=()=>{if(segVal(m,"res")==="miss"){q("#ti-dmg").value="0";return}const x=rollExpr("1d4");const t=Math.max(0,x.total+d.M("str"));q("#ti-dmg").value=t;toast("Rolled "+x.text+" "+sg(d.M("str"))+" = "+t)};
+    q("#ti-ok").onclick=()=>{const before=begin();const i=items[+q("#ti-i").value];const name=itemName(i);const fx={};const hit=segVal(m,"res")!=="miss";const dmg=parseInt(q("#ti-dmg").value);const gone=segVal(m,"after")==="gone";
+      fxInv(fx,i,-1);invAdjust(name,-1,null,gone);saveChar();
+      const c=ST.combat;if(c){if(!(c.attacks))econUse("action");c.attacks=(c.attacks||0)+1;if(!gone)c.thrown=(c.thrown||[]).concat([{name:name,item:name}])}
+      const tgt=q("#ti-t").value.trim();const left=(C.inventory.find(x=>itemName(x)===name)||{qty:0}).qty;
+      closeModal();log("attack","Threw "+name+(tgt?" → "+tgt:""),[hit?"Hit"+(isNaN(dmg)?"":", "+dmg+" damage"):"Miss",gone?"Used up":"It's on the ground",left+" left"].join(" · "),before,{dmg:isNaN(dmg)?0:dmg,hit:hit,fx:fx})};
+  });
+}
 function actHP(kind){
   const inp=$("#hp-amt");const n=parseInt(inp&&inp.value);if(!(n>0)){toast("Type an amount first.");inp&&inp.focus();return}
   const before=begin();const max=maxHP(C);let det="";
@@ -1075,15 +1300,16 @@ function startCombat(){
    <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="cb-ok">Roll initiative</button></div>`,m=>{
     m.querySelector("#cb-roll").onclick=()=>{const r=rollDice("1d20");m.querySelector("#cb-init").value=r.total+initBonus(C);toast("d20 rolled "+r.rolls[0]+" "+sg(initBonus(C)))};
     m.querySelector("#cb-ok").onclick=()=>{const before=begin();const ini=m.querySelector("#cb-init").value.trim();const nm=m.querySelector("#cb-name").value.trim();
-      ST.combat={round:1,used:{},attacks:0,riders:{},name:nm,started:new Date().toISOString(),startIdx:EVENTS.length};
+      TURN_PICK="action";ST.combat={round:1,used:{},attacks:0,riders:{},moved:0,dash:0,flags:{},thrown:[],name:nm,started:new Date().toISOString(),startIdx:EVENTS.length};
       closeModal();log("combat","Combat started"+(nm?": "+nm:""),ini?"Initiative "+ini:"",before)};
   });
 }
 function nextRound(){const before=begin();const cb=ST.combat;cb.round+=1;cb.used={};cb.attacks=0;const keep={};Object.keys(cb.riders||{}).forEach(k=>{const r=D().riders.find(x=>x.id===k);if(r&&r.oncePer==="combat")keep[k]=true});cb.riders=keep;cb.baSpell=false;cb.actSpellLeveled=false;
+  const wasFx=[(cb.flags||{}).dodge?"Dodge":"",cb.readied?"Readied action":""].filter(Boolean);cb.moved=0;cb.dash=0;cb.flags={};cb.readied=null;TURN_PICK="action";
   // Spells cast during this fight run out at the start of the round they end on (Shield: your next turn).
   const ended=[];if(ST.conc&&ST.conc.until&&cb.round>=ST.conc.until){ended.push(ST.conc.name);ST.conc=null}
   ST.spellFx=(ST.spellFx||[]).filter(x=>{if(x.until&&cb.round>=x.until){ended.push(x.name);return false}return true});
-  log("combat","Round "+cb.round,ended.length?"Ended: "+ended.join(", ")+" (duration over)":"",before)}
+  log("combat","Round "+cb.round,[ended.length?"Ended: "+ended.join(", ")+" (duration over)":"",wasFx.length?wasFx.join(" and ")+" ended":""].filter(Boolean).join(" · "),before)}
 function toggleEcon(k){const cb=ST.combat;if(!cb)return;cb.used[k]=!cb.used[k];saveState();render()}
 function endCombat(){
   const cb=ST.combat;const evs=EVENTS.slice(cb.startIdx||0).filter(e=>!e.undone);
@@ -1093,12 +1319,15 @@ function endCombat(){
   const ending=D().toggles.filter(t=>(ST.toggles||[]).includes(t.id)&&(t.endsOn||[]).includes("combatEnd"));
   openModal(`<h2>End combat</h2><p style="margin:0">${cb.round} round${cb.round>1?"s":""} · ${hits}/${atks} attacks hit · ${dmg} weapon damage logged · ${spells} spell${spells===1?"":"s"} cast</p>
    ${shot?`<div class="field"><span class="label">Recover ammunition</span><p class="muted" style="margin:0;font-size:.85rem">You can recover half your spent ammunition by searching after the fight.</p>${Object.entries(shotBy).map(([n,k])=>`<label class="check"><input type="checkbox" data-ammo="${esc(n)}" data-k="${Math.floor(k/2)}" ${Math.floor(k/2)?"checked":"disabled"}> Add ${Math.floor(k/2)} of ${k} ${esc(n||"ammunition").toLowerCase()} back</label>`).join("")}</div>`:""}
+   ${(cb.thrown||[]).length?`<div class="field"><span class="label">Pick up what you threw</span>${(cb.thrown||[]).map((t,i)=>`<label class="check"><input type="checkbox" data-thr="${i}" checked> ${esc(t.name)}${t.item?" back into your gear":""}</label>`).join("")}</div>`:""}
    ${ending.length?`<p class="muted" style="margin:0;font-size:.85rem">Ends: ${esc(ending.map(t=>t.name).join(", "))}.</p>`:""}
    <div class="modal-f"><button class="btn" data-close>Keep fighting</button><button class="btn primary" id="ec-ok">End combat</button></div>`,m=>{
-    m.querySelector("#ec-ok").onclick=()=>{const before=begin();let extra="";
-      m.querySelectorAll("[data-ammo]:checked").forEach(b=>{const k=+b.dataset.k;const it=ammoItem({ammo:b.dataset.ammo})||(C.inventory||[]).find(i=>itemName(i)===b.dataset.ammo);if(it&&k){it.qty+=k;saveChar();extra+=" · Recovered "+k+" "+itemName(it).toLowerCase()}});
+    m.querySelector("#ec-ok").onclick=()=>{const before=begin();let extra="";const fx={};
+      m.querySelectorAll("[data-ammo]:checked").forEach(b=>{const k=+b.dataset.k;const it=ammoItem({ammo:b.dataset.ammo})||(C.inventory||[]).find(i=>itemName(i)===b.dataset.ammo);if(it&&k){it.qty+=k;fxInv(fx,it,k);saveChar();extra+=" · Recovered "+k+" "+itemName(it).toLowerCase()}});
+      const picked=[];m.querySelectorAll("[data-thr]:checked").forEach(b=>{const t=cb.thrown[+b.dataset.thr];if(!t)return;if(t.item){const it=invAdjust(t.item,1);if(it)fxInv(fx,it,1)}picked.push(t.name)});
+      if(picked.length){saveChar();extra+=" · Picked up "+picked.join(", ")}
       ST.toggles=(ST.toggles||[]).filter(id=>!ending.some(t=>t.id===id));
-      ST.combat=null;closeModal();log("combat","Combat ended"+(cb.name?": "+cb.name:""),cb.round+" rounds · "+hits+"/"+atks+" hits · "+dmg+" damage · "+spells+" spells"+extra,before)};
+      ST.combat=null;closeModal();log("combat","Combat ended"+(cb.name?": "+cb.name:""),cb.round+" rounds · "+hits+"/"+atks+" hits · "+dmg+" damage · "+spells+" spells"+extra,before,{fx:fx})};
   });
 }
 function shortRest(){
@@ -1230,7 +1459,8 @@ const toLocalInput=t=>{const d=new Date(t);if(isNaN(d))return "";const p=n=>Stri
 function evAmt(e){if(e.amt!=null)return e.amt;const m=/^(?:Took|Healed) (\d+)/.exec(e.title||"");return m?+m[1]:0}
 function evCoin(e){if(e.coin)return e.coin;if(e.k!=="item")return null;const m=/^(Gained|Spent) ([\d.]+) (pp|gp|ep|sp|cp)(?:: (.*))?$/.exec(e.title||"");return m?{dir:m[1]==="Gained"?1:-1,amt:+m[2],d:m[3],note:m[4]||""}:null}
 function evEffect(e){
-  const f={slots:{},hp:0,res:{},ammo:0,coin:null,xp:0,cond:null,insp:null,conc:null,death:{s:0,f:0},item:null,lost:null};if(!e||e.undone)return f;
+  const f={slots:{},hp:0,res:{},ammo:0,coin:null,xp:0,cond:null,insp:null,conc:null,death:{s:0,f:0},item:null,lost:null,inv:{}};if(!e||e.undone)return f;
+  if(e.fx&&e.fx.inv)f.inv=Object.assign({},e.fx.inv);
   const t=e.title||"",d=e.detail||"",add=(id,n)=>{id=resId(id);f.res[id]=(f.res[id]||0)+n};let m;
   // Entries logged since version 2 record exactly what they spent; older ones are read from their text.
   if(e.fx){Object.entries(e.fx.res||{}).forEach(([id,n])=>add(id,n));Object.entries(e.fx.slots||{}).forEach(([l,n])=>{f.slots[l]=(f.slots[l]||0)+n});if(e.fx.hp)f.hp=e.fx.hp}
@@ -1282,6 +1512,7 @@ function applyEffectDiff(e,a,b){
     if(a.item){take(a.item,-1);out.push(a.item.name+" removed from gear")}if(b.item){take(b.item,1);out.push(b.item.name+" added to gear")}}
   if(J(a.lost)!==J(b.lost)){const ln=x=>x.name||itemName(x);if(a.lost&&!C.inventory.some(i=>itemName(i)===ln(a.lost))){C.inventory.push(Object.assign({id:"i"+uid(),qty:1},a.lost));out.push(ln(a.lost)+" back in gear")}
     if(b.lost){C.inventory=C.inventory.filter(i=>itemName(i)!==ln(b.lost));out.push(ln(b.lost)+" removed from gear")}}
+  Object.keys(Object.assign({},a.inv,b.inv)).forEach(n=>{const k=(b.inv[n]||0)-(a.inv[n]||0);if(!k)return;const it=invAdjust(n,k,((e.fx||{}).invItems||{})[n]);out.push(n.toLowerCase()+" "+(it?it.qty:0))});
   if(b.xp!==a.xp){C.xp=Math.max(0,xpNow(C)+(b.xp-a.xp));out.push(C.xp.toLocaleString()+" XP")}
   if(held)out.push("you've rested since, so today's HP and uses weren't changed");
   if(stale)out.push("a later entry changed the same thing, so it was left as is");
@@ -1602,33 +1833,29 @@ function viewPlay(){
   const d=D();const cb=ST.combat;const max=maxHP(C);
   const recent=EVENTS.slice(-10).reverse();
   const onceRiders=d.riders.filter(r=>r.oncePer);
-  const econ=cb?`<div class="econ">${[["action","Action"],["bonus","Bonus action"],["reaction","Reaction"],["move","Movement"]].map(k=>`<button class="chip ${cb.used[k[0]]?"spent":"on"}" data-econ="${k[0]}">${k[1]}</button>`).join("")}${onceRiders.map(r=>`<button class="chip psy ${(cb.riders||{})[r.id]?"spent":"on"}" data-rchip="${esc(r.id)}">${esc(r.name)}</button>`).join("")}</div>`:"";
-  const atkBtns=allAttacks().map(a=>{const am=ammoItem(a);return `<button class="qa" data-atk="${esc(a.id)}"><b>${esc(a.name)}</b><span class="num">${sg(attackBonus(a))} · ${esc(attackDmg(a))}${am?" · "+am.qty+" left":""}</span></button>`}).join("");
-  const actBtns=d.actions.map(a=>{const r=a.cost&&a.cost.resource?getRes(a.cost.resource):null;return `<button class="qa ${QA_COLOR[a.econ]||"info"}" data-act="${esc(a.id)}"><b>${esc(a.name)}</b><span>${esc(ECON_LABEL[a.econ]||a.econ)}${a.save?" · DC "+a.save.dc:""}${r?" · "+resLeft(r)+"/"+r.max+(r.die?" "+esc(r.die):""):""}</span></button>`}).join("");
+  // In combat: pick a part of your turn, and "Do something" shows only what fits it.
+  const econ=cb?`<div class="turn" role="group" aria-label="Part of your turn">${TURN_KINDS.map(([k,n])=>`<button class="${econSpent(k)?"spent":""}" data-tp="${k}" aria-pressed="${TURN_PICK===k}"><b>${n}</b><span>${esc(econState(k))}</span></button>`).join("")}</div>
+     ${onceRiders.length||(cb.flags||{}).dodge||(cb.flags||{}).disengage||cb.readied?`<div class="econ">${onceRiders.map(r=>`<button class="chip psy ${(cb.riders||{})[r.id]?"spent":"on"}" data-rchip="${esc(r.id)}">${esc(r.name)}</button>`).join("")}${(cb.flags||{}).dodge?'<span class="chip on">Dodging</span>':""}${(cb.flags||{}).disengage?'<span class="chip on">Disengaged</span>':""}${cb.readied?'<span class="chip on">Readied</span>':""}</div>`:""}`:"";
+  const atkBtns=allAttacks().map(a=>atkBtnHTML(a)).join("");
+  const actBtns=d.actions.map(actBtnHTML).join("");
   const ks=knownSpells();
   // Pinned spells (★ on the Spells tab), or your first three cantrips until you pin some.
   const pinned=ks.filter(s=>isPinned(s.key)&&(s.castable||s.ritualOnly));
-  const spellBtn=s=>{const r=spellMath(s,s.lvl);const dt=dmgText(r);const left=s.lvl?(castableNow(s)?"":" · no slots left"):"";
-    return `<button class="qa psy" data-cast="${esc(s.key)}"><b>${esc(s.name)}</b><span>${s.lvl?ord(s.lvl):"Cantrip"} · ${esc(TIME_LABEL[s.time]||s.castTime||s.time)}${dt?" · "+esc(dt):""}${r.save?" · DC "+spellDCFor(s):""}${left}</span></button>`};
-  const cantrips=(pinned.length?pinned:ks.filter(s=>s.lvl===0&&s.castable&&s.time!=="minute").slice(0,3)).map(spellBtn).join("");
-  // Reaction spells while your reaction is unused: Shield, Absorb Elements, Counterspell…
-  const reacts=cb?ks.filter(s=>s.castable&&s.time==="reaction"&&!pinned.includes(s)):[];
-  const reactCard=reacts.length?`<section class="card"><div class="card-h"><h2>Reactions</h2><span class="muted">${cb.used.reaction?"Reaction used this round":"Reaction ready"}</span></div>
-     <div class="quick">${reacts.map(s=>{const r=spellMath(s,s.lvl);return `<button class="qa info" data-cast="${esc(s.key)}" ${cb.used.reaction||!castableNow(s)?"disabled":""}><b>${esc(s.name)}</b><span>${s.lvl?ord(s.lvl)+" level":"Cantrip"}${dmgText(r)?" · "+esc(dmgText(r)):""}${castableNow(s)?"":" · no slots left"}</span></button>`}).join("")}</div>
-     ${reacts.some(s=>s.trigger)?`<p class="muted" style="margin:0;font-size:.8rem">${reacts.filter(s=>s.trigger).map(s=>"<b>"+esc(s.name)+"</b> "+esc(s.trigger)).join(" · ")}</p>`:""}</section>`:"";
+  const cantrips=(pinned.length?pinned:ks.filter(s=>s.lvl===0&&s.castable&&s.time!=="minute").slice(0,3)).map(s=>spellBtnHTML(s)).join("");
+  const pickAll=TURN_PICK==="all";
   const res=resources(C);const sl=slots(C);const toggles=d.toggles.filter(t=>(ST.toggles||[]).includes(t.id));
   const firstRound=cb&&cb.round===1&&(d.riders.some(r=>/firstRound/.test(JSON.stringify(r)))||Object.values(d.bonus).flat().length)?d.reminders.filter(r=>r.on==="initiative"):[];
   return `<div class="grid"><div class="col">
    <section class="card"><div class="card-h"><h2>${cb?"Round "+cb.round:"Combat"}</h2>${cb&&cb.name?`<span class="muted">${esc(cb.name)}</span>`:""}
      ${cb?`<button class="btn primary small" id="p-next">Next round</button><button class="btn small" id="p-endc">End combat</button>`:`<button class="btn primary" id="p-startc">Start combat</button>`}</div>
-     ${cb?econ+`<p class="muted" style="margin:0;font-size:.8rem">Tap a chip to mark it spent by hand. Logging an attack, spell or action marks it for you.</p>`+(cb.round===1&&d.attacksPerAction>1&&d.bonus.attacksPerAction?`<div class="warn">First round: ${d.attacksPerAction} attacks with the Attack action this turn.</div>`:""):`<p class="muted" style="margin:0;font-size:.88rem">Start combat to track rounds, your action, bonus action and reaction, and once-per-round features.</p>`}
+     ${cb?econ+`<p class="muted" style="margin:0;font-size:.8rem">Pick a part of your turn to see what you can do with it. Logging an attack, spell or action marks it used for you.</p>`+(cb.round===1&&d.attacksPerAction>1&&d.bonus.attacksPerAction?`<div class="warn">First round: ${d.attacksPerAction} attacks with the Attack action this turn.</div>`:""):`<p class="muted" style="margin:0;font-size:.88rem">Start combat to track rounds, your action, bonus action and reaction, and once-per-round features.</p>`}
    </section>
-   <section class="card"><div class="card-h"><h2>Do something</h2><button class="btn small" id="p-free">Log something else</button></div>
-     <div class="quick">${atkBtns}${actBtns}${cantrips}
+   <section class="card"><div class="card-h"><h2>Do something${cb&&!pickAll?": "+esc((TURN_KINDS.find(k=>k[0]===TURN_PICK)||[0,""])[1]):""}</h2>${cb?`<button class="btn small ghost" data-tp="${pickAll?"action":"all"}">${pickAll?"By part of turn":"Show everything"}</button>`:""}<button class="btn small" id="p-free">Log something else</button></div>
+     ${cb&&!pickAll?turnPanel(TURN_PICK):`<div class="quick">${atkBtns}${actBtns}${cantrips}
       ${d.casters.length||ks.some(s=>s.castable)?`<button class="qa info" id="p-spells"><b>Cast a spell</b><span>${sl.map((n,i)=>slotLeft(i+1)+"/"+n+" "+ord(i+1)).join(" · ")||(d.pact?"Pact slots "+resLeft(getRes("pact"))+"/"+d.pact.n:"No slots")}</span></button>`:""}
-     </div>
+      <button class="qa gold" data-std="use"><b>Use an item</b><span>Potion, scroll, torch…</span></button><button class="qa gold" data-std="throw"><b>Throw an item</b><span>Anything in your gear</span></button>
+     </div>`}
    </section>
-   ${reactCard}
    <section class="card"><div class="card-h"><h2>Recent</h2>${(ST.undo||[]).length?`<button class="btn small" id="p-undo">Undo last</button>`:""}<button class="btn ghost small" data-goto="history">Full history</button></div>
      ${recent.length?`<div class="log">${recent.map(evHTML).join("")}</div>`:`<div class="empty">Nothing logged yet. Open a session, then every attack, spell, rest and note you log lands here and in History.</div>`}
    </section>
@@ -1665,10 +1892,19 @@ function bindPlay(v){
   const on=(sel,fn)=>{const e=v.querySelector(sel);if(e)e.onclick=fn};
   on("#p-startc",startCombat);on("#p-next",nextRound);on("#p-endc",endCombat);on("#p-free",actFree);
   on("#p-spells",()=>{TAB="spells";render()});on("#p-undo",undoLast);on("#p-endconc",endConc);
-  v.querySelectorAll("[data-atk]").forEach(b=>b.onclick=()=>actAttack(b.dataset.atk));
+  v.querySelectorAll("[data-atk]").forEach(b=>b.onclick=()=>actAttack(b.dataset.atk,b.dataset.mode));
+  v.querySelectorAll("[data-tp]").forEach(b=>b.onclick=()=>{TURN_PICK=b.dataset.tp;render()});
+  v.querySelectorAll("[data-std]").forEach(b=>b.onclick=()=>actStd(b.dataset.std));
+  v.querySelectorAll("[data-obj]").forEach(b=>b.onclick=()=>actObject(b.dataset.obj));
+  v.querySelectorAll("[data-pickup]").forEach(b=>b.onclick=()=>pickUp(+b.dataset.pickup));
+  v.querySelectorAll("[data-econmark]").forEach(b=>b.onclick=()=>toggleEcon(b.dataset.econmark));
+  v.querySelectorAll("[data-mv]").forEach(b=>b.onclick=()=>doMove(+b.dataset.mv,(v.querySelector("#mv-diff")||{}).checked));
+  on("#mv-go",()=>{const i=v.querySelector("#mv-n");const n=parseInt(i.value);if(!(n>0)){i.focus();return}doMove(n,(v.querySelector("#mv-diff")||{}).checked)});
+  const mvn=v.querySelector("#mv-n");if(mvn)mvn.addEventListener("keydown",e=>{if(e.key==="Enter")v.querySelector("#mv-go").click()});
+  on("#mv-stand",standUp);on("#mv-prone",dropProne);
+  on("#mv-reset",()=>{const cb=ST.combat;if(!cb)return;const before=begin();cb.moved=0;cb.used.move=false;log("combat","Movement reset",moveInfo().budget+" ft left",before)});
   v.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>actAction(b.dataset.act));
   v.querySelectorAll("[data-cast]").forEach(b=>b.onclick=()=>actCast(b.dataset.cast));
-  v.querySelectorAll("[data-econ]").forEach(b=>b.onclick=()=>toggleEcon(b.dataset.econ));
   v.querySelectorAll("[data-rchip]").forEach(b=>b.onclick=()=>{const cb=ST.combat;if(!cb)return;cb.riders=cb.riders||{};cb.riders[b.dataset.rchip]=!cb.riders[b.dataset.rchip];saveState();render()});
   v.querySelectorAll("[data-endtoggle]").forEach(b=>b.onclick=()=>endToggle(b.dataset.endtoggle));
   v.querySelectorAll("[data-endfx]").forEach(b=>b.onclick=()=>endSpellFx(b.dataset.endfx));
