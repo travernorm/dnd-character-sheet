@@ -1873,7 +1873,7 @@ function viewPlay(){
      ${d.pact?`<p class="muted" style="margin:0;font-size:.82rem">Pact slots are under Features and uses.</p>`:""}
    </section>`:""}
    <section class="card"><div class="card-h"><h2>Features and uses</h2></div>
-     ${res.length?res.map(r=>`<div class="res"><span class="nm">${esc(r.name)}</span>${pipsHTML("res",r.id,r.max,ST.used[r.id]||0,r.color)}<span class="meta">${recTag(r.rec)} ${r.die?esc(r.die)+" · ":""}${r.meta?esc(r.meta):""}</span></div>`).join(""):'<p class="muted" style="margin:0">No limited-use features. Add your own trackers on the Backup & level up tab.</p>'}
+     ${res.length?res.map(r=>`<div class="res"><span class="nm">${esc(r.name)}</span>${pipsHTML("res",r.id,r.max,ST.used[r.id]||0,r.color)}<span class="meta">${recTag(r.rec)} ${[r.die?esc(r.die):"",r.meta?esc(r.meta):"",spentBy(r)].filter(Boolean).join(" · ")}</span></div>`).join(""):'<p class="muted" style="margin:0">No limited-use features. Add your own trackers on the Backup & level up tab.</p>'}
    </section>
    <section class="card"><div class="card-h"><h2>Conditions</h2></div>
      ${ST.conc?`<div class="row"><span class="tag conc">Concentrating</span><b>${esc(ST.conc.name)}</b><span class="muted" style="font-size:.8rem">${esc(spellLeft(ST.conc))}</span><button class="btn small" id="p-endconc">Stop</button></div>`:'<p class="muted" style="margin:0;font-size:.85rem">Not concentrating on anything.</p>'}
@@ -1886,6 +1886,11 @@ function viewPlay(){
   </div></div>`;
 }
 // "3 rounds left", or for longer spells "1 hour, cast at 10:32".
+// What spends a resource besides its own action: "Psychic Blades spends 1 on a hit".
+function spentBy(r){const d=D();const hits=x=>{const g=x.cost&&x.cost.resource?getRes(x.cost.resource):null;return g&&g.id===r.id};
+  const parts=d.riders.filter(hits).map(x=>esc(x.name)+" spends "+(x.cost.amount||1)+" on a hit"+(x.oncePer?" (once per "+esc(x.oncePer)+")":""))
+    .concat(d.actions.filter(x=>hits(x)&&x.name!==r.name).map(x=>esc(x.name)+" spends "+(x.cost.amount||1)+" ("+esc((ECON_LABEL[x.econ]||x.econ||"").toLowerCase())+")"));
+  return parts.length?"<b>"+parts.join(" · ")+"</b>":""}
 function spellLeft(x){const cb=ST.combat;if(x.until&&cb){const n=x.until-cb.round;return n<=1?"ends next round":n+" rounds left"}
   return [String(x.dur||"").replace(/^concentration,\s*/i,""),x.since?"cast at "+fmtTime(x.since):""].filter(Boolean).join(", ")}
 function bindPlay(v){
