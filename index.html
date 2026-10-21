@@ -923,7 +923,7 @@ function actAttack(aid,mode){
     };
   });
 }
-function actCast(key){
+function actCast(key,want){
   const sp=knownSpells().find(s=>s.key===key);if(!sp)return;
   const isCantrip=sp.lvl===0;const opts=[];const timeOf={};
   sp.grants.filter(g=>g.noSlot&&g.resId).forEach(g=>{const r=getRes(g.resId);const v="grant:"+g.resId;opts.push([v,"Free"+(g.econ?" as a "+(ECON_LABEL[g.econ]||g.econ).toLowerCase():"")+", "+g.src+" ("+(r?resLeft(r)+"/"+r.max:"?")+")"]);if(g.econ)timeOf[v]=g.econ});
@@ -935,7 +935,9 @@ function actCast(key){
   const cst=D().casters.find(x=>x.cls===sp.cls);
   if(!isCantrip&&sp.ritual&&(sp.ritualOnly||(cst&&cst.ritual!=="none")))opts.push(["ritual","As a ritual (+10 minutes, no slot)"]);
   const leftOf=v=>v==="atwill"||v==="ritual"?1:v==="pact"?resLeft(getRes("pact")):v.startsWith("grant:")?resLeft(getRes(v.slice(6))||{max:0}):v[0]==="s"?slotLeft(+v.slice(1)):0;
-  const firstOk=opts.find(o=>leftOf(o[0])>0)||opts[0];
+  // Opened from a part of your turn (Bonus action…): start on a way to cast it that fits, like Earth Genasi's bonus-action Blade Ward.
+  const fits=o=>!want||(timeOf[o[0]]||(o[0]==="ritual"?"minute":sp.time))===want;
+  const firstOk=opts.find(o=>fits(o)&&leftOf(o[0])>0)||opts.find(o=>leftOf(o[0])>0)||opts[0];
   const timeFor=v=>v==="ritual"?"minute":(timeOf[v]||sp.time);
   const dc=spellDCFor(sp);const mat=spellMaterial(sp);const matIt=materialItem(mat);
   const slotOf=v=>v&&v[0]==="s"?+v.slice(1):v==="pact"?(pactInfo()||{}).lvl||sp.lvl:sp.lvl;
@@ -1091,15 +1093,15 @@ function atkBtnHTML(a,mode,dis){const am=ammoItem(a);const ti=isThrown(a)&&!a.ra
   const dmgTxt=mode==="offhand"?a.dmg+" "+(a.type||""):attackDmg(a);
   return `<button class="qa ${mode==="opportunity"?"info":mode==="offhand"?"psy":""}" data-atk="${esc(a.id)}" ${mode?`data-mode="${mode}"`:""} ${dis?"disabled":""}><b>${esc(a.name)}</b><span class="num">${sg(attackBonus(a))} · ${esc(dmgTxt)}${am?" · "+am.qty+" left":ti?" · "+ti.qty+" on you":""}</span>${sub?`<span>${esc(sub)}</span>`:""}</button>`}
 function actBtnHTML(a){const r=a.cost&&a.cost.resource?getRes(a.cost.resource):null;return `<button class="qa ${QA_COLOR[a.econ]||"info"}" data-act="${esc(a.id)}"><b>${esc(a.name)}</b><span>${esc(ECON_LABEL[a.econ]||a.econ)}${a.save?" · DC "+a.save.dc:""}${r?" · "+resLeft(r)+"/"+r.max+(r.die?" "+esc(r.die):""):""}</span></button>`}
-function spellBtnHTML(s,cls){const r=spellMath(s,s.lvl);const dt=dmgText(r);const left=s.lvl?(castableNow(s)?"":" · no slots left"):"";
-  return `<button class="qa ${cls||"psy"}" data-cast="${esc(s.key)}"><b>${esc(s.name)}</b><span>${s.lvl?ord(s.lvl):"Cantrip"} · ${esc(TIME_LABEL[s.time]||s.castTime||s.time)}${dt?" · "+esc(dt):""}${r.save?" · DC "+spellDCFor(s):""}${left}</span></button>`}
+function spellBtnHTML(s,cls,want){const r=spellMath(s,s.lvl);const dt=dmgText(r);const left=s.lvl?(castableNow(s)?"":" · no slots left"):"";
+  return `<button class="qa ${cls||"psy"}" data-cast="${esc(s.key)}" ${want?`data-want="${want}"`:""}><b>${esc(s.name)}</b><span>${s.lvl?ord(s.lvl):"Cantrip"} · ${esc(TIME_LABEL[s.time]||s.castTime||s.time)}${dt?" · "+esc(dt):""}${r.save?" · DC "+spellDCFor(s):""}${left}</span></button>`}
 const stdBtnHTML=(x,note)=>`<button class="qa gold" data-std="${x.id}"><b>${esc(x.name)}</b><span>${esc(note||x.short||x.sum)}</span></button>`;
 const tbGroup=(title,html,note)=>html?`<div class="tb-g"><div class="label">${esc(title)}</div>${note?`<p class="muted tb-n">${note}</p>`:""}<div class="quick">${html}</div></div>`:"";
 
 // What fits the picked part of your turn.
 function turnPanel(kind){
   const d=D();const cb=ST.combat;const ks=knownSpells().filter(s=>s.castable);const atks=allAttacks();
-  const spellsFor=t=>ks.filter(s=>s.time===t||s.grants.some(g=>g.econ===t&&g.noSlot)).map(s=>spellBtnHTML(s,t==="reaction"?"info":"psy")).join("");
+  const spellsFor=t=>ks.filter(s=>s.time===t||s.grants.some(g=>g.econ===t&&g.noSlot)).map(s=>spellBtnHTML(s,t==="reaction"?"info":"psy",t)).join("");
   const feats=t=>d.actions.filter(a=>t==="free"?!["action","bonus","reaction"].includes(a.econ)&&a.econ!=="minute":a.econ===t).map(actBtnHTML).join("");
   const spentBtn=k=>`<button class="btn small ghost" data-econmark="${k}">${cb.used[k]?"Not used yet":"Mark as used"}</button>`;
   const head=(txt,k)=>`<div class="tb-h"><span class="muted">${txt}</span>${k?spentBtn(k):""}</div>`;
@@ -1934,7 +1936,7 @@ function bindPlay(v){
   on("#mv-stand",standUp);on("#mv-prone",dropProne);
   on("#mv-reset",()=>{const cb=ST.combat;if(!cb)return;const before=begin();cb.moved=0;cb.used.move=false;log("combat","Movement reset",moveInfo().budget+" ft left",before)});
   v.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>actAction(b.dataset.act));
-  v.querySelectorAll("[data-cast]").forEach(b=>b.onclick=()=>actCast(b.dataset.cast));
+  v.querySelectorAll("[data-cast]").forEach(b=>b.onclick=()=>actCast(b.dataset.cast,b.dataset.want));
   v.querySelectorAll("[data-rchip]").forEach(b=>b.onclick=()=>actRider(b.dataset.rchip));
   v.querySelectorAll("[data-endtoggle]").forEach(b=>b.onclick=()=>endToggle(b.dataset.endtoggle));
   v.querySelectorAll("[data-endfx]").forEach(b=>b.onclick=()=>endSpellFx(b.dataset.endfx));
