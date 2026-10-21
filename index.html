@@ -1150,6 +1150,31 @@ function turnPanel(kind){
   return "";
 }
 
+// Tapping a once-per-round add-on chip (Psychic Blades, Sneak Attack…) uses it on a hit you already logged or
+// are about to: it spends its cost, rolls its dice and logs it. Ticking it in the attack dialog does the same.
+function actRider(id){const cb=ST.combat;if(!cb)return;const r=D().riders.find(x=>x.id===id);if(!r)return;
+  if((cb.riders||{})[id]){toast(r.name+" is already used this "+(r.oncePer==="combat"?"combat":"round")+". Undo its log entry to take it back.");return}
+  const res=r.cost&&r.cost.resource?getRes(r.cost.resource):null;const n=r.cost&&r.cost.amount||1;
+  const lvls=r.cost&&r.cost.slot?slots().map((x,i)=>i+1).filter(l=>l>=r.cost.slot&&slotLeft(l)>0):[];
+  const dice=l=>{if(!r.cost||!r.cost.slot||!r.perSlotLevel||!l)return r.damage;const base=parseInt(r.damage)||0,per=parseInt(r.perSlotLevel)||1,f=String(r.damage).split("d")[1];return Math.min(r.maxDice||99,base+per*(l-r.cost.slot))+"d"+f};
+  openModal(`<h2>${esc(r.name)}</h2><div class="row"><span class="tag">On a hit · no action</span>${r.oncePer?`<span class="tag">Once per ${esc(r.oncePer)}</span>`:""}</div>
+   ${res?`<p style="margin:0">Spends <b>${n} ${esc(res.name)}</b>: ${resLeft(res)} of ${res.max} left.</p>${resLeft(res)<n?'<div class="warn bad">None left. Logging will still record it.</div>':""}`:""}
+   ${r.cost&&r.cost.slot?(lvls.length?`<div class="field"><span class="label">Spell slot</span><select id="rd-slot">${lvls.map(l=>`<option value="${l}">${ord(l)} (${slotLeft(l)} left)</option>`).join("")}</select></div>`:'<div class="warn bad">No spell slots left.</div>'):""}
+   ${remindersHTML("attack")}
+   <div class="field"><span class="label">Which hit (optional)</span><input id="rd-t" autocomplete="off" placeholder="e.g. crossbow bolt into the cultist"></div>
+   ${r.damage?`<div class="row"><div class="field" style="flex:1"><span class="label">Extra damage</span><input id="rd-dmg" class="num" inputmode="numeric"></div><button class="btn" id="rd-roll" type="button">Roll <span id="rd-d">${esc(dice(lvls[0]))}</span></button><label class="check"><input type="checkbox" id="rd-crit"> Critical</label></div>`:""}
+   <div class="modal-f"><button class="btn" data-close>Cancel</button><button class="btn primary" id="rd-ok">Use ${esc(r.name)}</button></div>`,m=>{
+    const q=x=>m.querySelector(x);const lv=()=>q("#rd-slot")?+q("#rd-slot").value:0;
+    if(q("#rd-slot"))q("#rd-slot").onchange=()=>{q("#rd-d").textContent=dice(lv())};
+    if(q("#rd-roll"))q("#rd-roll").onclick=()=>{const x=rollExpr(String(dice(lv())),q("#rd-crit").checked);q("#rd-dmg").value=x.total;toast("Rolled "+x.text+" = "+x.total)};
+    q("#rd-ok").onclick=()=>{const before=begin();const fx={res:{},slots:{}};const parts=[];const c=ST.combat;
+      if(res){ST.used[res.id]=Math.min(res.max,(ST.used[res.id]||0)+n);fx.res[res.id]=n;parts.push("Spent "+n+" "+res.name+" ("+resLeft(res)+" left)")}
+      const l=lv();if(l){ST.slotsUsed[l]=(ST.slotsUsed[l]||0)+1;fx.slots[l]=1;parts.push(ord(l)+"-level slot")}
+      const dmg=parseInt((q("#rd-dmg")||{}).value);if(!isNaN(dmg))parts.push("+"+dmg+(r.damageType?" "+r.damageType:"")+" damage");
+      if(r.oncePer){c.riders=c.riders||{};c.riders[id]=true}
+      const t=q("#rd-t").value.trim();closeModal();log("feature",r.name+(t?" → "+t:""),parts.join(" · "),before,{fx:fx,rider:id})};
+  });
+}
 function doMove(n,diff){const cb=ST.combat;if(!cb||!(n>0))return;const before=begin();const cost=diff?n*2:n;const m0=moveInfo();
   cb.moved=(cb.moved||0)+cost;cb.used.move=true;const m=moveInfo();
   log("combat","Moved "+n+" ft",[diff?"Difficult terrain, cost "+cost+" ft":"",m.left+" of "+m.budget+" ft left",cost>m0.left?"That's more than you had left":"",cb.flags&&cb.flags.disengage?"Disengaged":""].filter(Boolean).join(" · "),before)}
@@ -1848,7 +1873,7 @@ function viewPlay(){
   return `<div class="grid"><div class="col">
    <section class="card"><div class="card-h"><h2>${cb?"Round "+cb.round:"Combat"}</h2>${cb&&cb.name?`<span class="muted">${esc(cb.name)}</span>`:""}
      ${cb?`<button class="btn primary small" id="p-next">Next round</button><button class="btn small" id="p-endc">End combat</button>`:`<button class="btn primary" id="p-startc">Start combat</button>`}</div>
-     ${cb?econ+`<p class="muted" style="margin:0;font-size:.8rem">Pick a part of your turn to see what you can do with it. Logging an attack, spell or action marks it used for you.${onceRiders.length?" Purple chips are add-ons to a hit, not actions: tick them in the attack dialog.":""}</p>`+(cb.round===1&&d.attacksPerAction>1&&d.bonus.attacksPerAction?`<div class="warn">First round: ${d.attacksPerAction} attacks with the Attack action this turn.</div>`:""):`<p class="muted" style="margin:0;font-size:.88rem">Start combat to track rounds, your action, bonus action and reaction, and once-per-round features.</p>`}
+     ${cb?econ+`<p class="muted" style="margin:0;font-size:.8rem">Pick a part of your turn to see what you can do with it. Logging an attack, spell or action marks it used for you.${onceRiders.length?" Purple chips are add-ons to a hit, not actions: tap one, or tick it when you log the attack.":""}</p>`+(cb.round===1&&d.attacksPerAction>1&&d.bonus.attacksPerAction?`<div class="warn">First round: ${d.attacksPerAction} attacks with the Attack action this turn.</div>`:""):`<p class="muted" style="margin:0;font-size:.88rem">Start combat to track rounds, your action, bonus action and reaction, and once-per-round features.</p>`}
    </section>
    <section class="card"><div class="card-h"><h2>Do something${cb&&!pickAll?": "+esc((TURN_KINDS.find(k=>k[0]===TURN_PICK)||[0,""])[1]):""}</h2>${cb?`<button class="btn small ghost" data-tp="${pickAll?"action":"all"}">${pickAll?"By part of turn":"Show everything"}</button>`:""}<button class="btn small" id="p-free">Log something else</button></div>
      ${cb&&!pickAll?turnPanel(TURN_PICK):`<div class="quick">${atkBtns}${actBtns}${cantrips}
@@ -1910,7 +1935,7 @@ function bindPlay(v){
   on("#mv-reset",()=>{const cb=ST.combat;if(!cb)return;const before=begin();cb.moved=0;cb.used.move=false;log("combat","Movement reset",moveInfo().budget+" ft left",before)});
   v.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>actAction(b.dataset.act));
   v.querySelectorAll("[data-cast]").forEach(b=>b.onclick=()=>actCast(b.dataset.cast));
-  v.querySelectorAll("[data-rchip]").forEach(b=>b.onclick=()=>{const cb=ST.combat;if(!cb)return;cb.riders=cb.riders||{};cb.riders[b.dataset.rchip]=!cb.riders[b.dataset.rchip];saveState();render()});
+  v.querySelectorAll("[data-rchip]").forEach(b=>b.onclick=()=>actRider(b.dataset.rchip));
   v.querySelectorAll("[data-endtoggle]").forEach(b=>b.onclick=()=>endToggle(b.dataset.endtoggle));
   v.querySelectorAll("[data-endfx]").forEach(b=>b.onclick=()=>endSpellFx(b.dataset.endfx));
   v.querySelectorAll("[data-hp]").forEach(b=>b.onclick=()=>actHP(b.dataset.hp));
