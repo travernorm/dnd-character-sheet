@@ -200,6 +200,12 @@ main .wrap{padding-block:16px 96px}
 .kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;font-size:.88rem}
 .kv .v{font-family:var(--f-num);text-align:right}
 .kv .p{color:var(--accent);font-weight:700}
+/* saves and skills as a lined table: a rule between rows and between name and number */
+.kv.lined{gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.kv.lined>span{padding:5px 10px;border-top:1px solid var(--line)}
+.kv.lined>span:nth-child(-n+2){border-top:0}
+.kv.lined>.v{border-left:1px solid var(--line);min-width:52px}
+.kv.lined>span:nth-child(4n+3),.kv.lined>span:nth-child(4n+4){background:color-mix(in srgb,var(--sunk) 55%,transparent)}
 .feat{border-top:1px solid var(--line);padding:8px 0}
 .feat:first-child{border-top:0}
 .feat b{font-size:.92rem}
@@ -2163,10 +2169,10 @@ function viewSheet(){
    ${companionsCard()}
   </div><div class="col">
    <section class="card"><div class="card-h"><h2>Saving throws</h2></div>
-    <div class="kv">${ABIL.map(([k,n])=>`<span class="${P.saves.has(k)?"p":""}">${n}${P.saves.has(k)?" ●":""}</span><span class="v">${sg(d.save(k))}</span>`).join("")}</div>
+    <div class="kv lined">${ABIL.map(([k,n])=>`<span class="${P.saves.has(k)?"p":""}">${n}${P.saves.has(k)?" ●":""}</span><span class="v">${sg(d.save(k))}</span>`).join("")}</div>
    </section>
    <section class="card"><div class="card-h"><h2>Skills</h2><span class="muted" style="font-size:.8rem">● proficient · ●● expertise${d.checkProf.length?" · others include "+esc([...new Set(d.checkProf.map(x=>x.src))].join(", ")):""}</span></div>
-    <div class="kv">${SKILLS.map(([k,n,a])=>{const e=P.expertise.has(k),p=P.skills.has(k);return `<span class="${p||e?"p":""}">${n} <span class="muted" style="font-size:.75rem;text-transform:uppercase">${a}</span>${e?" ●●":p?" ●":""}</span><span class="v">${sg(d.skill(k))}</span>`}).join("")}</div>
+    <div class="kv lined">${SKILLS.map(([k,n,a])=>{const e=P.expertise.has(k),p=P.skills.has(k);return `<span class="${p||e?"p":""}">${n} <span class="muted" style="font-size:.75rem;text-transform:uppercase">${a}</span>${e?" ●●":p?" ●":""}</span><span class="v">${sg(d.skill(k))}</span>`}).join("")}</div>
     <p class="muted" style="margin:0;font-size:.84rem">Passive Perception ${d.passive("perception")} · Passive Insight ${d.passive("insight")} · Passive Investigation ${d.passive("investigation")}</p>
    </section>
    <section class="card"><div class="card-h"><h2>Proficiencies and defenses</h2><button class="btn small ghost" id="sh-ov">Adjust numbers</button></div>
